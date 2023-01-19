@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AMPLink Control Panel</title>
+<link href="style.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="sidenav">
+  <img src="resources/images/branding.png" alt="branding" width="200" height="80">
+  <a href="/">Home</a>
+  <a href="/panel">Server Control Panel&nbsp;</a>
+  <a href="/console">Server Console</a>
+  <a href="/users">Users</a>
+  <a href="/about">About</a>
+  <div class="brightercolor"><a href="#">Welcome<br><form action="/logout"><input type="submit" value="Logout" class="btn btn-danger"></form></a></div>
+</div>
+<main>
+
+<div class="content">
+  <h2>Welcome to the users section</h2>
+  <p class="subtitle2">User Control Panel</p>
+
+
+<div class="setUserWidth">
+  <div class="row alert alert-secondary">
+
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Username</th>
+    <th>Is Superuser?</th>
+    <th>Actions</th>
+  </tr>
+  {{#each users}}
+  <tr>
+    <td>{{this.id}}</td>
+    <td>{{this.username}}</td>
+    <td id="listsu"><div>{{this.is_superuser}}</div></td>
+    <td>
+      <form style="float:left; margin-right: 10px;" action="/users/promote/{{this.id}}" method="POST"> <input type="submit" value="Promote" class="btn btn-info" onclick="return confirm('Are you sure you want to promote this user?');"></form>
+      <form style="float:left; margin-right: 10px;" action="/users/demote/{{this.id}}" method="POST"> <input type="submit" value="Demote" class="btn btn-warning" onclick="return confirm('Are you sure you want to demote this user?');"></form>
+      <form style="float:left; margin-right: 10px;" action="/users/delete/{{this.id}}" method="POST"> <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');"></form>
+    </td>
+  </tr>
+  {{/each}}
+  <tr>
+    <td>&nbsp;</td>
+  
+    <td>&nbsp;</td>
+  
+    <td>&nbsp;</td>
+  
+    <td><br><form action="/register" ><input type="submit" value="+ Add a user" class="btn btn-primary" style="float:left; margin-right: 10px;" ></form></td>
+  </tr>
+</table>
+
+<br>&nbsp;
+<p class="alert alert-primary">TIP: It is recommended to edit users in the user page, versus editing it directly in phpMyAdmin.<br><b>If the value of "Is superuser?" is equal to 1, the user is a superuser. If it is equal to 0, the user is a normal user.</b></p>
+
+<!--<script>
+      /*let text2 = document.getElementById("listsu").innerHTML; 
+      text2.replace(0, 'Superuser').replace(1, 'Superuser');
+      
+      */
+      const inputElement = document.getElementById('listsu');
+      const input = Number(inputElement.value);
+
+      let output;
+      if (input === 0) {
+        output = 'User';
+      } else {
+        output = 'Superuser';
+      }
+      document.getElementById("listsu").innerHTML = output;
+</script>-->
+
+  </div>
+</div>
+</div>
+
+</main>
+</body>
+</html>

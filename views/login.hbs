@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+<style>
+body {
+    text-align: center;
+}
+.aligntocenter {
+    text-align: left;
+    width: 50vw;
+}
+.center {
+    text-align: center;
+}
+
+@media (max-width:600px){
+.aligntocenter {
+    width: 75vw;
+}
+}
+</style>
+</head>
+<body>
+    <h1>AMPLink</h1>
+<div class="container mt-4 aligntocenter">
+        <div class="card">            
+            <div class="card-header center">Login</div>    
+            <div class="card-body">
+                <form action="/login" method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username:</label><br>
+                        <input type="text" class="form-control" id="username" name="username"><br>                        
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label><br>
+                        <input type="password" class="form-control" id="password" name="password">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            {{#if message }}
+            <div style="margin: 5px;">
+				<p class="alert alert-dark">{{message}}</p>
+			</div>
+            {{/if}}
+        </div>
+    </div>
+</body>
+</html>

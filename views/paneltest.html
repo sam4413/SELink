@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMPLink Control Panel</title>
+<link href="style.css" rel="stylesheet" type="text/css">
+<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
+<link href="css/bootstrap-4.4.1.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<div class="sidenav">
+  <img src="resources/images/branding.png" alt="branding" width="200" height="80">
+  <a href="/">Home</a>
+  <a href="/panel">Server Control Panel&nbsp;</a>
+  <a href="/console">Server Console</a>
+  <a href="/users">Users</a>
+  <a href="/about">About</a>
+  <div class="brightercolor"><a href="#">Welcome<br><form action="/logout"><input type="submit" value="Logout" class="btn btn-danger"></form></a></div>
+</div>
+<main>
+
+<div class="content">
+  <h2>AMPLink Configurator</h2>
+  <p class="subtitle2">Server String Editor</p>
+
+
+
+<div class="row">
+<div class="col-md-9 col-xl-5">
+
+
+<p class="alert alert-warning "><b>WARNING: CHANGING ANY OF THESE CONFIGURATION STRINGS COULD BREAK THE TORCH INSTANCE, OR MAKE AMPLINK INACCESSABLE.</b></p>
+  
+<h3>Plugins</h3>
+<div class="alert sidebarAccentColor text-white"><strong>INSTALLED PLUGINS
+    <div class="row">
+      <div class="col-xl-4">Content goes here</div>
+      <div class="col-xl-4">Content goes here</div>
+      <div class="col-xl-4">Content goes here</div>
+    </div>
+</strong>
+<hr>
+<span id="getAllPlugins"></span>
+
+{{#each result}}
+  <tr>
+    <td>{{this}}</td>
+    <td>
+      <form style="float:right; "action="/configurator/plugin/configure/{{this.id}}" method="POST"> <input type="submit" value="Configure" class="btn btn-info"></form>
+      <form style="float:right;margin-right:10px;"action="/configurator/plugin/delete/{{this.id}}" method="POST"> <input type="submit" value="Remove Plugin" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this plugin? This action cannot be undone!');">
+    </td>
+  </tr><br><br>
+  {{/each}}
+
+</div>
+<br>
+<div class="alert sidebarAccentColor text-white"><strong>INSTALL A PLUGIN</strong>
+<form action="/configurator/plugin/delete/{{this.id}}" method="POST">
+<div class="mb-3">
+  <label id="file" for="formFile" class="form-label">Upload a plugin to server:</label>
+  <input class="form-control" type="file" accept=".zip" id="formFile">
+  <input type="submit" style="margin-top:10px;" value="Upload Plugin" class="btn btn-success" onclick="return confirm('Are you sure you want to upload this plugin?');">
+</div>
+</form>
+<input type="submit" action="/configurator/plugin/search" method="POST" style="margin-top:10px;" value="Plugin List" class="btn btn-secondary" >
+</div>
+
+<!--<script>
+      /*let text2 = document.getElementById("listsu").innerHTML; 
+      text2.replace(0, 'Superuser').replace(1, 'Superuser');
+      
+      */
+      const inputElement = document.getElementById('listsu');
+      const input = Number(inputElement.value);
+
+      let output;
+      if (input === 0) {
+        output = 'User';
+      } else {
+        output = 'Superuser';
+      }
+      document.getElementById("listsu").innerHTML = output;
+</script>-->
+
+</div>
+</div>
+
+
+</div>
+
+<script>
+  /*const staticData = () => {
+    fetch('/configurator/plugins')
+      .then((response) => response.text())
+      
+      .then((result) => {
+        JSON.parse(result)
+        document.getElementById('getAllPlugins').innerHTML = result;
+      });
+      
+  };
+  staticData()*/
+</script>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,146 @@
+@charset "utf-8";
+
+/*
+
+AMPLink External Stylesheet
+The majority of AMPLink's styling is handled through Bootstrap 5.1.2, and 5.0.2 (on certain pages).
+However background colors, and the sidebar are managed through this stylesheet.
+
+Recommended colors:
+Set background-color to #222222 for dark mode and #ffffff for color
+and set background-color to #ffffff for light mode and #000000 for color
+*/
+
+:root {
+  /*Background Colors*/
+  --main-bg-color: #ffffff;
+  --main-text-color: #000000;
+
+  /*Nav Menu Colors*/
+  --nav-menu-bg-color: #303030;
+  --nav-menu-bg-color-2: #404040;
+
+  /*Accent Colors*/
+  --accent-color: #303030;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*===== Advanced Users only =====*/
+/*===== Advanced Users only =====*/
+/*===== Advanced Users only =====*/
+* {
+  box-sizing: border-box;
+  
+}
+
+body {
+  margin: 0;
+  background-color: var(--main-bg-color);
+}
+
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: var(--nav-menu-bg-color);
+  overflow-x: hidden;
+ color: #294152;
+}
+
+.sidenav a {
+  color: white;
+  padding: 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.sidenav a:hover {
+  background-color: #ddd;
+  color: #294152;
+}
+
+.content {
+  margin-left: 200px;
+  padding-left: 20px;
+	margin-right: 1%;
+}
+
+.sidebarAccentColor {
+  background-color: #303030;
+}
+
+main {
+  background-color: var(--main-bg-color);
+  color: var(--main-text-color);
+  height: 100vh;
+
+  
+}
+
+.warning {
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+	margin: 25px 0;
+	padding: 25px;
+	background-color: rgba(255,155,0,0.25);
+}
+
+.critical {
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+	margin: 25px 0;
+	padding: 25px;
+	background-color: rgba(255,0,0,0.25);
+}
+
+.info {
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+	margin: 25px 0;
+	padding: 25px;
+	background-color: rgba(0,0,255,0.25);
+}
+.subtitle {
+	font-size: 40px;
+	font-weight: 900;
+}
+.subtitle2 {
+	font-size: 20px;
+	font-weight: 900;
+}
+
+.brightercolor {
+  background-color: var(--nav-menu-bg-color-2);
+  color: #294152;
+  position: relative;
+  bottom: 0px;
+}
+
+.console {
+	background-color: #000000;
+	color: #ffffff;
+	padding: 5px;
+	position: relative;
+	height: 500px;
+  overflow-y: scroll;
+}
+
+.setUserWidth {
+  max-width: 1000px;
+}
+
+.setConfigHeight {
+  min-height: 75vh;
+  overflow-y: scroll;
+  position: static;
+}

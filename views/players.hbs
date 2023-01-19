@@ -1,0 +1,26 @@
+<table class="">
+  <tr>
+    <th>Username</th>
+    <th>SteamID</th>
+    <th>Actions</th>
+  </tr>
+  {{#each play}}
+  <tr>
+    <td>{{this.name}}</td>
+    <td>{{this.clientId}}</td>
+    <td>
+      <form style="float:left; margin-right: 10px;" action="/panel/players/promote/{{this.clientId}}" method="POST"> <input type="submit" value="Promote" class="btn btn-primary" onclick="return confirm('Are you sure you want to promote this user?');"></form>
+      <form style="float:left; margin-right: 10px;" action="/panel/players/demote/{{this.clientId}}" method="POST"> <input type="submit" value="Demote" class="btn btn-secondary" onclick="return confirm('Are you sure you want to demote this user?');"></form>
+      <form style="float:left; margin-right: 10px;" action="/panel/players/kick/{{this.clientId}}" method="POST"> <input type="submit" value="Kick" class="btn btn-warning" onclick="return confirm('Are you sure you want to kick this user?');"></form>
+      <form style="float:left; margin-right: 10px;" action="/panel/players/ban/{{this.clientId}}" method="POST"> <input type="submit" value="Ban" class="btn btn-danger" onclick="return confirm('Are you sure you want to ban this user?');"></form>
+    </td>
+  </tr>
+  {{/each}}
+  <tr>
+    <td>&nbsp;</td>
+  
+    <td>&nbsp;</td>
+  
+    <td>&nbsp;</td>
+  </tr>
+</table>
