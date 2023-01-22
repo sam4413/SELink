@@ -1,4 +1,5 @@
-# amplink
+# AMPLink
+## (Advanced Moderation Panel Linker)
  AMPLink is a powerful tool that allows Administrators easy access to their Space Engineers servers through an easy to use webpanel.
  
  AMPLink relies on a RestAPI plugin for Torch called "TorchRemote." 
