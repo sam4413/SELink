@@ -22,8 +22,7 @@
 <main>
 <div class="content">
   <h2>Server Control Panel</h2>
-	<hr>
-	<!--<h3>&nbsp;</h3>-->
+	<p class="subtitle2">Server Control Panel</p>
 	<!--Container-->
     <div class="row">
       <div class="col-xl-4 alert sidebarAccentColor text-white"><strong>Server Information</strong>
@@ -46,7 +45,7 @@
     {{/if}}
 
     {{#if ipn}} 
-    <strong>Local Address: </strong>{{ipn}}:{{#if pt}}{{pt}}{{/if}}
+    <strong>Server Address: </strong>{{ipn}}:{{#if pt}}{{pt}}{{/if}}
     {{/if}}
 
     
@@ -57,9 +56,11 @@
 	  </div>
 		<!--Divider-->
 	  <div class=""><br></div>
-		<div class="col-xl-4 alert sidebarAccentColor text-white"><strong>Enter the Configurator to edit configuraiton files.&nbsp;</strong>
+		<div class="col-xl-4 alert sidebarAccentColor text-white"><strong>Configuration&nbsp;</strong>
 		  <hr>
-		<form action="/postConfigurator" method="POST"><input type="submit" value="Enter Configurator (WIP)" class="btn btn-danger"></form>
+		<form style="float:left; margin-right: 10px;" action="/postConfigurator" method="POST"><input type="submit" value="Plugins Management" class="btn btn-danger"></form>
+    <form style="float:left; margin-right: 10px;" action="/postInstance" method="POST"><input type="submit" value="Torch Instance" class="btn btn-danger"></form>
+    <form style="float:left; margin-right: 10px;" action="/postScheduled" method="POST"><input type="submit" value="Scheduled Tasks" class="btn btn-danger"></form>
 	  </div>
     </div>
 

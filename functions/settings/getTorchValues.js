@@ -2,6 +2,7 @@
 //Made by sam
 
 const request = require('request');
+const { json } = require('stream/consumers');
 require('dotenv').config();
 
 exports.getTorchValues = async function (string, array) {
@@ -31,14 +32,21 @@ exports.getTorchValues = async function (string, array) {
 });
 };
 
+/*
 // For debugging
 var getTorchValues = require(__dirname + '/getTorchValues.js');
-
+//var getTorchSchema = require(__dirname + '/getTorchSchema.js');
+var jp = require('jsonpath');
 (async () => {
-  var array = `[\r\n    "chatName",\r\n    "chatColor",\r\n    "noGui"\r\n]`
-
+  //var array = `[\r\n    "chatName",\r\n    "chatColor",\r\n    "noGui"\r\n]`
+  //var array = console.log(await getTorchSchema.getTorchSchema('Torch.Server.TorchConfig'));
+  
   //All Torch Settings
   var array =   `["shouldUpdatePlugins","shouldUpdateTorch","instanceName","instancePath","noUpdate","forceUpdate","autostart",
-"tempAutostart","restartOnCrash","noGui","waitForPID","getTorchUpdates","getPluginUpdates","tickTimeout","plugins","localPlugins","disconnectOnRestart","chatName","chatColor","enableWhitelist","whitelist"]`
+  "tempAutostart","restartOnCrash","noGui","waitForPID","getTorchUpdates","getPluginUpdates","tickTimeout","plugins","localPlugins","disconnectOnRestart","chatName","chatColor","enableWhitelist","whitelist",
+"windowWidth","windowHeight","fontSize","ugcServiceType","branchName","lastUsedTheme","independentConsole","testPlugin","enableAsserts","sendLogsToKeen","deleteMiniDumps","loginToken"]`
+  //console.log(JSON.stringify(array));
+  
   console.log(await getTorchValues.getTorchValues('Torch.Server.TorchConfig', array));
 })();
+*/

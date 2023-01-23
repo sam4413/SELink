@@ -29,9 +29,9 @@ exports.getTorchSchema = async function (string) {
   });
 });
 };
-/*// For debugging
+// For debugging
 var getTorchSchema = require(__dirname + '/getTorchSchema.js');
 
 (async () => {
-  console.log(await getTorchSchema.getTorchSchema('TorchRemote.Plugin.Config'));
-})();*/
+  console.log(JSON.parse(await getTorchSchema.getTorchSchema('Torch.Server.ViewModels.SessionSettingsViewModel')));
+})();

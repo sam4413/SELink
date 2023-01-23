@@ -17,12 +17,29 @@
   <a href="/about">About</a>
   <div class="brightercolor"><a href="#">Welcome<br><form action="/logout"><input type="submit" value="Logout" class="btn btn-danger"></form></a></div>
 </div>
-<main>
+<main style="overflow-y: hidden;">
   
 <div class="content">
   <h2>Console</h2>
   <div class="console" id="scroller" style="font-family:'Consolas', 'Courier New', Courier, monospace;"><span id="variable">{{variable}}</span></div><br>
-  <div class="alert alert-dark">
+  <div style="position:relative; margin-left:88%; top:-70px;">
+    <button class="btn btn-dark"onclick="copyconsole()" >Copy Console</button>
+    <script>
+    function copyconsole() {
+      // Get the text field
+      var copyText = document.getElementById("scroller");
+
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); 
+
+      navigator.clipboard.writeText(copyText.value);
+      
+      // Alert the copied text
+      alert("Console copied.");
+    }
+    </script>
+  </div>
+  <div class="alert alert-dark" style="position: relative; top:-50px;">
   <form action="/invokeCommand" method="POST" style="width: 100%">
   <label for="string" class="form-label">Actions:</label><br>
   <input type="text" class="form-control" id="command" name="command">
@@ -34,7 +51,7 @@
   <form style="float:left; margin-right: 10px; margin-top: 10px" action="/serverRestart" method="POST"><input type="submit" value="Restart" class="btn btn-warning"></form>
   <form style="float:left; margin-right: 10px; margin-top: 10px"action="/serverStop" method="POST"><input type="submit" value="Shutdown" class="btn btn-danger"></form>
   <input style="float:left; margin-right: 10px; margin-top: 10px" type="submit" value="More Actions (WIP)" class="btn btn-primary">
-  <br><br></div>
+  <br><br>{{errormsg}}</div>
     
   <p>&nbsp;</p>
 </div>

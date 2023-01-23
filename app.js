@@ -32,6 +32,8 @@ const websocketLogs = require('./functions/logs/websocketLogs.js')
 const deletePlugin = require('./functions/plugins/deletePlugin.js')
 const getAllPlugins = require('./functions/plugins/getAllPlugins.js')
 const putPlugin = require('./functions/plugins/putPlugin.js')
+  //plugins download
+  const getPluginsDownloadsAll = require('./functions/plugins/downloads/getPluginsDownloadsAll.js')
 //server
 
 const getHeartbeat = require('./functions/server/getHeartbeat.js');
@@ -46,7 +48,11 @@ const postKickPlayer = require('./functions/players/postKickPlayer.js');
 const postPromotePlayer = require('./functions/players/postPromotePlayer.js');
 const postDemotePlayer = require('./functions/players/postDemotePlayer.js');
 const postDisconnectPlayer = require('./functions/players/postDisconnectPlayer.js');
+//settings
+const getTorchValues = require("./functions/settings/getTorchValues.js")
+const patchTorchValues = require("./functions/settings/patchTorchValues.js")
 const { randomInt } = require('crypto');
+const { json } = require('stream/consumers');
 
 // REMOTE KEYS ///////////
 const bearerToken = `${process.env.TORCHREMOTE_TOKEN}`
@@ -565,45 +571,67 @@ app.get('/users', (req, res) => {
   ============================*/
   
   
-  app.post('/invokeCommand', (req, res) => {
+  app.post('/invokeCommand', async (req, res) => {
     if (req.session.userId) {
       const { command } = req.body;
       //console.dir("InvokeCommand:", string)
-      postInvokeCommand.postInvokeCommand(command);
-
+      var status = (await postInvokeCommand.postInvokeCommand(command));
+      if (status == 400) {
+        //res.redirect('/console');
+        res.render('console.hbs', {errormsg: 'Error: Server cannot be accessed.'});
+      } else {
+      //res.redirect('/console');
+      res.render('console.hbs', {errormsg: 'Sent command request to server.'});
+      }
       res.redirect('/console');
-    } else {
-      res.render('login.hbs');
     }
   });
 
-  app.post('/serverRestart', (req, res) => {
+  app.post('/serverRestart', async (req, res) => {
     if (req.session.userId) {
       //console.dir("InvokeCommand:", string)
       var string = 'restart';
-      postInvokeCommand.postInvokeCommand(string);
-
+      var status = (await postInvokeCommand.postInvokeCommand(string));
+      if (status == 400) {
+        //res.redirect('/console');
+        res.render('console.hbs', {errormsg: 'Error: Server cannot be accessed.'});
+      } else {
+      //res.redirect('/console');
+      res.render('console.hbs', {errormsg: 'Sent restart request to server.'});
+      }
       res.redirect('/console');
     } else {
       res.render('login.hbs');
     }
   });
 
-  app.post('/serverStop', (req, res) => {
-    if (req.session.userId) {
-      postStop.postStop();
 
+  app.post('/serverStop', async (req, res) => {
+    if (req.session.userId) {
+      var status = (await postStop.postStop());
+      if (status == 400) {
+        //res.redirect('/console');
+        res.render('console.hbs', {errormsg: 'Error: Server has already stopped.'});
+      } else {
+      //res.redirect('/console');
+      res.render('console.hbs', {errormsg: 'Sent stop request to server.'});
+      }
       res.redirect('/console');
     } else {
       res.render('login.hbs');
     }
   });
 
-  app.post('/serverStart', (req, res) => {
+  app.post('/serverStart', async (req, res) => {
     if (req.session.userId) {
-      postStart.postStart();
-
-      res.redirect('/console');
+      var status = (await postStart.postStart());
+      if (status == 400) {
+        //res.redirect('/console');
+        res.render('console.hbs', {errormsg: 'Error: Server has already started.'});
+      } else {
+      //res.redirect('/console');
+      res.render('console.hbs', {errormsg: 'Sent start request to server.'});
+      }
     } else {
       res.render('login.hbs');
     }
@@ -680,7 +708,18 @@ app.get('/users', (req, res) => {
   res.send(plugins)
 })();
               */
-app.get('/configurator/plugins', (req, res) => {
+//Redirect Securely
+app.post('/postConfiguratorSearch', (req, res) => {
+  if (req.session.userId) {
+    //console.dir("InvokeCommand:", string)
+    //postStop.postStop('!restart 1');
+
+    res.redirect('/pluginsSearch');
+  } else {
+    res.render('login.hbs');
+  }
+});
+app.get('/pluginsSearch', (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -690,26 +729,102 @@ app.get('/configurator/plugins', (req, res) => {
   
     // Check if the user is a superuser
     const query = `SELECT is_superuser FROM users WHERE id = ?`;
-    connection.query(query, [userId], (error, results) => {
+    connection.query(query, [userId], async (error, results) => {
       if (error) {
         console.error('[E004] MySQL query error:', error);
         res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
       } else if (results[0].is_superuser === 1) {
         //Result
-        (async () => {
-          var plugins = JSON.parse(await getAllPlugins.getAllPlugins());
-          var output = jp.query(plugins, '$')
-          res.send(output)
-        })();
-
-
+        var plugins = JSON.parse(await getPluginsDownloadsAll.getPluginsDownloadsAll());
+        var output = jp.query(plugins, '$.*')
+        var shortDescriptions = jp.query(plugins, '$..description').map(function(description) {
+          if (description) {
+            return description.substring(0, 100);
+          }
+          return null;
+        });
+        //console.log(shortDescriptions);
+        res.render('plugins.hbs', {shortdesc: 'shortDescriptions', result: output});
           } else {
             res.send('You do not have permission to access this page.');
           }
         });
       }
     );
-  
+
+    app.get('/configurator/plugins/torchConfig', (req, res) => {
+      if (!req.session.userId) {
+        res.render('login.hbs');
+        return;
+      }
+    
+      const userId = req.session.userId;
+    
+      // Check if the user is a superuser
+      const query = `SELECT is_superuser FROM users WHERE id = ?`;
+      connection.query(query, [userId], async (error, results) => {
+        if (error) {
+          console.error('[E004] MySQL query error:', error);
+          res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+        } else if (results[0].is_superuser === 1) {
+          //Result
+          (async () => {
+            //var getSettings = await getTorchSettings.getTorchSettings('TorchRemote.Plugin.Config');
+    
+            //var array = `[\r\n    "chatName",\r\n    "chatColor",\r\n    "noGui"\r\n]`
+          
+            //All Torch Settings
+            var array =   `["shouldUpdatePlugins","shouldUpdateTorch","instanceName","instancePath","noUpdate","forceUpdate","autostart",
+      "tempAutostart","restartOnCrash","noGui","waitForPID","getTorchUpdates","getPluginUpdates","tickTimeout","plugins","localPlugins","disconnectOnRestart","chatName","chatColor","enableWhitelist","whitelist",
+    "windowWidth","windowHeight","fontSize","ugcServiceType","branchName","lastUsedTheme","independentConsole","testPlugin","enableAsserts","sendLogsToKeen","deleteMiniDumps","loginToken"]`
+            var outTorch = (await (getTorchValues.getTorchValues('Torch.Server.TorchConfig', array)));
+            jparse = JSON.parse(outTorch)
+            var parse = jp.query(jparse, '$.*')
+            console.log(parse)
+            //var result = JSON.stringify(parse, null, 2);
+            res.send(parse)
+          })();
+            } else {
+              res.send('You do not have permission to access this page.');
+            }
+          });
+        }
+      );
+
+      app.post('/configurator/plugins/torchConfig/submit', (req, res) => {
+        if (!req.session.userId) {
+          res.render('login.hbs');
+          return;
+        }
+      
+        const userId = req.session.userId;
+      
+        // Check if the user is a superuser
+        const query = `SELECT is_superuser FROM users WHERE id = ?`;
+        connection.query(query, [userId], async (error, results) => {
+          if (error) {
+            console.error('[E004] MySQL query error:', error);
+            res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+          } else if (results[0].is_superuser === 1) {
+            //Result
+            var { torchConfig } = req.body;
+              console.log(torchConfig)
+              //var parse = jp.query(torchConfig, '$.*')
+              //console.log(jparse)
+              var result = (patchTorchValues.patchTorchValues('Torch.Server.TorchConfig', torchConfig))
+              
+              //var result = JSON.stringify(parse, null, 2);
+              res.render('configurator.hbs', {torchMsg: result})
+
+              } else {
+                res.send('You do not have permission to access this page.');
+              }
+            });
+          }
+        );
+
+        
+
 /*=============================
            AMP LINK
          SERVER PANEL
@@ -742,7 +857,7 @@ app.get('/configurator/plugins', (req, res) => {
         var id = req.params.id;
           var res = await postBanPlayer.postBanPlayer(id);
           console.log(res)
-          res.render('/panel')
+          res.redirect('/panel')
         } catch (e) {
           console.log(e)
         }
@@ -758,7 +873,7 @@ app.get('/configurator/plugins', (req, res) => {
           var id = req.params.id;
             var res = await postKickPlayer.postKickPlayer(id);
             console.log(res)
-            res.render('/panel')
+            res.redirect('/panel')
           } catch (e) {
             console.log(e)
           }
@@ -773,7 +888,7 @@ app.get('/configurator/plugins', (req, res) => {
           var id = req.params.id;
             var res = await postPromotePlayer.postPromotePlayer(id);
             console.log(res)
-            res.render('/panel')
+            res.redirect('/panel')
           } catch (e) {
             console.log(e)
           }
@@ -788,7 +903,7 @@ app.get('/configurator/plugins', (req, res) => {
           var id = req.params.id;
             var res = await postDemotePlayer.postDemotePlayer(id);
             console.log(res)
-            res.render('/panel')
+            res.redirect('/panel')
           } catch (e) {
             console.log(e)
           }
@@ -803,7 +918,7 @@ app.get('/configurator/plugins', (req, res) => {
           var id = req.params.id;
             var res = await postDisconnectPlayer.postDisconnectPlayer(id);
             console.log(res)
-            res.render('/panel')
+            res.redirect('/panel')
           } catch (e) {
             console.log(e)
           }
@@ -816,8 +931,6 @@ app.get('/configurator/plugins', (req, res) => {
            AMP LINK
         PLUGIN MANAGEMENT
   ============================*/
-
-
 
 
 //run it

@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AMPLink Control Panel</title>
+<link href="style.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div class="sidenav">
+  <img src="resources/images/branding.png" alt="branding" width="200" height="80">
+  <a href="/">Home</a>
+  <a href="/panel">Server Control Panel&nbsp;</a>
+  <a href="/console">Server Console</a>
+  <a href="/users">Users</a>
+  <a href="/about">About</a>
+  <div class="brightercolor"><a href="#">Welcome<br><form action="/logout"><input type="submit" value="Logout" class="btn btn-danger"></form></a></div>
+</div>
+<main>
+
+<div class="content">
+  <h2>Torch Plugin Search</h2>
+  <p class="subtitle2">Find Plugins Here</p>
+
+
+
+<div class="row">
+<div class="col-md-11">
+
+<div class="alert alert-warning "style="margin-left:10px; max-height:100px;"><i class="subtitle bi bi-exclamation-triangle-fill"></i>
+<div style="position:relative; left:60px; top:-40px;">
+  <b>Adding or removing plugins could break the torch instance, or make AMPLink inaccessible.</b>
+</div>
+</div>
+
+<h3>Plugins</h3>
+<div class="alert bg-dark"><strong>AVAILABLE PLUGINS</strong>
+<hr>
+<span id="getAllPlugins"></span>
+
+<div id="plugin_table_wrapper" class="dataTables_wrapper no-footer "></div>
+<table id="plugin_table" class="display dataTable no-footer" aria-describedby="plugin_table_info" style="width: 100%;" width="100%" cellspacing="0">
+  <thead style="background-color: #343a40; ">
+    <tr>
+      <th class="sorting" tabindex="0" aria-controls="plugin_table" rowspan="1" colspan="1" style="width: 34px;" aria-label=": activate to sort column ascending"></th>
+      <th style="color: lightgrey; width: 135px;" class="sorting" tabindex="0" aria-controls="plugin_table" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending">Name</th>
+      <th style="color: lightgrey; width: 92px;" class="sorting sorting_desc" tabindex="0" aria-controls="plugin_table" rowspan="1" colspan="1" aria-label="Author: activate to sort column ascending" aria-sort="descending">Author</th>
+      <th style="color: lightgrey; width: 734px;" class="sorting" tabindex="0" aria-controls="plugin_table" rowspan="1" colspan="1" aria-label="Description: activate to sort column ascending">Description</th><th style="color: lightgrey; width: 123px;" class="sorting" tabindex="0" aria-controls="plugin_table" rowspan="1" colspan="1" aria-label="Cumulative Downloads: activate to sort column ascending">Cumulative Downloads</th>
+      <th style="color: lightgrey; width: 123px;" class="sorting" tabindex="0" aria-controls="plugin_table" rowspan="1" colspan="1" >Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+    {{#each result}}
+    <tr style="color: white; border: 0; padding:75px;" class="even">
+      <td style="color: white; border: 0;" class=""><img src="{{this.icon}}" alt="{{this.name}}" width="50" height="50"></td>
+      <td style="color: white; border: 0;"><a href="/configurator/plugin/info/{{this.guid}}">{{this.name}}</a></td>
+      <td style="color: white; border: 0;" class="sorting_1">{{this.author}}</td>
+      <td style="color: white; border: 0;" id="markparse">{{shortdesc}}</td>
+      <td style="color: white; border: 0;">{{this.downloads}}</td>
+      <td style="color: white; border: 0;"><form style="float:right; "action="/configurator/plugin/install/{{this.guid}}" method="POST"> 
+      <input type="submit" value="Install" class="btn btn-primary" onclick="return confirm('Are you sure you want to install this plugin?');"></form><br></td>
+        {{/each}}
+	</tbody>
+</table>
+
+<!--
+  <tr>
+    <td><b>{{this}}</b><br>{{this.description}}<br>Version:{{this.version}}<br>Downloads: {{this.downloads}}</td>
+    <td>
+      <form style="float:right; "action="/configurator/plugin/configure/{{this.id}}" method="POST"> <input type="submit" value="Install" class="btn btn-info" onclick="return confirm('Are you sure you want to install this plugin?');"></form>
+    </td>
+  </tr><br><br>
+
+  -->
+
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+<script>
+  /*const staticData = () => {
+    fetch('/configurator/plugins')
+      .then((response) => response.text())
+      
+      .then((result) => {
+        JSON.parse(result)
+        document.getElementById('getAllPlugins').innerHTML = result;
+      });
+      
+  };
+  staticData()*/
+</script>
+
+</main>
+</body>
+</html>

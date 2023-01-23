@@ -8,7 +8,7 @@ exports.patchTorchValues = async function (string, sendData) {
 
   const bearerToken = `${process.env.TORCHREMOTE_TOKEN}`
   const options = {
-    url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/settings/${string}/select`,
+    url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/settings/${string}/values`,
     body: sendData,
     headers: {
       'Authorization': `Bearer ${bearerToken}`,
@@ -24,12 +24,15 @@ exports.patchTorchValues = async function (string, sendData) {
 
     if (response.statusCode == 401) {
       console.log("[E008] Error accessing remote data.")
+      resolve(response.statusCode);
     } else if (response.statusCode == 400) {
       console.log("[E011] Error on server end.")
+      resolve(response.statusCode);
     } else if (response.statusCode != 200){
       console.log(`[E009] Error accessing remote data with a status code of ${response.statusCode}.`)
+      resolve(response.statusCode);
     }
-    resolve(response.statusCode);
+    resolve(response.body);
   });
 });
 };
