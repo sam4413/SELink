@@ -40,4 +40,13 @@ But on the other hand, User B, which is a superuser can:
  
 Clearly everything isnt added at the moment, but this is what I plan to add.<br>
 
+##Compatibility
+AMPLink can be ran from any box. For instance: AMPLink can run on box 123.456.789:5000 but the server is on 888.888.888:27016.
+
+It is not recommended to run AMPLink if you are running it through a server host and already have a control panel to control your SE Server.
+<b>Anything using TCPanel will cause conflicts with both panels and if your running a server and the provider already has a control panel to control your SE Server from, it's recommended to just stick with the provided panel from the provider.</b>
+This program is to allow servers that are running Space Engineers Torch on a Dedicated box, or their own server.
+
+<br>Message sam44#9932 on discord if you have any questions.
+
 <b>AMPLink is currently in ALPHA, and many features are either planned, don't work, or are unstable! I highly discourage using this in production use at the current moment.</b>
