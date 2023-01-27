@@ -57,7 +57,8 @@
     {{#each result}}
     <tr style="color: white; border: 0; padding:75px;" class="even">
       <td style="color: white; border: 0;" class=""><img src="{{this.icon}}" alt="{{this.name}}" width="50" height="50"></td>
-      <td style="color: white; border: 0;"><a href="/configurator/plugin/info/{{this.guid}}">{{this.name}}</a></td>
+      <td style="color: white; border: 0;"><form style="float:left; "action="/configurator/plugin/info/{{this.guid}}" method="POST"> 
+      <input type="submit" class="btn btn-link"value="{{this.name}}" class="btn btn-primary"></form></a></td>
       <td style="color: white; border: 0;" class="sorting_1">{{this.author}}</td>
       <td style="color: white; border: 0;" id="markparse">{{shortdesc}}</td>
       <td style="color: white; border: 0;">{{this.downloads}}</td>

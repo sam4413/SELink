@@ -17,6 +17,8 @@ const { jsonrepair } = require('jsonrepair')
 const WebSocket = require('ws')
 var jp = require('jsonpath');
 var JSONbig = require('json-bigint');
+var sqlEscape = require('sql-escape');
+
 //Config
 require('dotenv').config()
 
@@ -51,12 +53,11 @@ const postDisconnectPlayer = require('./functions/players/postDisconnectPlayer.j
 //settings
 const getTorchValues = require("./functions/settings/getTorchValues.js")
 const patchTorchValues = require("./functions/settings/patchTorchValues.js")
+
 const { randomInt } = require('crypto');
 const { json } = require('stream/consumers');
 
-// REMOTE KEYS ///////////
-const bearerToken = `${process.env.TORCHREMOTE_TOKEN}`
-//////////////////////////
+try {
 
 
 const connection = mysql.createConnection({
@@ -118,8 +119,21 @@ function getDB() {
 app.set('view engine', 'hbs');
 
 
-//call websocket to start logging
-websocketLogs.websocketLogs()
+//call websocket manager to start logging
+async function startWebsocketManager() {
+  websocketLogs.websocketLogs()
+}
+
+
+//Prevent sql attack
+function escapeMiddleware(req, res, next) {
+  for (let key in req.body) {
+    req.body[key] = sqlEscape(req.body[key]);
+  }
+  next();
+}
+
+
 
 // Set up the routes
 
@@ -137,7 +151,7 @@ app.get('/', (req, res) => {
         console.error('[E004] MySQL query error:', error);
         res.render('error.hbs', {message: 'A 500 error has occured. Please try again.',error})
       } else {
-        setInterval(() => {
+        /*setInterval(() => {
           (async () => {
             var res = (await getStatus.getStatus());
             JSON.stringify(res)
@@ -145,8 +159,8 @@ app.get('/', (req, res) => {
             return res
           })();
           
-        }, 5000); // Update every 5 seconds
-        
+        }, 5000); // Update every 5 seconds*/
+        var res = ""
         res.render("home.hbs", {livedata: res, message: results[0].username})
       }
     });
@@ -159,11 +173,11 @@ app.get('/', (req, res) => {
 
 
 
-app.get("/register", (req, res) => {
+app.get("/register", escapeMiddleware, (req, res) => {
     res.render("register.hbs")
 })
 
-app.get('/legacylogin', (req, res) => {
+/*app.get('/legacylogin', escapeMiddleware, (req, res) => {
   // Render the login form
   res.send(`
     <h1>Login to AMPLink</h1>
@@ -175,16 +189,16 @@ app.get('/legacylogin', (req, res) => {
       <input type="submit" value="Submit">
     </form> 
   `);
-});
+});*/
 
 app.get('/login'), (req, res) => {
     res.render("login.hbs")
 }
 
 
-app.post('/login', limiter, (req, res) => {
-    const { username, password } = req.body;
+app.post('/login', limiter, escapeMiddleware, (req, res) => {
   
+    const { username, password } = req.body;
     // Is user in database?
     const query = `SELECT * FROM users WHERE username = ?`;
     connection.query(query, [username], (error, results) => {
@@ -214,7 +228,7 @@ app.post('/login', limiter, (req, res) => {
   });
 
   
-app.post('/register', (req, res) => {
+app.post('/register', escapeMiddleware, (req, res) => {
     // Ensure passwords match
         const { username, password, confirmPassword } = req.body;
         if (password !== confirmPassword) {
@@ -230,11 +244,7 @@ app.post('/register', (req, res) => {
             console.error('[E004] MySQL query error:', error);
             res.render('error.hbs', {message: 'A 500 error has occured. Please try again.',error})
             } else if (results.length > 0) {
-
-
             res.render('register.hbs', {message: 'Username already taken.'})
-
-
             } else {
             // Hash the password using bcrypt
             bcrypt.hash(password, 10, (error, hashedPassword) => {
@@ -289,29 +299,6 @@ app.get('/logout', (req, res) => {
     }
   });
 
-
-
-  app.get('/panel', (req, res) => {
-    if (req.session.userId) {
-      (async () => {
-        var string = JSON.parse(await getSettings.getSettings());
-        
-        var serverName = jp.query(string, '$.serverName')
-        var mapName = jp.query(string, '$.mapName')
-        var serverDescription = jp.query(string, '$.serverDescription')
-        var memberLimit = jp.query(string, '$.memberLimit')
-        var ip = jp.query(string, '$.listenEndPoint.ip')
-        var port = jp.query(string, '$.listenEndPoint.port')
-
-        console.log(jp.query(string, '$'))
-        res.render('panel.hbs', {sn: serverName, mn: mapName, sd: serverDescription, ml: memberLimit, ipn: ip, pt: port});
-      })();
-      
-    } else {
-      res.render('login.hbs');
-    }
-  });
-
   app.get('/console', (req, res) => {
     if (req.session.userId) {
       res.render("console.hbs")
@@ -322,7 +309,7 @@ app.get('/logout', (req, res) => {
 
   app.get('/console/logs', (req, res) => {
     if (req.session.userId) {
-      fs.readFile('logs.txt', 'utf-8', (err, data) => {
+      fs.readFile('logs.html', 'utf-8', (err, data) => {
         if (err) throw err;
         //console.log(data)
         res.send(data)
@@ -672,6 +659,30 @@ app.get('/users', (req, res) => {
     }
   });
 
+  //Redirect Securely
+  app.post('/postInstance', (req, res) => {
+    if (req.session.userId) {
+      //console.dir("InvokeCommand:", string)
+      //postStop.postStop('!restart 1');
+
+      res.render('error.hbs', {errormsg:" Feature not added, coming soon."});
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  //Redirect Securely
+  app.post('/postScheduled', (req, res) => {
+    if (req.session.userId) {
+      //console.dir("InvokeCommand:", string)
+      //postStop.postStop('!restart 1');
+
+      res.render('error.hbs', {errormsg:" Feature not added, coming soon."});
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
 
   app.get('/configurator', (req, res) => {
     if (!req.session.userId) {
@@ -780,7 +791,7 @@ app.get('/pluginsSearch', (req, res) => {
             var outTorch = (await (getTorchValues.getTorchValues('Torch.Server.TorchConfig', array)));
             jparse = JSON.parse(outTorch)
             var parse = jp.query(jparse, '$.*')
-            console.log(parse)
+            //console.log(parse)
             //var result = JSON.stringify(parse, null, 2);
             res.send(parse)
           })();
@@ -790,6 +801,93 @@ app.get('/pluginsSearch', (req, res) => {
           });
         }
       );
+
+      app.post('/configurator/plugin/info/:guid', (req, res) => {
+        if (!req.session.userId) {
+          res.render('login.hbs');
+          return;
+        }
+        
+        const userId = req.session.userId;
+        var guid = req.params.guid;
+        // Check if the user is a superuser
+        const query = `SELECT is_superuser FROM users WHERE id = ?`;
+        connection.query(query, [userId], async (error, results) => {
+          if (error) {
+            console.error('[E004] MySQL query error:', error);
+            res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+          } else if (results[0].is_superuser === 1) {
+            //Result
+            (async () => {
+              var plugins = JSON.parse(await getPluginsDownloadsAll.getPluginsDownloadsAll());
+              var pluginName = jp.query(plugins, `$[?(@.guid=="${guid}")].name`)
+              var author = jp.query(plugins, `$[?(@.guid=="${guid}")].author`)
+              var downloads = jp.query(plugins, `$[?(@.guid=="${guid}")].downloads`)
+              var description = jp.query(plugins, `$[?(@.guid=="${guid}")].description`)
+              var latestVersion = jp.query(plugins, `$[?(@.guid=="${guid}")].latestVersion`)
+              var pluginGuid = jp.query(plugins, `$[?(@.guid=="${guid}")].guid`)
+              var icon = jp.query(plugins, `$[?(@.guid=="${guid}")].icon`)
+              res.send(`    
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AMPLink Control Panel</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+</head>
+<body class="bg-black text-white">
+<h1><br></h1>
+<main class="col-md-8 mx-auto text-center">
+<div class="alert bg-dark">
+<h2 class="text-left">${pluginName}</h2><img alt="logo" align="right" src="${icon}" width="100px" height="100px"><br><br><br>
+<div class="card-header">
+        <div class="row">
+            <div class="col-md-4">
+                <h4 class="card-title">Author:
+                    ${author}
+                </h4>
+            </div>
+            <!--display latest version of plugin-->
+            <div class="col-md-4">
+                <h4 class="card-title">Latest Version:
+                    ${latestVersion}
+                </h4>
+            </div>
+            <!---display cumulative downloads of plugin-->
+            <div class="col-md-4">
+                <h4 class="card-title">Cumulative Downloads:
+                    ${downloads}
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="card-body" style="color: white;">
+        <div class="col-md-12 bg-dark" id="default-desc-display">
+          <p>${description}</p>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer" style="background-color: #1c1919 !important;">
+        <div class="row">
+          <div class="col-md-12">
+              <p style="color: white;">Plugin Guid: ${pluginGuid}<br><a href="https://torchapi.com/plugins/view/${pluginGuid}">Plugin Page</a></p>
+          </div>
+    </div>
+</div>
+<br>
+<form action="/pluginsSearch" ><input type="submit" value="Go back" class="btn btn-primary" style="float:left; margin-right: 10px;" ></form>
+</div>
+</main>
+</body>
+</html>
+            `);
+            })();
+              } else {
+                res.send('You do not have permission to access this page.');
+              }
+            });
+          }
+        );
 
       app.post('/configurator/plugins/torchConfig/submit', (req, res) => {
         if (!req.session.userId) {
@@ -830,6 +928,26 @@ app.get('/pluginsSearch', (req, res) => {
          SERVER PANEL
   ============================*/
 
+  app.get('/panel', (req, res) => {
+    if (req.session.userId) {
+      (async () => {
+        var string = JSON.parse(await getSettings.getSettings());
+        
+        var serverName = jp.query(string, '$.serverName')
+        var mapName = jp.query(string, '$.mapName')
+        var serverDescription = jp.query(string, '$.serverDescription')
+        var memberLimit = jp.query(string, '$.memberLimit')
+        var ip = jp.query(string, '$.listenEndPoint.ip')
+        var port = jp.query(string, '$.listenEndPoint.port')
+
+        //console.log(jp.query(string, '$'))
+        res.render('panel.hbs', {sn: serverName, mn: mapName, sd: serverDescription, ml: memberLimit, ipn: ip, pt: port});
+      })();
+      
+    } else {
+      res.render('login.hbs');
+    }
+  });
 
     app.get('/panel/players', async (req, res) => {
       if (req.session.userId) {
@@ -936,4 +1054,17 @@ app.get('/pluginsSearch', (req, res) => {
 //run it
 app.listen(`${process.env.AMP_PORT}`, ()=> {
     console.log("AMPLink started on port 5000")
+
+  //Initialize configuration
+
+    if (process.env.LOG_CONSOLE == 'true') {
+      startWebsocketManager()
+    } else {
+      console.log(`[AMPLink]: LOG_CONSOLE = ${process.env.LOG_CONSOLE}`)
+    }
+    
 })
+
+} catch(err) {
+  console.log("[AMPLink]: An error occured: ", err)
+}
