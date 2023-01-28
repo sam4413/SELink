@@ -160,8 +160,7 @@ app.get('/', (req, res) => {
           })();
           
         }, 5000); // Update every 5 seconds*/
-        var res = ""
-        res.render("home.hbs", {livedata: res, message: results[0].username})
+        res.render("home.hbs")
       }
     });
   } else {
