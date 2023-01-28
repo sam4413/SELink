@@ -21,22 +21,17 @@
   
 <div class="content">
   <h2>Console</h2>
-  <div class="console" id="scroller" style="font-family:'Consolas', 'Courier New', Courier, monospace;"><span id="variable">{{variable}}</span></div><br>
+  <div class="console" name="copyme" id="scroller" style="font-family:'Consolas', 'Courier New', Courier, monospace;"><span id="variable">{{variable}}</span></div><br>
   <div style="position:relative; margin-left:88%; top:-70px;">
-    <button class="btn btn-dark"onclick="copyconsole()" >Copy Console</button>
+    <button onclick="copy()" class="btn btn-dark">Copy console</button>
     <script>
-    function copyconsole() {
-      // Get the text field
-      var copyText = document.getElementById("scroller");
-
-      copyText.select();
-      copyText.setSelectionRange(0, 99999); 
-
-      navigator.clipboard.writeText(copyText.value);
-      
-      // Alert the copied text
-      alert("Console copied.");
-    }
+    function copy() {
+    // Get the text field
+    var copyText = document.getElementById("variable").innerText;
+    navigator.clipboard.writeText(copyText);
+    alert("Copied console.");
+    console.log("Copied console")
+}
     </script>
   </div>
   <div class="alert alert-dark" style="position: relative; top:-50px;">
