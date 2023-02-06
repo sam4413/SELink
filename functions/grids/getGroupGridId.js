@@ -1,6 +1,6 @@
 //AMPLink Server Controllers
 //Made by sam
-/*
+
 const request = require('request');
 require('dotenv').config();
 var JSONbig = require('json-bigint');
@@ -9,7 +9,7 @@ exports.getGroupGridId = async function () {
 
   const bearerToken = `${process.env.TORCHREMOTE_TOKEN}`
   const options = {
-    url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/grids/125089175477343565/`,
+    url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/grids/81640682597491813/`,
     headers: {
       'Authorization': `Bearer ${bearerToken}`
     }
@@ -34,6 +34,7 @@ exports.getGroupGridId = async function () {
       resolve(response.statusCode);
     }
     resolve(body)
+    console.log(JSONbig.parse(body))
   })
 })
 }
@@ -44,5 +45,3 @@ var getGroupGridId = require(__dirname + '/getGroupGridId.js');
 (async () => {
   console.log(await getGroupGridId.getGroupGridId());
 })();
-*/
-//wip

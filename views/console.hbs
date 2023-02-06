@@ -21,8 +21,8 @@
   
 <div class="content">
   <h2>Console</h2>
-  <div class="console" name="copyme" id="scroller" style="font-family:'Consolas', 'Courier New', Courier, monospace;"><span id="variable">{{variable}}</span></div><br>
-  <div style="position:relative; margin-left:88%; top:-70px;">
+  <div class="console  col-md-10" name="copyme" id="scroller" style="font-family:'Consolas', 'Courier New', Courier, monospace;"><span id="variable">{{variable}}</span></div><br>
+  <div style="position:relative; margin-left:75%; top:-70px;">
     <button onclick="copy()" class="btn btn-dark">Copy console</button>
     <script>
     function copy() {
@@ -34,7 +34,7 @@
 }
     </script>
   </div>
-  <div class="alert alert-dark" style="position: relative; top:-50px;">
+  <div class="col-md-10 callout-inverted" style="position: relative; top:-50px;">
   <form action="/invokeCommand" method="POST" style="width: 100%">
   <label for="string" class="form-label">Actions:</label><br>
   <input type="text" class="form-control" id="command" name="command">

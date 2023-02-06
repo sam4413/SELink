@@ -30,10 +30,8 @@
 <div class="col-xl-4">
 
 
-<div class="alert alert-warning "style="margin-left:10px; max-height:100px;"><i class="subtitle bi bi-exclamation-triangle-fill"></i>
-<div style="position:relative; left:60px; top:-50px;">
+<div class="callout-warning">
   <b>Changing any configuration string could break the torch <br>instance, or make AMPLink inaccessible.</b>
-</div>
 </div>
 
 <h3>Plugins Management</h3>
@@ -106,18 +104,47 @@
 
 
 <script>
-  const staticData = () => {
+  /*const staticData = () => {
     fetch('/configurator/plugins/torchConfig')
       .then((response) => response.text())
       
       .then((result) => {
         JSON.parse(result)
+        
         document.getElementById('torchConfig').innerHTML = result;
+        
       });
-      
-      
   };
-  staticData()
+  staticData()*/
+  let jsonData = [{"$type":"boolean","value":false,"name":"enableWhitelist"},{"$type":"integer","value":16,"name":"fontSize"},{"$type":"enum","value":"Steam","name":"ugcServiceType"},{"$type":"string","value":null,"name":"loginToken"}];
+  let parent = document.getElementById('torchConfig');
+  jsonData.forEach(function(data) {
+    switch (data.$type) {
+      case 'boolean':
+        var div = document.createElement("div");
+        div.classList.add("bool");
+        div.innerHTML = data.value;
+        parent.appendChild(div);
+        break;
+      case 'integer':
+        var input = document.createElement("input");
+        input.classList.add("integer");
+        input.type = "number";
+        input.value = data.value;
+        parent.appendChild(input);
+        break;
+      case 'enum':
+      case 'string':
+        var input = document.createElement("input");
+        input.classList.add(data.$type);
+        input.type = "text";
+        input.value = data.value;
+        parent.appendChild(input);
+        break;
+      default:
+        break;
+    }
+  });
 </script>
 
 </main>

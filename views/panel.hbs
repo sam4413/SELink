@@ -19,16 +19,15 @@
   <a href="/about">About</a>
   <div class="brightercolor"><a href="#">Welcome<br><form action="/logout"><input type="submit" value="Logout" class="btn btn-danger"></form></a></div>
 </div>
-<main>
-<div class="content">
+<main class="content">
   <h2>Server Control Panel</h2>
 	<p class="subtitle2">Server Control Panel</p>
-	<!--Container-->
-    <div class="row">
-      <div class="col-xl-4 alert sidebarAccentColor text-white"><strong>Server Information</strong>
-        <hr>
+  <!--Container-->
+<div class="row">
+<div class="col-md-10 callout-info"><strong>Server Information</strong>
+   <hr>
 		{{#if sn}} 
-    <p class="alert bg-gradient"><strong>Server Name: </strong>{{sn}}<br>
+    <p class="callout-secondary"><strong>Server Name: </strong>{{sn}}<br>
     {{/if}}
 		
 
@@ -47,25 +46,28 @@
     {{#if ipn}} 
     <strong>Server Address: </strong>{{ipn}}:{{#if pt}}{{pt}}{{/if}}
     {{/if}}
+    </p>
+</div>
 
-    
-</p>
-		</div>
-      <div class="offset-xl-1 col-xl-6 alert sidebarAccentColor text-white " ><strong>Current Connected Players</strong><hr><br>
-		<div id="players"></div>
-	  </div>
-		<!--Divider-->
-	  <div class=""><br></div>
-		<div class="col-xl-4 alert sidebarAccentColor text-white"><strong>Configuration&nbsp;</strong>
+<div class="w-100"></div>
+
+<div class="col-md-10 callout-info"><strong>Current Connected Players</strong>
+  <hr>
+  <div id="players"></div>
+</div>
+
+<div class="w-100"></div>
+
+<!--Divider-->
+		<div class="col-md-4 callout-danger"><strong>Configuration&nbsp;</strong>
 		  <hr>
 		<form style="float:left; margin-right: 10px;" action="/postConfigurator" method="POST"><input type="submit" value="Plugins Management" class="btn btn-danger"></form>
     <form style="float:left; margin-right: 10px;" action="/postInstance" method="POST"><input type="submit" value="Torch Instance" class="btn btn-danger"></form>
     <form style="float:left; margin-right: 10px;" action="/postScheduled" method="POST"><input type="submit" value="Scheduled Tasks" class="btn btn-danger"></form>
 	  </div>
-    </div>
-
-
 </div>
+
+
 
 <script>
   const updateVariable = () => {

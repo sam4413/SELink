@@ -24,11 +24,10 @@
   <p class="subtitle2">User Control Panel</p>
 
 
-<div class="setUserWidth">
-  <div class="row alert alert-secondary">
+<div class="col-md-6">
 
-
-<table>
+<div class="table-responsive-md">
+<table class="table table-light text-center">
   <tr>
     <th>ID</th>
     <th>Username</th>
@@ -36,7 +35,7 @@
     <th>Actions</th>
   </tr>
   {{#each users}}
-  <tr>
+  <tr></thead>
     <td>{{this.id}}</td>
     <td>{{this.username}}</td>
     <td id="listsu"><div>{{this.is_superuser}}</div></td>
@@ -57,9 +56,9 @@
     <td><br><form action="/register" ><input type="submit" value="+ Add a user" class="btn btn-primary" style="float:left; margin-right: 10px;" ></form></td>
   </tr>
 </table>
+</div>
+<div class="callout-info">TIP: It is recommended to edit users in the user page, versus editing it directly in phpMyAdmin.</div>
 
-<br>&nbsp;
-<p class="alert alert-primary">TIP: It is recommended to edit users in the user page, versus editing it directly in phpMyAdmin.<br><b>If the value of "Is superuser?" is equal to 1, the user is a superuser. If it is equal to 0, the user is a normal user.</b></p>
 
 <!--<script>
       /*let text2 = document.getElementById("listsu").innerHTML; 

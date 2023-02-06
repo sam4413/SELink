@@ -13,8 +13,14 @@ and set background-color to #ffffff for light mode and #000000 for color
 
 :root {
   /*Background Colors*/
-  --main-bg-color: #222222;
-  --main-text-color: #ffffff;
+  --main-bg-color: #ffffff;
+  --main-text-color: #222222;
+
+
+  /*Dark Mode Colors*/
+  --main-bg-color-dark: #222222;
+  --main-text-color-dark: #ffffff;
+
 
   /*Nav Menu Colors*/
   --nav-menu-bg-color: #303030;
@@ -26,7 +32,45 @@ and set background-color to #ffffff for light mode and #000000 for color
 
 
 
+@media (prefers-color-scheme: dark) {
+  body {
+    margin: 0;
+    background-color: var(--main-bg-color-dark);
+    color: var(--main-text-color-dark);
+  }
+  .content {
+    margin-left: 200px;
+    padding-left: 20px;
+    margin-right: 0%;
+    overflow-x: hidden;
+    background-color: var(--main-bg-color-dark);
+    color: var(--main-text-color-dark);
+  }
+  main {
+    background-color: var(--main-bg-color-dark);
+    color: var(--main-text-color-dark);
+    height: 100vh;  
+  }
+}
 
+@media (prefers-color-scheme: light) {
+  body {
+    margin: 0;
+    background-color: var(--main-bg-color);
+  }
+  .content {
+    margin-left: 200px;
+    padding-left: 20px;
+    margin-right: 0%;
+    overflow-x: hidden;
+    background-color: var(--main-bg-color);
+  }
+  main {
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
+    height: 100vh;  
+  }
+}
 
 
 
@@ -43,9 +87,9 @@ and set background-color to #ffffff for light mode and #000000 for color
   
 }
 
+
 body {
   margin: 0;
-  background-color: var(--main-bg-color);
 }
 
 .sidenav {
@@ -77,19 +121,12 @@ body {
   padding-left: 20px;
 	margin-right: 0%;
 	overflow-x: hidden;
-	background-color: var(--main-bg-color);
 }
-
 .sidebarAccentColor {
   background-color: var(--accent-color);
 }
-
 main {
-  background-color: var(--main-bg-color);
-  color: var(--main-text-color);
-  height: 100vh;
-
-  
+  height: 100vh;  
 }
 
 .warning {
@@ -145,4 +182,74 @@ main {
   min-height: 75vh;
   overflow-y: scroll;
   position: static;
+}
+
+/*Callouts aka Embed messages on discord*/
+
+.callout-primary {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #0d6efd;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.callout-secondary {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #6c757d;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.callout-success {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #198754;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.callout-warning {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #ffc107;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+
+.callout-danger {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #dc3545;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.callout-info {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #0dcaf0;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.callout-inverted {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+/*=================*/
+
+#scroller * {
+  overflow-anchor: none;
+}
+
+#anchor {
+  overflow-anchor: auto;
+  height: 1px;
 }

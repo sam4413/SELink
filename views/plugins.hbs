@@ -30,20 +30,18 @@
 <div class="row">
 <div class="col-md-11">
 
-<div class="alert alert-warning "style="margin-left:10px; max-height:100px;"><i class="subtitle bi bi-exclamation-triangle-fill"></i>
-<div style="position:relative; left:60px; top:-40px;">
+<div class="callout-warning">
   <b>Adding or removing plugins could break the torch instance, or make AMPLink inaccessible.</b>
-</div>
 </div>
 
 <h3>Plugins</h3>
-<div class="alert bg-dark"><strong>AVAILABLE PLUGINS</strong>
+<div class="callout-info"><strong>AVAILABLE PLUGINS</strong>
 <hr>
 <span id="getAllPlugins"></span>
 
 <div id="plugin_table_wrapper" class="dataTables_wrapper no-footer "></div>
 <table id="plugin_table" class="display dataTable no-footer" aria-describedby="plugin_table_info" style="width: 100%;" width="100%" cellspacing="0">
-  <thead style="background-color: #343a40; ">
+  <thead style="background-color: rgba(0, 0, 0, 0.5);">
     <tr>
       <th class="sorting" tabindex="0" aria-controls="plugin_table" rowspan="1" colspan="1" style="width: 34px;" aria-label=": activate to sort column ascending"></th>
       <th style="color: lightgrey; width: 135px;" class="sorting" tabindex="0" aria-controls="plugin_table" rowspan="1" colspan="1" aria-label="Name: activate to sort column ascending">Name</th>
@@ -55,14 +53,14 @@
   <tbody>
     
     {{#each result}}
-    <tr style="color: white; border: 0; padding:75px;" class="even">
-      <td style="color: white; border: 0;" class=""><img src="{{this.icon}}" alt="{{this.name}}" width="50" height="50"></td>
-      <td style="color: white; border: 0;"><form style="float:left; "action="/configurator/plugin/info/{{this.guid}}" method="POST"> 
+    <tr style="color: border: 0; padding:75px;" class="even">
+      <td style="color: border: 0;" class=""><img src="{{this.icon}}" alt="{{this.name}}" width="50" height="50"></td>
+      <td style="color: border: 0;"><form style="float:left; "action="/configurator/plugin/info/{{this.guid}}" method="POST"> 
       <input type="submit" class="btn btn-link"value="{{this.name}}" class="btn btn-primary"></form></a></td>
-      <td style="color: white; border: 0;" class="sorting_1">{{this.author}}</td>
-      <td style="color: white; border: 0;" id="markparse">{{shortdesc}}</td>
-      <td style="color: white; border: 0;">{{this.downloads}}</td>
-      <td style="color: white; border: 0;"><form style="float:right; "action="/configurator/plugin/install/{{this.guid}}" method="POST"> 
+      <td style="border: 0;" class="sorting_1">{{this.author}}</td>
+      <td style="border: 0;" id="markparse">{{shortdesc}}</td>
+      <td style="border: 0;">{{this.downloads}}</td>
+      <td style="border: 0;"><form style="float:right; "action="/configurator/plugin/install/{{this.guid}}" method="POST"> 
       <input type="submit" value="Install" class="btn btn-primary" onclick="return confirm('Are you sure you want to install this plugin?');"></form><br></td>
         {{/each}}
 	</tbody>

@@ -1,18 +1,31 @@
-<table class="">
-  <tr>
-    <th>Username</th>
-    <th>SteamID</th>
-    <th>Actions</th>
+<div class="table-responsive-md">
+<table class="table text-center" style="border: none;">
+  <tr style="background-color: rgba(0, 0, 0, 0.2);">
+    <th class="col text-secondary">Username</th>
+    <th class="col text-secondary">SteamID</th>
+    <th class="col text-secondary">Actions</th>
   </tr>
   {{#each play}}
   <tr>
-    <td>{{this.name}}</td>
-    <td>{{this.clientId}}</td>
-    <td>
-      <form style="float:left; margin-right: 10px;" action="/panel/players/promote/{{this.clientId}}" method="POST"> <input type="submit" value="Promote" class="btn btn-primary" onclick="return confirm('Are you sure you want to promote this user?');"></form>
-      <form style="float:left; margin-right: 10px;" action="/panel/players/demote/{{this.clientId}}" method="POST"> <input type="submit" value="Demote" class="btn btn-secondary" onclick="return confirm('Are you sure you want to demote this user?');"></form>
-      <form style="float:left; margin-right: 10px;" action="/panel/players/kick/{{this.clientId}}" method="POST"> <input type="submit" value="Kick" class="btn btn-warning" onclick="return confirm('Are you sure you want to kick this user?');"></form>
-      <form style="float:left; margin-right: 10px;" action="/panel/players/ban/{{this.clientId}}" method="POST"> <input type="submit" value="Ban" class="btn btn-danger" onclick="return confirm('Are you sure you want to ban this user?');"></form>
+    <td scope="row text-primary"><span class="text-primary" style="padding-top:15px;">{{this.name}}</span></td>
+    <td scope="row text-primary"><p class="text-primary" style="padding-top:15px;">{{this.clientId}}</p></td>
+    <td scope="row text-primary">
+
+      <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+        <button type="submit" class="btn btn-primary"><form action="/panel/players/promote/{{this.clientId}}" method="POST"> 
+        <input type="submit" value="Promote" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to promote this user?');"></form>
+        </button>
+        <button type="submit" class="btn btn-secondary"><form action="/panel/players/demote/{{this.clientId}}" method="POST"> 
+        <input type="submit" value="Demote" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to demote this user?');"></form>
+        </button>
+        <button type="submit" class="btn btn-warning"><form action="/panel/players/kick/{{this.clientId}}" method="POST"> 
+        <input type="submit" value="Kick" class="btn btn-hidden" onclick="return confirm('Are you sure you want to kick this user?');"></form>
+        </button>
+        <button type="submit" class="btn btn-danger"><form action="/panel/players/ban/{{this.clientId}}" method="POST"> 
+        <input type="submit" value="Ban" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to ban this user?');"></form>
+        </button>
+      </div>
+      
     </td>
   </tr>
   {{/each}}
@@ -24,3 +37,4 @@
     <td>&nbsp;</td>
   </tr>
 </table>
+</div>

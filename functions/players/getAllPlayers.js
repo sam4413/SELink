@@ -22,11 +22,14 @@ exports.getAllPlayers = async function () {
 
     if (response.statusCode == 401) {
       console.log("[E008] Error accessing remote data.")
+      resolve(response.statusCode);
     } else if (response.statusCode == 500){
-      console.log(`[E009] Error accessing remote data with a status code of ${response.statusCode}.`)
+      //console.log(`[E009] Error accessing remote data with a status code of ${response.statusCode}.`)
+      resolve(response.statusCode);
       var body = `[]`
     } else if (response.statusCode != 200){
       console.log(`[E009] Error accessing remote data with a status code of ${response.statusCode}.`)
+      resolve(response.statusCode);
     }
     resolve(body);
   });

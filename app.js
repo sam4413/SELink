@@ -43,7 +43,7 @@ const getSettings = require('./functions/server/getSettings.js');
 const getStatus = require('./functions/server/getStatus.js');
 const postSettings = require('./functions/server/postSettings.js');
 const postStart = require('./functions/server/postStart.js');
-const postStop = require('./functions/server/postStart.js');
+const postStop = require('./functions/server/postStop.js');
 const getAllPlayers = require('./functions/players/getAllPlayers.js');
 const postBanPlayer = require('./functions/players/postBanPlayer.js');
 const postKickPlayer = require('./functions/players/postKickPlayer.js');
@@ -160,7 +160,7 @@ app.get('/', (req, res) => {
           })();
           
         }, 5000); // Update every 5 seconds*/
-        res.render("home.hbs")
+        res.render("home.hbs", {message: req.session.username})
       }
     });
   } else {
@@ -562,14 +562,14 @@ app.get('/users', (req, res) => {
       const { command } = req.body;
       //console.dir("InvokeCommand:", string)
       var status = (await postInvokeCommand.postInvokeCommand(command));
-      if (status == 400) {
+      if (status == 503) {
         //res.redirect('/console');
-        res.render('console.hbs', {errormsg: 'Error: Server cannot be accessed.'});
+        res.render('console.hbs', {errormsg: 'Error: Server is offline.'});
       } else {
       //res.redirect('/console');
       res.render('console.hbs', {errormsg: 'Sent command request to server.'});
       }
-      res.redirect('/console');
+      //res.redirect('/console');
     }
   });
 
@@ -578,14 +578,14 @@ app.get('/users', (req, res) => {
       //console.dir("InvokeCommand:", string)
       var string = 'restart';
       var status = (await postInvokeCommand.postInvokeCommand(string));
-      if (status == 400) {
+      if (status == 503) {
         //res.redirect('/console');
-        res.render('console.hbs', {errormsg: 'Error: Server cannot be accessed.'});
+        res.render('console.hbs', {errormsg: 'Error: Server is offline.'});
       } else {
       //res.redirect('/console');
       res.render('console.hbs', {errormsg: 'Sent restart request to server.'});
       }
-      res.redirect('/console');
+      //res.redirect('/console');
     } else {
       res.render('login.hbs');
     }
@@ -602,7 +602,7 @@ app.get('/users', (req, res) => {
       //res.redirect('/console');
       res.render('console.hbs', {errormsg: 'Sent stop request to server.'});
       }
-      res.redirect('/console');
+      //res.redirect('/console');
     } else {
       res.render('login.hbs');
     }
@@ -927,21 +927,18 @@ app.get('/pluginsSearch', (req, res) => {
          SERVER PANEL
   ============================*/
 
-  app.get('/panel', (req, res) => {
+  app.get('/panel', async (req, res) => {
     if (req.session.userId) {
-      (async () => {
+      //res.send('Redirecting...');
         var string = JSON.parse(await getSettings.getSettings());
-        
         var serverName = jp.query(string, '$.serverName')
         var mapName = jp.query(string, '$.mapName')
         var serverDescription = jp.query(string, '$.serverDescription')
         var memberLimit = jp.query(string, '$.memberLimit')
         var ip = jp.query(string, '$.listenEndPoint.ip')
         var port = jp.query(string, '$.listenEndPoint.port')
-
         //console.log(jp.query(string, '$'))
         res.render('panel.hbs', {sn: serverName, mn: mapName, sd: serverDescription, ml: memberLimit, ipn: ip, pt: port});
-      })();
       
     } else {
       res.render('login.hbs');
@@ -953,12 +950,16 @@ app.get('/pluginsSearch', (req, res) => {
         try {
         //console.log('panel')
           var players = await getAllPlayers.getAllPlayers();
+          if (players == 500) {
+            res.send(`<h3>Server is offline. Please start it in order to get live player stats.</h3>`);
+          } else {
           var parsed = JSONbig.parse(players)
           //console.log(parsed)
           var playersList = jp.query(parsed, '$.*')
   
         
           res.render('players.hbs', {play: playersList});
+          }
         } catch (e) {
           console.log(e)
         }

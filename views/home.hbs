@@ -17,14 +17,23 @@
   <a href="/about">About</a>
   <div class="brightercolor"><a href="#">Welcome, <b>{{#if message }}{{message}}{{/if}}</b><br><form action="/logout"><input type="submit" value="Logout" class="btn btn-danger"></form></a></div>
 </div>
-<main>
-<div class="content">
+<main class="content">
+<div class="row">
+<div class="col-xl-10">
+  <div></div>
   <h2>AMPLink Alpha&nbsp;</h2>
-  <p>Welcome to AMPLink!<br>Please keep in mind that this is a ALPHA Build and features may be missing and/or bugs might occur!&nbsp; &nbsp;&nbsp;</p>
-  <p>{{livedata}}</p>
+  <p><div class="callout-danger">Welcome to AMPLink!<br>Please keep in mind that this is a ALPHA Build and features may be missing and/or bugs might occur!
+  <br>If you encounter issues or have a suggestion, front-end or back-end, open up a issue/suggestion on the GitHub Repo!
+  <br><a href="https://github.com/sam4413/amplink/">https://github.com/sam4413/amplink/</a>&nbsp; &nbsp;&nbsp;</div></p>
+</div><br>
+<div class="col-xl-5">
+  <p class="callout-info">LiveStats [Will finish on next update] {{livedata}}</p>
+</div>
+<div class="col-xl-5">
+  <p class="callout-info">EntityList [Will finish on next update]</p>
 </div>
 
-
+</div>
 </main>
 </body>
 </html>

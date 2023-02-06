@@ -26,7 +26,7 @@ exports.postInvokeCommand = async function (string) {
     if (response.statusCode == 401) {
       console.log("[E008] Error accessing remote data.")
       resolve(response.statusCode);
-    } else if (response.statusCode == 400) {
+    } else if (response.statusCode == 503) {
       console.log("[E012] Server connection cannot be established. This could be due to the server being down or offline.")
       resolve(response.statusCode);
     } else if (response.statusCode != 200){

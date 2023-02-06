@@ -4,12 +4,18 @@
 const request = require('request');
 require('dotenv').config();
 
-exports.postSendChatMessage = async function (string) {
+exports.postSendChatMessage = async function (string, author, channel) {
+
+  var payload = `{
+    "message": "${string}",
+    "author": "${author}",
+    "channel": ${channel}
+}`
 
   const bearerToken = `${process.env.TORCHREMOTE_TOKEN}`
   const options = {
     url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/chat/message`,
-    body: string,
+    body: payload,
     headers: {
       'Authorization': `Bearer ${bearerToken}`,
     }
@@ -36,10 +42,13 @@ exports.postSendChatMessage = async function (string) {
   });
 });
 };
-/* // For debugging
+
+/*
+ // For debugging
 var postSendChatMessage = require(__dirname + '/postSendChatMessage.js');
 
 (async () => {
-  console.log(await postSendChatMessage.postSendChatMessage());
+  console.log(await postSendChatMessage.postSendChatMessage(``, ``, 1));
 })();
+
 */
