@@ -12,7 +12,7 @@
 
  - Server Mods Management [PLANNED] (when zznty adds it)
  - Server Scheduled Actions (AutoRestart, etc) [PLANNED]
- - Redo UI [PLANNED]
+ - Redo UI [DONE]
  - Workshop Browser [PLANNED]
  - Add more ranks for Users management. (ex: Normal User, Admin User, Superuser)
 
