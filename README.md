@@ -55,5 +55,5 @@ This program is to allow servers that are running Space Engineers Torch on a Ded
 Message sam44#9932 on discord if you have any questions.
 
 <b>AMPLink is currently in ALPHA, and many features are either planned, don't work, or are unstable! Production use at the current moment is not recommended.</b>
-<br>Main: AMPLink Alpha v0.0.5
-<br>Staging: AMPLink v0.1-beta Build
+<br>Main (Stable branch): AMPLink Alpha v0.0.5
+<br>Staging (Unstable branch): AMPLink v0.1-beta Build
