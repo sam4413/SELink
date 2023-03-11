@@ -28,7 +28,7 @@ require('dotenv').config()
 const postInvokeCommand = require('./functions/chat/postInvokeCommand.js')
 const postSendChatMessage = require('./functions/chat/postSendChatMessage.js')
 //logs 
-//const websocketChat = require('./functions/logs/websocketChat.js') Coming soon:tm:
+const websocketChat = require('./functions/logs/websocketChat.js')
 const websocketLogs = require('./functions/logs/websocketLogs.js')
 //plugins
 const deletePlugin = require('./functions/plugins/deletePlugin.js')
@@ -52,10 +52,19 @@ const postDemotePlayer = require('./functions/players/postDemotePlayer.js');
 const postDisconnectPlayer = require('./functions/players/postDisconnectPlayer.js');
 //settings
 const getTorchValues = require("./functions/settings/getTorchValues.js")
+const getTorchSchema = require("./functions/settings/getTorchSchema.js")
+const getTorchSettings = require("./functions/settings/getTorchSettings.js")
 const patchTorchValues = require("./functions/settings/patchTorchValues.js")
 
 const { randomInt } = require('crypto');
 const { json } = require('stream/consumers');
+// Console formatting
+const notify = require("./functions/notify.js");
+const getInstalledPlugins = require('./functions/getInstalledPlugins.js');
+const getRootKeys = require('./functions/getRootKeys.js');
+
+require("./functions/updater.js")
+//updater.update()
 
 try {
 
@@ -69,9 +78,9 @@ const connection = mysql.createConnection({
 
 connection.connect((error) => {
   if (error) {
-    console.error('[E001] MySQL connection error:', error);
+    notify.notify(4, `MySQL connection error:', ${error}`)
   } else {
-    console.log('[I001] MySQL connected!');
+    notify.notify(1, "Successfully connected to MySQL Database.")
   }
 });
 
@@ -93,7 +102,94 @@ const limiter = RateLimit({
     windowMs: 60 * 1000, //Limit length 
     max: 5, // limit each IP to 5 requests per windowMs
     delayMs: 0, // disable delaying - full speed until the max limit is reached
-    message: `<h1 style="font-family: Arial, sans-serif; text-align:center;">Too many login attempts. Please try again in one minute.</h1>` // custom error message
+    message: `
+    <!doctype html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <title>AMPLink Control Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <style>
+  body {
+      text-align: center;
+      overflow-y: hidden;
+      margin: 0px;
+  }
+  main {
+      margin: 0px;
+  }
+  .aligntocenter {
+      text-align: left;
+      width: 50vw;
+  }
+  .center {
+      text-align: center;
+  }
+  
+  
+  @media (max-width:600px){
+  .aligntocenter {
+      width: 75vw;
+  }
+  }
+  @media (prefers-color-scheme: dark) {
+      .bg-adapt {
+          background-color: #333333;
+          
+      }
+      .bg-adapt-txt {
+          background-color: #4e4e4e;
+          border: none;
+      }
+  }
+  @media (prefers-color-scheme: light) {
+      .bg-adapt {
+          background-color: #EEEEEE;
+          color: #000000;
+      }
+      .bg-adapt-txt {
+          background-color: #ffffff;
+          color: #000000;
+          
+      }
+  }
+  
+  }
+  </style>
+    </head>
+    <body>
+    <main>
+    <div class="container mt-4 aligntocenter">
+    <h1 class="alert center"><b>AMPLink</b></h1>
+        <div class="card bg-adapt">            
+            <div class="card-header center">Login</div>    
+            <div class="card-body">
+                <form action="/login" method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username:</label><br>
+                        <input type="text" class="form-control bg-adapt-txt" disabled>                        
+
+                        <label for="password" class="form-label">Password:</label><br>
+                        <input type="password" class="form-control bg-adapt-txt" disabled>
+                    </div>
+
+                    <button class="btn btn-primary" disabled>Submit</button>
+                    <div style="padding: 3px; float: right; max-width:150px; text-align: center; position: relative; top:10px; z-index:1111;">
+                      <em>Alpha Build v0.06</em>
+                    </div>
+                </form>
+            </div>
+            
+          <div style="margin: 5px;">
+				    <p class="callout-danger">Too many login attempts. Please try again in one minute.</p>
+			    </div>
+        </div>
+    </div>
+    </main>
+    </body>
+    </html>
+    ` // custom error message
   });
 
 //initialize the css
@@ -105,7 +201,7 @@ function getDB() {
     const query = `SELECT * FROM users`;
     connection.query(query, (error, results) => {
         if (error) {
-        console.error('[E004] MySQL query error:', error,'\n\nEnsure that the MySQL Database is running, and you have proper access to the database.');
+        notify.notify(4, `MySQL query error:', ${error} \n\nEnsure that the MySQL Database is running, and you have proper access to the database.`)
         //res.render('error.hbs', {message: 'A 500 error has occured. Please try again.',error});
         } else {
             var data = JSON.parse(JSON.stringify(results));
@@ -119,11 +215,14 @@ function getDB() {
 app.set('view engine', 'hbs');
 
 
-//call websocket manager to start logging
+//call websocket console manager to start logging
 async function startWebsocketManager() {
   websocketLogs.websocketLogs()
 }
-
+//call websocket console manager to start logging
+async function startWebsocketChatManager() {
+  websocketChat.websocketChat()
+}
 
 //Prevent sql attack
 function escapeMiddleware(req, res, next) {
@@ -148,7 +247,7 @@ app.get('/', (req, res) => {
     const query = `SELECT username FROM users WHERE id = ?`;
     connection.query(query, [req.session.userId], (error, results) => {
       if (error) {
-        console.error('[E004] MySQL query error:', error);
+        notify.notify(3, `MySQL query error:', ${error}`)
         res.render('error.hbs', {message: 'A 500 error has occured. Please try again.',error})
       } else {
         /*setInterval(() => {
@@ -202,7 +301,7 @@ app.post('/login', limiter, escapeMiddleware, (req, res) => {
     const query = `SELECT * FROM users WHERE username = ?`;
     connection.query(query, [username], (error, results) => {
       if (error) {
-        console.error('[E002] MySQL query error:', error);
+        notify.notify(3, `MySQL query error:', ${error}`)
         res.render('error.hbs', {message: 'A 500 server-side error has occured. Check if the database is running correctly, and try again.',error})  
       } else if (results.length === 0) {
         res.render('login.hbs', {message: 'Invalid password. Please try again.'})
@@ -212,7 +311,7 @@ app.post('/login', limiter, escapeMiddleware, (req, res) => {
         // Compare password with hashed one using bcrypt
         bcrypt.compare(password, hashedPassword, (error, result) => {
           if (error) {
-            console.error('[E007] Bcrypt error:', error);
+            notify.notify(3, `Bycrypt error:', ${error}`)
             res.render('error.hbs', {message: 'A 500 error has occured. Please try again.',error})
           } else if (result) {
             // Save the user ID in the session
@@ -240,7 +339,7 @@ app.post('/register', escapeMiddleware, (req, res) => {
         const query = `SELECT * FROM users WHERE username = ?`;
         connection.query(query, [username], (error, results) => {
             if (error) {
-            console.error('[E004] MySQL query error:', error);
+              notify.notify(3, `MySQL query error:', ${error}`)
             res.render('error.hbs', {message: 'A 500 error has occured. Please try again.',error})
             } else if (results.length > 0) {
             res.render('register.hbs', {message: 'Username already taken.'})
@@ -248,18 +347,18 @@ app.post('/register', escapeMiddleware, (req, res) => {
             // Hash the password using bcrypt
             bcrypt.hash(password, 10, (error, hashedPassword) => {
                 if (error) {
-                console.error('[E006] Bcrypt error:', error);
+                  notify.notify(3, `Bycrypt error:', ${error}`)
                 res.render('register.hbs', {message: 'An error has occured. Please try again later.',error})
                 } else {
                 // Insert the new user into the database
                 const insertQuery = `INSERT INTO users (username, password) VALUES (?, ?)`;
                 connection.query(insertQuery, [username, hashedPassword], (error) => {
                     if (error) {
-                    console.error('[E005] MySQL query error:', error);
+                    notify.notify(3, `MySQL query error:', ${error}`)
                     res.render('error.hbs', {message: 'A 500 error has occured. Please try again.',error})
                     } else {
                     // The user was successfully registered
-                    res.render('register.hbs', {message: 'User successfully registered. Please login to continue.'})
+                    res.render('register.hbs', {message: 'User successfully registered. You may now login to the user.'})
                     }
                 });
                 }
@@ -273,7 +372,7 @@ app.post('/register', escapeMiddleware, (req, res) => {
 app.get('/logout', (req, res) => {
   req.session.destroy((error) => {
     if (error) {
-      console.error('[E003] Session destroy error:', error);
+      notify.notify(3, `Session error:', ${error}`)
       res.send('An error occurred. Please try again later.');
     } else {
       res.render('login.hbs', {message: 'You have successfully logged out.'});
@@ -309,12 +408,60 @@ app.get('/logout', (req, res) => {
   app.get('/console/logs', (req, res) => {
     if (req.session.userId) {
       fs.readFile('logs.html', 'utf-8', (err, data) => {
-        if (err) throw err;
+        if (err) throw notify.notify(3,err);
         //console.log(data)
         res.send(data)
       });
     } else {
       res.send('<p style="color:#ff4848;"><strong>[AMPLink Websockets Manager]: Invalid session. Please log into AMPLink to resume logging.<strong></p>')
+    }
+  });
+
+  app.get('/console/chat', (req, res) => {
+    if (req.session.userId) {
+      fs.readFile('chat.html', 'utf-8', (err, data) => {
+        if (err) throw notify.notify(3,err);
+        //console.log(data)
+        res.send(data)
+      });
+    } else {
+      res.send('<p style="color:#ff4848;"><strong>[AMPLink Websockets Manager]: Invalid session. Please log into AMPLink to resume logging.<strong></p>')
+    }
+  });
+
+  app.get('/server/status', async (req, res) => {
+    if (req.session.userId) {
+      try {
+      //console.log('panel')
+        var status = await getStatus.getStatus();
+        if (status == 500) {
+          res.send(`Server is offline.`);
+        } else {
+        var parsed = JSON.parse(status)
+        //console.log(parsed)
+        var serverstatus = JSON.stringify(parsed.status);
+        var serverSimSpeed = JSON.stringify(parsed.simSpeed);
+        var serverUptime = JSON.stringify(parsed.uptime);
+        var serverMemberCount = JSON.stringify(parsed.memberCount);
+        
+        /*Status Checker
+        if (serverstatus == 0) {
+          return serverstatus == "Stopped";
+        } else if (serverstatus == 1) {
+          return serverstatus == "Starting";
+        } else if (serverstatus == 2) {
+          return serverstatus == "Running";
+        } else if (serverstatus == 3) {
+          return serverstatus == "Crashed";
+        }*/
+        //console.log(serverstatus)
+        res.render('status.hbs', {status: serverstatus, sim: serverSimSpeed, uptime: serverUptime, memberCount: serverMemberCount});
+        }
+      } catch (e) {
+        notify.notify(3, e)
+      }
+    } else {
+      res.render('login.hbs');
     }
   });
 
@@ -344,14 +491,14 @@ app.get('/users', (req, res) => {
     const query = `SELECT is_superuser FROM users WHERE id = ?`;
     connection.query(query, [userId], (error, results) => {
       if (error) {
-        console.error('[E004] MySQL query error:', error);
+        notify.notify(3, `MySQL query error:', ${error}`)
         res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
       } else if (results[0].is_superuser === 1) {
         // If the user is a superuser, query the database to get a list of all users.
         const query = `SELECT * FROM users`;
         connection.query(query, (error, results) => {
           if (error) {
-            console.error('[E005] MySQL query error:', error);
+            notify.notify(3, `MySQL query error:', ${error}`)
             res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
           } else {
             //console.log(results)
@@ -380,17 +527,17 @@ app.get('/users', (req, res) => {
     const query = `SELECT is_superuser FROM users WHERE id = ?`;
     connection.query(query, [userId], (error, results) => {
       if (error) {
-        console.error('[E004] MySQL query error:', error);
+        notify.notify(3, `MySQL query error:', ${error}`)
         res.send('An error occurred. Please try again later.');
       } else if (results[0].is_superuser === 1) {
         // Delete the user from the database
         const query = `DELETE FROM users WHERE id = ?`;
         connection.query(query, [userToDeleteId], (error, results) => {
           if (error) {
-            console.error('[E006] MySQL query error:', error);
+            notify.notify(3, `MySQL query error:', ${error}`)
             res.send('An error occurred. Please try again later.');
           } else {
-            console.log(`[I002] User with ID of ${userToDeleteId} has been sucessfully deleted.`, results)
+            notify.notify(1, `User with ID of ${userToDeleteId} has been sucessfully deleted. \n${results}`)
             // I am extremely lazy, so Ima just copy and paste html here lol
             res.send(`
             
@@ -443,7 +590,7 @@ app.get('/users', (req, res) => {
     const query = `SELECT is_superuser FROM users WHERE id = ?`;
     connection.query(query, [userId], (error, results) => {
       if (error) {
-        console.error('[E004] MySQL query error:', error);
+        notify.notify(3, `MySQL query error:', ${error}`)
         res.send('An error occurred. Please try again later.');
       } else if (results[0].is_superuser === 1) {
               const userId = req.params.id;
@@ -452,7 +599,7 @@ app.get('/users', (req, res) => {
         const query = `UPDATE users SET is_superuser = 1 WHERE id = ?`;
         connection.query(query, [userId], (error, results) => {
           if (error) {
-            console.error('[E005] MySQL query error:', error);
+            notify.notify(3, `MySQL query error:', ${error}`)
             res.send('An error occurred. Please try again later.');
           } else {
             res.send(`
@@ -506,7 +653,7 @@ app.get('/users', (req, res) => {
     const query = `SELECT is_superuser FROM users WHERE id = ?`;
     connection.query(query, [userId], (error, results) => {
       if (error) {
-        console.error('[E004] MySQL query error:', error);
+        notify.notify(3, `MySQL query error:', ${error}`)
         res.send('An error occurred. Please try again later.');
       } else if (results[0].is_superuser === 1) {
               const userId = req.params.id;
@@ -515,7 +662,7 @@ app.get('/users', (req, res) => {
         const query = `UPDATE users SET is_superuser = 0 WHERE id = ?`;
         connection.query(query, [userId], (error, results) => {
           if (error) {
-            console.error('[E005] MySQL query error:', error);
+            notify.notify(3, `MySQL query error:', ${error}`)
             res.send('An error occurred. Please try again later.');
           } else {
             res.send(`
@@ -639,6 +786,162 @@ app.get('/users', (req, res) => {
     }
   });*/
 
+/*=============================
+           AMP LINK
+      PLAYERS MANAGEMENT
+  ============================*/
+
+  app.get('/players', async (req, res) => {
+    if (req.session.userId) {
+      try {
+      //console.log('panel')
+
+        res.render('chatplayers.hbs');
+        } catch (e) {
+        notify.notify(3, e)
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.get('/players', async (req, res) => {
+    if (req.session.userId) {
+      try {
+      //console.log('panel')
+
+        res.render('chatplayers.hbs');
+        } catch (e) {
+        notify.notify(3, e)
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.get('/players/list', async (req, res) => {
+    if (req.session.userId) {
+      try {
+      //console.log('panel')
+        var players = await getAllPlayers.getAllPlayers();
+        if (players == 500) {
+          res.send(`<h3>Server is offline. Please start it in order to get live player stats.</h3>`);
+        } else {
+        var parsed = JSONbig.parse(players)
+        //console.log(parsed)
+        var playersList = jp.query(parsed, '$.*')
+
+      
+        res.render('players.hbs', {play: playersList});
+        }
+      } catch (e) {
+        notify.notify(3, e)
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/panel/players/ban/:id', async (req, res) => {
+    if (req.session.userId) {
+      try {
+      //console.log('panel')
+      var id = req.params.id;
+        var res = await postBanPlayer.postBanPlayer(id);
+        notify.notify(1, `Player with steam ID of ${id} has been banned.`)
+        res.redirect('/panel')
+      } catch (e) {
+        notify.notify(3, e)
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/panel/players/kick/:id', async (req, res) => {
+    if (req.session.userId) {
+      try {
+        //console.log('panel')
+        var id = req.params.id;
+          var res = await postKickPlayer.postKickPlayer(id);
+          notify.notify(1, `Player with steam ID of ${id} has been kicked.`)
+          res.redirect('/panel')
+        } catch (e) {
+          notify.notify(3, e)
+        }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  
+
+  app.post('/panel/players/promote/:id', async (req, res) => {
+    if (req.session.userId) {
+      try {
+        //console.log('panel')
+        var id = req.params.id;
+          var res = await postPromotePlayer.postPromotePlayer(id);
+          notify.notify(1, `Player with steam ID of ${id} has been promoted.`)
+          res.redirect('/panel')
+        } catch (e) {
+           notify.notify(3, e)
+        }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+  app.post('/panel/players/demote/:id', async (req, res) => {
+    if (req.session.userId) {
+      try {
+        //console.log('panel')
+        var id = req.params.id;
+          var res = await postDemotePlayer.postDemotePlayer(id);
+          notify.notify(1, `Player with steam ID of ${id} has been demoted.`)
+          res.redirect('/panel')
+        } catch (e) {
+          notify.notify(3, e)
+        }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+  app.post('/panel/players/disconnect/:id', async (req, res) => {
+    if (req.session.userId) {
+      try {
+        //console.log('panel')
+        var id = req.params.id;
+          var res = await postDisconnectPlayer.postDisconnectPlayer(id);
+          notify.notify(1, `Player with steam ID of ${id} has been disconnected.`)
+          res.redirect('/panel')
+        } catch (e) {
+          notify.notify(3, e)
+        }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/postMessage', async (req, res) => {
+    if (req.session.userId) {
+      try {
+        const { command } = req.body;
+        //console.dir("InvokeCommand:", string)
+        var status = (await postSendChatMessage.postSendChatMessage(command, `${process.env.CHAT_AUTHOR}`, 1));
+        if (status == 503) {
+          //res.redirect('/console');
+          res.render('chatplayers.hbs', {errormsg: 'Error: Server is offline.'});
+        } else {
+        //res.redirect('/console');
+        res.render('chatplayers.hbs', {errormsg: 'Sent message server.'});
+        }
+        } catch (e) {
+          notify.notify(3, e)
+        }
+    } else {
+      res.render('login.hbs');
+    }
+  });
 
 /*=============================
            AMP LINK
@@ -695,13 +998,14 @@ app.get('/users', (req, res) => {
     const query = `SELECT is_superuser FROM users WHERE id = ?`;
     connection.query(query, [userId], (error, results) => {
       if (error) {
-        console.error('[E004] MySQL query error:', error);
+        notify.notify(3, `MySQL query error:', ${error}`)
         res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
       } else if (results[0].is_superuser === 1) {
         (async () => {
           var string = JSON.parse(await getAllPlugins.getAllPlugins());
+          var dataset = JSON.parse(await getTorchSettings.getTorchSettings());
           var output = jp.query(string, '$..name')
-          res.render('configurator.hbs', {result: output});
+          res.render('configurator.hbs', {result: output, result2: dataset});
         })();
 
           } else {
@@ -741,7 +1045,7 @@ app.get('/pluginsSearch', (req, res) => {
     const query = `SELECT is_superuser FROM users WHERE id = ?`;
     connection.query(query, [userId], async (error, results) => {
       if (error) {
-        console.error('[E004] MySQL query error:', error);
+        notify.notify(3, `MySQL query error:', ${error}`)
         res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
       } else if (results[0].is_superuser === 1) {
         //Result
@@ -762,44 +1066,7 @@ app.get('/pluginsSearch', (req, res) => {
       }
     );
 
-    app.get('/configurator/plugins/torchConfig', (req, res) => {
-      if (!req.session.userId) {
-        res.render('login.hbs');
-        return;
-      }
     
-      const userId = req.session.userId;
-    
-      // Check if the user is a superuser
-      const query = `SELECT is_superuser FROM users WHERE id = ?`;
-      connection.query(query, [userId], async (error, results) => {
-        if (error) {
-          console.error('[E004] MySQL query error:', error);
-          res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
-        } else if (results[0].is_superuser === 1) {
-          //Result
-          (async () => {
-            //var getSettings = await getTorchSettings.getTorchSettings('TorchRemote.Plugin.Config');
-    
-            //var array = `[\r\n    "chatName",\r\n    "chatColor",\r\n    "noGui"\r\n]`
-          
-            //All Torch Settings
-            var array =   `["shouldUpdatePlugins","shouldUpdateTorch","instanceName","instancePath","noUpdate","forceUpdate","autostart",
-      "tempAutostart","restartOnCrash","noGui","waitForPID","getTorchUpdates","getPluginUpdates","tickTimeout","plugins","localPlugins","disconnectOnRestart","chatName","chatColor","enableWhitelist","whitelist",
-    "windowWidth","windowHeight","fontSize","ugcServiceType","branchName","lastUsedTheme","independentConsole","testPlugin","enableAsserts","sendLogsToKeen","deleteMiniDumps","loginToken"]`
-            var outTorch = (await (getTorchValues.getTorchValues('Torch.Server.TorchConfig', array)));
-            jparse = JSON.parse(outTorch)
-            var parse = jp.query(jparse, '$.*')
-            //console.log(parse)
-            //var result = JSON.stringify(parse, null, 2);
-            res.send(parse)
-          })();
-            } else {
-              res.send('You do not have permission to access this page.');
-            }
-          });
-        }
-      );
 
       app.post('/configurator/plugin/info/:guid', (req, res) => {
         if (!req.session.userId) {
@@ -813,7 +1080,7 @@ app.get('/pluginsSearch', (req, res) => {
         const query = `SELECT is_superuser FROM users WHERE id = ?`;
         connection.query(query, [userId], async (error, results) => {
           if (error) {
-            console.error('[E004] MySQL query error:', error);
+            notify.notify(3, `MySQL query error:', ${error}`)
             res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
           } else if (results[0].is_superuser === 1) {
             //Result
@@ -888,39 +1155,232 @@ app.get('/pluginsSearch', (req, res) => {
           }
         );
 
-      app.post('/configurator/plugins/torchConfig/submit', (req, res) => {
-        if (!req.session.userId) {
-          res.render('login.hbs');
-          return;
-        }
-      
-        const userId = req.session.userId;
-      
-        // Check if the user is a superuser
-        const query = `SELECT is_superuser FROM users WHERE id = ?`;
-        connection.query(query, [userId], async (error, results) => {
-          if (error) {
-            console.error('[E004] MySQL query error:', error);
-            res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
-          } else if (results[0].is_superuser === 1) {
-            //Result
-            var { torchConfig } = req.body;
-              console.log(torchConfig)
-              //var parse = jp.query(torchConfig, '$.*')
-              //console.log(jparse)
-              var result = (patchTorchValues.patchTorchValues('Torch.Server.TorchConfig', torchConfig))
-              
-              //var result = JSON.stringify(parse, null, 2);
-              res.render('configurator.hbs', {torchMsg: result})
 
-              } else {
-                res.send('You do not have permission to access this page.');
+
+      app.get('/configurator/plugins/torchConfig', (req, res) => {
+      if (!req.session.userId) {
+        res.render('login.hbs');
+        return;
+      }
+    
+      const userId = req.session.userId;
+    
+      // Check if the user is a superuser
+      const query = `SELECT is_superuser FROM users WHERE id = ?`;
+      connection.query(query, [userId], async (error, results) => {
+        if (error) {
+          notify.notify(3, `MySQL query error:', ${error}`)
+          res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+        } else if (results[0].is_superuser === 1) {
+          //Result
+          (async () => {
+            //var getSettings = await getTorchSettings.getTorchSettings('TorchRemote.Plugin.Config');
+    
+            //var array = `[\r\n    "chatName",\r\n    "chatColor",\r\n    "noGui"\r\n]`
+          
+            //All Torch Settings
+            var array = `["shouldUpdatePlugins","shouldUpdateTorch","instanceName","instancePath","noUpdate","forceUpdate","autostart","tempAutostart","restartOnCrash","noGui","waitForPID","getTorchUpdates","getPluginUpdates","tickTimeout","plugins","localPlugins","disconnectOnRestart","chatName","chatColor","enableWhitelist","whitelist","windowWidth","windowHeight","fontSize","ugcServiceType","branchName","lastUsedTheme","independentConsole","testPlugin","enableAsserts","sendLogsToKeen","deleteMiniDumps","loginToken"]`;
+            var outTorch = (await (getTorchValues.getTorchValues('Torch.Server.TorchConfig', array)));
+            jparse = JSON.parse(outTorch)
+            var parse = jp.query(jparse, '$.*')
+            //console.log(parse)
+            //var result = JSON.stringify(parse, null, 2);
+            res.send(parse)
+          })();
+            } else {
+              res.send('You do not have permission to access this page.');
+            }
+          });
+        }
+      );
+
+      
+      app.get('/configurator/plugins/installed', (req, res) => {
+      if (!req.session.userId) {
+        res.render('login.hbs');
+        return;
+      }
+    
+      const userId = req.session.userId;
+    
+      // Check if the user is a superuser
+      const query = `SELECT is_superuser FROM users WHERE id = ?`;
+      connection.query(query, [userId], async (error, results) => {
+        if (error) {
+          notify.notify(3, `MySQL query error:', ${error}`)
+          res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+        } else if (results[0].is_superuser === 1) {
+          //Result
+          (async () => {
+            
+            var allPlugins = (await getAllPlugins.getAllPlugins())
+            var parse = jp.query(JSON.parse(allPlugins), '$..settingId')
+            notify.notify(1,parse)
+            
+            for (let i = 0; i < parse.length; i++) {
+              if (parse[i] === null) {
+                parse.splice(i, 1)
+                i--;
               }
-            });
-          }
-        );
+            } 
+            //notify.notify(1, parse)
+            
+            //notify.notify(1,installedPlugins)
+
+            let results = ""; 
+            //let getLayout;
+
+            try {
+              parse.forEach(async (parse) => {
+                var getLayout = (await getTorchSchema.getTorchSchema(parse))
+                //notify.notify(1, getLayout)
+                results += getLayout+","
+              });
+              //let fixArray = "";
+
+              setTimeout(() => {
+                var fixArray = results.slice(0, -1);
+                var fixArray2 = JSON.parse("["+fixArray+"]")
+                var fixArray3 = jp.query(fixArray2, "$.*.name")
+                res.json(fixArray2)
+                notify.notify(1, fixArray2)
+                return fixArray3
+              }, 1000);
+
+            } catch(e) {
+              notify.notify(3,e)
+            }
+            
+          })();
+            } else {
+              res.send('You do not have permission to access this page.');
+            }
+          });
+        }
+      );
+
+
+
+
+//Posts
+app.post('/configurator/plugins/get/:id/post', (req, res) => {
+  if (!req.session.userId) {
+    res.render('login.hbs');
+    return;
+  }
+
+  const userId = req.session.userId;
+
+  // Check if the user is a superuser
+  const query = `SELECT is_superuser FROM users WHERE id = ?`;
+  connection.query(query, [userId], async (error, results) => {
+    if (error) {
+      notify.notify(3, `MySQL query error:', ${error}`)
+      res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+    } else if (results[0].is_superuser === 1) {
+      //Result
+      var id = req.params.id; 
+        //console.log(id)
+        //console.log(JSON.parse(id))
+        //var parse = jp.query(torchConfig, '$.*')
+        //console.log(jparse)
+        var result = (await getTorchSchema.getTorchSchema(`${id}`))
+        //notify.notify(3,result)
+        var keys = (await getRootKeys.getRootKeys(result))
+        //console.log(keys)
+        var getLayout = (await getTorchValues.getTorchValues(`${id}`, JSON.stringify(keys)))
+        //notify.notify(3,getLayout)
+        fs.writeFile('plugins.json', getLayout, (err) => {
+          if (err) notify.notify(3, err);
+        });
 
         
+        } else {
+          res.send('You do not have permission to access this page.');
+        }
+      });
+    }
+  );
+
+
+  app.get('/configurator/plugins/get/display', (req, res) => {
+    if (!req.session.userId) {
+      res.render('login.hbs');
+      return;
+    }
+  
+    const userId = req.session.userId;
+  
+    // Check if the user is a superuser
+    const query = `SELECT is_superuser FROM users WHERE id = ?`;
+    connection.query(query, [userId], (error, results) => {
+      if (error) {
+        notify.notify(3, `MySQL query error:', ${error}`)
+        res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+      } else if (results[0].is_superuser === 1) {
+        fs.readFile('plugins.json', 'utf-8', (err, data) => {
+        if (err) throw notify.notify(3,err);
+        res.send(data)
+        })
+      }
+    })
+  })
+
+
+  
+
+app.post('/configurator/plugins/torchConfig/submit', (req, res) => {
+  if (!req.session.userId) {
+    res.render('login.hbs');
+    return;
+  }
+
+  const userId = req.session.userId;
+
+  // Check if the user is a superuser
+  const query = `SELECT is_superuser FROM users WHERE id = ?`;
+  connection.query(query, [userId], async (error, results) => {
+    if (error) {
+      notify.notify(3, `MySQL query error:', ${error}`)
+      res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+    } else if (results[0].is_superuser === 1) {
+      //Result
+      var { torchConfig } = req.body;
+      var postme = JSON.parse(JSON.stringify(torchConfig))
+        console.log(torchConfig)
+        //var parse = jp.query(torchConfig, '$.*')
+        //console.log(jparse)
+        var result = (await patchTorchValues.patchTorchValues('Torch.Server.TorchConfig', postme))
+        console.log(result)
+        res.send(`
+        <!doctype html>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        <title>AMPLink Control Panel</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+        <link href="style.css" rel="stylesheet" type="text/css">
+        </head>
+        <body>
+        
+        <main>
+        
+        <div class="content">
+          <h2>The Torch configuration has been applied to the server.</h2>
+          <p>Restart the server to apply the configuration(s).<br><form action="/configurator" ><input type="submit" value="Go back" class="btn btn-primary" style="float:left; margin-right: 10px;" ></form><br><hr>
+          <b>Server Response:</b><br>
+          <pre>${result}</pre></p>
+        </div>
+        
+        </main>
+        </body>
+        </html>`)
+        } else {
+          res.send('You do not have permission to access this page.');
+        }
+      });
+    }
+  );
 
 /*=============================
            AMP LINK
@@ -945,105 +1405,7 @@ app.get('/pluginsSearch', (req, res) => {
     }
   });
 
-    app.get('/panel/players', async (req, res) => {
-      if (req.session.userId) {
-        try {
-        //console.log('panel')
-          var players = await getAllPlayers.getAllPlayers();
-          if (players == 500) {
-            res.send(`<h3>Server is offline. Please start it in order to get live player stats.</h3>`);
-          } else {
-          var parsed = JSONbig.parse(players)
-          //console.log(parsed)
-          var playersList = jp.query(parsed, '$.*')
-  
-        
-          res.render('players.hbs', {play: playersList});
-          }
-        } catch (e) {
-          console.log(e)
-        }
-      } else {
-        res.render('login.hbs');
-      }
-    });
-
-    app.post('/panel/players/ban/:id', async (req, res) => {
-      if (req.session.userId) {
-        try {
-        //console.log('panel')
-        var id = req.params.id;
-          var res = await postBanPlayer.postBanPlayer(id);
-          console.log(res)
-          res.redirect('/panel')
-        } catch (e) {
-          console.log(e)
-        }
-      } else {
-        res.render('login.hbs');
-      }
-    });
-
-    app.post('/panel/players/kick/:id', async (req, res) => {
-      if (req.session.userId) {
-        try {
-          //console.log('panel')
-          var id = req.params.id;
-            var res = await postKickPlayer.postKickPlayer(id);
-            console.log(res)
-            res.redirect('/panel')
-          } catch (e) {
-            console.log(e)
-          }
-      } else {
-        res.render('login.hbs');
-      }
-    });
-    app.post('/panel/players/promote/:id', async (req, res) => {
-      if (req.session.userId) {
-        try {
-          //console.log('panel')
-          var id = req.params.id;
-            var res = await postPromotePlayer.postPromotePlayer(id);
-            console.log(res)
-            res.redirect('/panel')
-          } catch (e) {
-            console.log(e)
-          }
-      } else {
-        res.render('login.hbs');
-      }
-    });
-    app.post('/panel/players/demote/:id', async (req, res) => {
-      if (req.session.userId) {
-        try {
-          //console.log('panel')
-          var id = req.params.id;
-            var res = await postDemotePlayer.postDemotePlayer(id);
-            console.log(res)
-            res.redirect('/panel')
-          } catch (e) {
-            console.log(e)
-          }
-      } else {
-        res.render('login.hbs');
-      }
-    });
-    app.post('/panel/players/disconnect/:id', async (req, res) => {
-      if (req.session.userId) {
-        try {
-          //console.log('panel')
-          var id = req.params.id;
-            var res = await postDisconnectPlayer.postDisconnectPlayer(id);
-            console.log(res)
-            res.redirect('/panel')
-          } catch (e) {
-            console.log(e)
-          }
-      } else {
-        res.render('login.hbs');
-      }
-    });
+    
 
 /*=============================
            AMP LINK
@@ -1053,18 +1415,19 @@ app.get('/pluginsSearch', (req, res) => {
 
 //run it
 app.listen(`${process.env.AMP_PORT}`, ()=> {
-    console.log("AMPLink started on port 5000")
+    notify.notify(1, `AMPLink started on port ${process.env.AMP_PORT}`)
 
   //Initialize configuration
 
     if (process.env.LOG_CONSOLE == 'true') {
       startWebsocketManager()
+      startWebsocketChatManager()
     } else {
-      console.log(`[AMPLink]: LOG_CONSOLE = ${process.env.LOG_CONSOLE}`)
+      notify.notify(1, `[AMPLink]: LOG_CONSOLE = ${process.env.LOG_CONSOLE}`)
     }
     
 })
 
 } catch(err) {
-  console.log("[AMPLink]: An error occured: ", err)
+  notify.notify(3, "[AMPLink]: An error occured: ", err)
 }

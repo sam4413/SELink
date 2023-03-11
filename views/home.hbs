@@ -13,6 +13,7 @@
   <a href="/">Home</a>
   <a href="/panel">Server Control Panel&nbsp;</a>
   <a href="/console">Server Console</a>
+  <a href="/players">Chat/Players</a>
   <a href="/users">Users</a>
   <a href="/about">About</a>
   <div class="brightercolor"><a href="#">Welcome, <b>{{#if message }}{{message}}{{/if}}</b><br><form action="/logout"><input type="submit" value="Logout" class="btn btn-danger"></form></a></div>
@@ -21,19 +22,48 @@
 <div class="row">
 <div class="col-xl-10">
   <div></div>
-  <h2>AMPLink Alpha&nbsp;</h2>
-  <p><div class="callout-danger">Welcome to AMPLink!<br>Please keep in mind that this is a ALPHA Build and features may be missing and/or bugs might occur!
+  <h2>AMPLink Beta&nbsp;</h2>
+  <p><div class="callout-danger">Welcome to AMPLink!<br>Please keep in mind that this is a BETA Build and features may be missing and/or bugs might occur!
   <br>If you encounter issues or have a suggestion, front-end or back-end, open up a issue/suggestion on the GitHub Repo!
   <br><a href="https://github.com/sam4413/amplink/">https://github.com/sam4413/amplink/</a>&nbsp; &nbsp;&nbsp;</div></p>
 </div><br>
+
+<!--Status section-->
 <div class="col-xl-5">
-  <p class="callout-info">LiveStats [Will finish on next update] {{livedata}}</p>
-</div>
+  <div class="callout-info">
+  <strong>Server Status</strong>
+  <hr>
+  <span id="statuscheck">{{Status}}Please wait, retrieving info...</span>
+</div></div>
+
+
 <div class="col-xl-5">
-  <p class="callout-info">EntityList [Will finish on next update]</p>
+  <div class="callout-info">
+    EntityList [Will finish on next update]
+  </div>
 </div>
 
 </div>
+
+<script>
+  const updateVariable = () => {
+    fetch('/server/status/')
+  .then(response => response.text())
+  .then(html => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const scriptTag = doc.querySelector('script');
+    const scriptContent = scriptTag.textContent;
+    const targetElement = document.getElementById('statuscheck');
+    targetElement.innerHTML = html;
+    // execute the script content if necessary
+    eval(scriptContent);
+  }); 
+  };
+setInterval(updateVariable, 1000);
+</script>
+
+
 </main>
 </body>
 </html>

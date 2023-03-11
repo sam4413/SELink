@@ -87,6 +87,15 @@ and set background-color to #ffffff for light mode and #000000 for color
   
 }
 
+legend {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 3px 6px;
+}
+
+.fieldborders {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
 
 body {
   margin: 0;

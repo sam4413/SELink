@@ -34,5 +34,6 @@ var getAllPlugins = require(__dirname + '/getAllPlugins.js');
 
 (async () => {
   console.log(await getAllPlugins.getAllPlugins());
-})();*/
+})();*/ 
+
 

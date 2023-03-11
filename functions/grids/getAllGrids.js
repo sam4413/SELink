@@ -4,6 +4,7 @@
 const request = require('request');
 require('dotenv').config();
 var JSONbig = require('json-bigint');
+const { parse } = require('path');
 
 exports.getAllGrids = async function () {
 
@@ -21,7 +22,7 @@ exports.getAllGrids = async function () {
       console.error(error);
       return;
     }
-console.log("part1")
+//console.log("part1")
     if (response.statusCode == 401) {
       console.log("[E008] Error accessing remote data.")
       resolve(response.statusCode);
@@ -34,8 +35,8 @@ console.log("part1")
     }
 
     var array = JSONbig.parse(body);
-    console.log(array.length)
-
+    //console.log(array.length)
+    //console.log(array)
     //Now that we have all the grids, we need to spam the api to get all the current grids. (Thank god theres no ratelimit)
     let result = ""
 
@@ -65,20 +66,29 @@ console.log("part1")
        resolve(response2.statusCode);
      }
    result += body2 + ',';
-   return result
+   return result //result
    });
    });
-
+   //console.log(result)
 }
 //Parse the data to a tangable format, aka JerryRig a new array.
 setTimeout(() => {
-  var fixArray = result
-  var fixArray2 = "["+fixArray.slice(0, -1)+"]"
-  //console.log(resultArray)
-  var resultArray = JSONbig.parse(fixArray2)
-  return resultArray
+  var fixArray = result.slice(0, -1);
+  var fixArray2 = "["+fixArray+"]";
+  var parseme = JSONbig.parse(fixArray2)
+  var sortme = parseme.sort((a,b) => {
+    if (a.blockCount < b.blockCount) {
+      return -1
+    }
+  });
+  //console.log(JSONbig.stringify(sortme))
+  resolve(sortme);
+  return sortme
+  //sorted by blockCount Key, least to greatest
 }, process.env.GET_ALL_GRIDS_TIMEOUT);
-  })
+})
+
+
 });
 } catch(err) {
   console.log("[AMPLink]: ",err)
@@ -91,5 +101,5 @@ setTimeout(() => {
 var getAllGrids = require(__dirname + '/getAllGrids.js');
 
 (async () => {
-  console.log(await getAllGrids.getAllGrids());
+  console.log(JSONbig.stringify(await getAllGrids.getAllGrids()));
 })();

@@ -9,7 +9,7 @@ exports.getGroupGridId = async function () {
 
   const bearerToken = `${process.env.TORCHREMOTE_TOKEN}`
   const options = {
-    url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/grids/81640682597491813/`,
+    url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/grids/86768568801471620`,
     headers: {
       'Authorization': `Bearer ${bearerToken}`
     }

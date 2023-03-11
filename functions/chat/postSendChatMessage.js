@@ -42,13 +42,11 @@ exports.postSendChatMessage = async function (string, author, channel) {
   });
 });
 };
-
 /*
  // For debugging
 var postSendChatMessage = require(__dirname + '/postSendChatMessage.js');
 
 (async () => {
-  console.log(await postSendChatMessage.postSendChatMessage(``, ``, 1));
+  console.log(await postSendChatMessage.postSendChatMessage(`yo`, `sam from console`, 1));
 })();
-
 */

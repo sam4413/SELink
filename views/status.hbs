@@ -1,0 +1,32 @@
+<span id="statuscheck"></span>
+<script>
+const updateVariable = () => {
+if ({{status}} == 0) {
+document.getElementById('statuscheck').innerHTML = `
+<strong>Status:</strong> <span style="background-color:#ff4848;color:#ffffff;">Stopped</span> <br>
+<strong>Simulation Speed:</strong> {{sim}}<br>
+<strong>Uptime: </strong> {{uptime}}<br>
+<strong>Connected Players:</strong> {{memberCount}}`;
+} else if ({{status}} == 1) {
+document.getElementById('statuscheck').innerHTML = `
+<strong>Status:</strong> <span style="background-color:#ffc107;color:#000000;">Starting</span> <br>
+<strong>Simulation Speed:</strong> {{sim}}<br>
+<strong>Uptime: </strong> {{uptime}}<br>
+<strong>Connected Players:</strong> {{memberCount}}`;
+} else if ({{status}} == 2) {
+document.getElementById('statuscheck').innerHTML = `
+<strong>Status:</strong> <span style="background-color:#198754;color:#ffffff;">Running</span> <br>
+<strong>Simulation Speed:</strong> {{sim}}<br>
+<strong>Uptime: </strong> {{uptime}}<br>
+<strong>Connected Players:</strong> {{memberCount}}`;
+} else if ({{status}} == 3) {
+document.getElementById('statuscheck').innerHTML = `
+<strong>Status:</strong> <span style="background-color:#ff0000;color:#ffffff;">Crashed</span> <br>
+<strong>Simulation Speed:</strong> {{sim}}<br>
+<strong>Uptime: </strong> {{uptime}}<br>
+<strong>Connected Players:</strong> {{memberCount}}`;
+}
+}
+updateVariable();
+
+</script>
