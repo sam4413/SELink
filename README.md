@@ -17,7 +17,9 @@
  - Add more ranks for Users management. (ex: Normal User, Admin User, Superuser)
  
 ## NEW: Staging branch:
- - I have recently added the new staging branch onto AMPLink. Here you can see what the latest new features are happening for Beta I. Once all the features from the staging branch are deemed to be stable, and mostly bug free, it will move to the main branch. Some features im working on are: auto-updates, plugin configuration, and a dedicated Chat/Players page. Keep in mind, however, because it is a staging branch, bugs will be present, as well as missing features. Make a backup of your config and use with caution!
+ - I have recently added the new staging branch onto AMPLink. Here you can see what the latest new features are happening for Beta I. Once all the features from the staging branch are deemed to be stable, and mostly bug free, it will move to the main branch. 
+- Some features im working on are: auto-updates, plugin configuration, and a dedicated Chat/Players page. Keep in mind, however, because it is a staging branch, bugs will be present, as well as missing features. Make a backup of your config and use with caution!
+- Have any more questions? Visit the AMPLink Discord: https://discord.gg/nVxAgZ3P
  
  ## Features and planned features:
 Here is a long list of what I plan to add to or already added to AMPLink.<br>
@@ -53,4 +55,5 @@ This program is to allow servers that are running Space Engineers Torch on a Ded
 Message sam44#9932 on discord if you have any questions.
 
 <b>AMPLink is currently in ALPHA, and many features are either planned, don't work, or are unstable! Production use at the current moment is not recommended.</b>
-<br>AMPLink Alpha Version 0.0.5
+<br>Main: AMPLink Alpha v0.0.5
+<br>Staging: AMPLink v0.1-beta Build
