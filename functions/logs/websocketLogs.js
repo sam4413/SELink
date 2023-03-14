@@ -54,7 +54,7 @@
     try {
     if (err.code === 'ECONNREFUSED') {
       notify.notify(3, '[AMPLink Websockets Manager]: Connection refused. Please check the server is running and the port is correct.');
-      ws.terminate();
+      
       fs.writeFile('logs.html', '<b style="color:#0099ff;">[AMPLink Websockets Manager]: Connection refused. Please check the server is running and the port is correct.</b><br>', (err) => {
         if (err) notify.notify(3, '[AMPLink Websockets Manager]: ',err);
         //console.log('Connecting to server logs & clearing data...');
@@ -62,6 +62,7 @@
       });
       setTimeout(() => {
         notify.notify(2, '[AMPLink Websockets Manager]: Reconnecting...');
+        ws.terminate();
         connect()
       }, process.env.WSM_RECONNECT_INTERVAL);
     } else {
@@ -77,9 +78,10 @@
       
         notify.notify(2, "[AMPLink Websockets Manager]: Connection to server logs has been lost. Attempting to reconnect...")
       fs.appendFile("logs.html", `<b style="color:#ff4848;">[AMPLink Websockets Manager]: Connection to server logs has been lost. Attempting to reconnect...<br></b>` , (err) => {
-      ws.terminate();
+      
       setTimeout(() => {
-        notify.notify(1, '[AMPLink Websockets Manager]: Reconnecting...');
+        notify.notify(2, '[AMPLink Websockets Manager]: Reconnecting...');
+        ws.terminate();
         connect()
       }, process.env.WSM_RECONNECT_INTERVAL);
   })
