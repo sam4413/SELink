@@ -91,9 +91,10 @@
       
         notify.notify(2, "[AMPLink Websockets Manager]: Connection to server chat has been lost. Attempting to reconnect...")
       fs.appendFile("chat.html", `<b style="color:#ff4848;">[AMPLink Websockets Manager]: Connection to server chat has been lost. Attempting to reconnect...<br></b>` , (err) => {
-      ws.terminate();
+      
       setTimeout(() => {
-        notify.notify(1, '[AMPLink Websockets Manager]: Reconnecting...');
+        notify.notify(2, '[AMPLink Websockets Manager]: Reconnecting...');
+        ws.terminate();
         connect()
       }, process.env.WSM_RECONNECT_INTERVAL);
   })
