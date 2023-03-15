@@ -52,10 +52,10 @@
   - [ ] Restart AMPLink server
   
 - [ ] Discord Bot Integration (This is far off, so this might change)
-  [ ] Chat monitoring
-  [ ] Console monitoring
-  [ ] Send server commands through discord bot
-  [ ] Send chat messages through discord bot
+  - [ ] Chat monitoring
+  - [ ] Console monitoring
+  - [ ] Send server commands through discord bot
+  - [ ] Send chat messages through discord bot
 
 ## NEW: Staging branch:
  - I have recently added the new staging branch onto AMPLink. Here you can see what the latest new features are. Once all the features from the staging branch are deemed to be stable, and mostly bug free, it will move to the main branch. 
