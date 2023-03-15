@@ -6,25 +6,64 @@
  https://torchapi.com/plugins/view/284017F3-9682-4841-A544-EB04DB8CB9BA
  
  ## ROADMAP:
- - Torch Installation / Uninstallation of Plugins [WORKING]
- - Torch Instance Configuration [WORKING]
- - Server Grid List [WORKING]
-
- - Server Mods Management [PLANNED] (when zznty adds it)
- - Server Scheduled Actions (AutoRestart, etc) [PLANNED]
- - Redo UI [DONE]
- - Workshop Browser [PLANNED]
- - Add more ranks for Users management. (ex: Normal User, Admin User, Superuser)
+[ ] Torch Configuration
+  [X] Configuring Plugins
+  [X] Torch Plugins Search
+  [ ] Post configuration to server
+  [ ] Upload new plugins
+  [ ] Automatic / Scheduled tasks
+  
+[ ] Moderation
+  [X] Chat monitoring
+  [X] Kick, ban, promote, and demote players
+  [X] Send Messages through Panel
+  [ ] Entity list
+  [ ] Delete a grid
+  
+[X] Server
+  [X] Console monitoring
+  [X] Start, restart, and stop server
+  [X] Send commands through console
+  [X] Copy console
+  [X] Server info and description
+  
+[ ] World
+  [ ] Basic world info
+  [ ] World size
  
+[ ] Users Management
+  [X] Create users
+  [X] Delete users
+  [X] User level management
+  [X] Login page
+  
+[ ] VRageRemote API Integration
+  [ ] VRage Moderation
+    [ ] Banned players list
+    [ ] Unban players
+  [ ] Create a new save
+  [ ] Delete planets
+  [ ] Delete asteroids
+  
+[ ] Other
+  [ ] Automatic Updates
+  [X] Configuratable .env
+  [X] Configuratable style.css
+  [ ] Restart AMPLink server
+  
+[ ] Discord Bot Integration (This is far off, so this might change)
+  [ ] Chat monitoring
+  [ ] Console monitoring
+  [ ] Send server commands through discord bot
+  [ ] Send chat messages through discord bot
+
 ## NEW: Staging branch:
- - I have recently added the new staging branch onto AMPLink. Here you can see what the latest new features are happening for Beta I. Once all the features from the staging branch are deemed to be stable, and mostly bug free, it will move to the main branch. 
+ - I have recently added the new staging branch onto AMPLink. Here you can see what the latest new features are. Once all the features from the staging branch are deemed to be stable, and mostly bug free, it will move to the main branch. 
 - Some features im working on are: auto-updates, plugin configuration, and a dedicated Chat/Players page. Keep in mind, however, because it is a staging branch, bugs will be present, as well as missing features. Make a backup of your config and use with caution!
 - Have any more questions? Visit the AMPLink Discord: https://discord.gg/nVxAgZ3P
  
- ## Features and planned features:
-Here is a long list of what I plan to add to or already added to AMPLink.<br>
+ ## Users system:
 
-Users System:<br>
 One unique thing about AMPLink is that you can give your users certain features. For instance, User A is registered as a Normal User, and can only:
  - restart the server
  - stop the server
@@ -54,6 +93,7 @@ This program is to allow servers that are running Space Engineers Torch on a Ded
 
 Message sam44#9932 on discord if you have any questions.
 
-<b>AMPLink is currently in ALPHA, and many features are either planned, don't work, or are unstable! Production use at the current moment is not recommended.</b>
-<br>Main (Stable branch): AMPLink Alpha v0.0.5
+<b>AMPLink is currently in BETA, and several features don't work, or are unstable! </b>
+
+<br>Main (Stable branch): AMPLink v0.1-beta Build
 <br>Staging (Unstable branch): AMPLink v0.1-beta Build
