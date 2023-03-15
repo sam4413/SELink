@@ -29,10 +29,12 @@ exports.getTorchSettings = async function () {
   });
 });
 };
+/*
 // For debugging
 var getTorchSettings = require(__dirname + '/getTorchSettings.js');
 
 (async () => {
-  console.log(await getTorchSettings.getTorchSettings('TorchRemote.Plugin.Config'));
+  console.log(await getTorchSettings.getTorchSettings());
 })();
 
+*/

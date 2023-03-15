@@ -3,9 +3,17 @@
 <head>    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <link href="style.css" rel="stylesheet" type="text/css">
+    
 <style>
+/* ---- reset ---- */
+
 body {
     text-align: center;
+    overflow-y: hidden;
+    margin: 0px;
+}
+main {
+    margin: 0px;
 }
 .aligntocenter {
     text-align: left;
@@ -15,40 +23,245 @@ body {
     text-align: center;
 }
 
+
 @media (max-width:600px){
 .aligntocenter {
     width: 75vw;
 }
 }
+@media (prefers-color-scheme: dark) {
+    .bg-adapt {
+        background-color: #333333;
+        
+    }
+    .bg-adapt-txt {
+        background-color: #4e4e4e;
+        color: #ffffff;
+        border: none;
+    }
+
+
+#particles-js {
+  position: absolute;
+  width: 100vw;
+  height: 110vh;
+  top: -10px;
+  background-color: #333333;
+  background-image: url("");
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 0;
+  
+}
+
+}
+@media (prefers-color-scheme: light) {
+    .bg-adapt {
+        background-color: #EEEEEE;
+        color: #000000;
+    }
+    .bg-adapt-txt {
+        background-color: #ffffff;
+        color: #000000;
+        border: none;
+    }
+
+#particles-js {
+  position: absolute;
+  width: 100vw;
+  height: 110vh;
+  top: -10px;
+  background-color: #FFFFFF;
+  background-image: url("");
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 0;
+  
+}
+
+}
+
+canvas {
+  display: block;
+  vertical-align: bottom;
+}
+
+/* ---- particles.js container ---- */
+
+
+
 </style>
 </head>
-<main>
 <body>
-    <h1>AMPLink</h1>
+<main>
+<!-- particles.js container -->
+
+<div id="particles-js"></div>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+
+
 <div class="container mt-4 aligntocenter">
-        <div class="card">            
+    <h1 class="alert center"><b>AMPLink</b></h1>
+        <div class="card bg-adapt" style="z-index:10;">            
             <div class="card-header center">Login</div>    
             <div class="card-body">
                 <form action="/login" method="POST">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username:</label><br>
-                        <input type="text" class="form-control" id="username" name="username"><br>                        
-                    </div>
-                    <div class="mb-3">
+                        <input type="text" class="form-control bg-adapt-txt" id="username" name="username">                        
+
                         <label for="password" class="form-label">Password:</label><br>
-                        <input type="password" class="form-control" id="password" name="password">
+                        <input type="password" class="form-control bg-adapt-txt" id="password" name="password">
                     </div>
 
                     <button type="submit" class="btn btn-primary">Submit</button>
+                    <div style="padding: 3px; float: right; max-width:150px; text-align: center; position: relative; top:10px; z-index:1111;">
+                      <em>AMPLink v0.1-beta Build</em>
+                    </div>
                 </form>
             </div>
+            
+            
             {{#if message }}
             <div style="margin: 5px;">
-				<p class="alert alert-dark">{{message}}</p>
-			</div>
+				      <p class="callout-warning">{{message}}</p>
+			      </div>
             {{/if}}
+            
         </div>
+        
     </div>
+    
+</main>
+
+
+
+
+
+
+
+<script>
+
+    /* ---- particles.js config ---- */
+
+particlesJS(
+  {
+  "particles": {
+    "number": {
+      "value": 6,
+      "density": {
+        "enable": true,
+        "value_area": 800
+      }
+    },
+    "color": {
+      "value": "#eeeeee"
+    },
+    "shape": {
+      "type": "polygon",
+      "stroke": {
+        "width": 0,
+        "color": "#000"
+      },
+      "polygon": {
+        "nb_sides": 6
+      },
+      "image": {
+        "src": "img/github.svg",
+        "width": 100,
+        "height": 100
+      }
+    },
+    "opacity": {
+      "value": 0.3,
+      "random": true,
+      "anim": {
+        "enable": false,
+        "speed": 1,
+        "opacity_min": 0.1,
+        "sync": false
+      }
+    },
+    "size": {
+      "value": 160,
+      "random": false,
+      "anim": {
+        "enable": true,
+        "speed": 10,
+        "size_min": 40,
+        "sync": false
+      }
+    },
+    "line_linked": {
+      "enable": false,
+      "distance": 200,
+      "color": "#ffffff",
+      "opacity": 1,
+      "width": 2
+    },
+    "move": {
+      "enable": true,
+      "speed": 2,
+      "direction": "none",
+      "random": false,
+      "straight": false,
+      "out_mode": "out",
+      "bounce": false,
+      "attract": {
+        "enable": false,
+        "rotateX": 600,
+        "rotateY": 1200
+      }
+    }
+  },
+  "interactivity": {
+    "detect_on": "canvas",
+    "events": {
+      "onhover": {
+        "enable": false,
+        "mode": "grab"
+      },
+      "onclick": {
+        "enable": false,
+        "mode": "push"
+      },
+      "resize": true
+    },
+    "modes": {
+      "grab": {
+        "distance": 400,
+        "line_linked": {
+          "opacity": 1
+        }
+      },
+      "bubble": {
+        "distance": 400,
+        "size": 40,
+        "duration": 2,
+        "opacity": 8,
+        "speed": 3
+      },
+      "repulse": {
+        "distance": 200,
+        "duration": 0.4
+      },
+      "push": {
+        "particles_nb": 4
+      },
+      "remove": {
+        "particles_nb": 2
+      }
+    }
+  },
+  "retina_detect": true
+});
+
+</script>
+
+<!-- particles.js lib (JavaScript CodePen settings): https://github.com/VincentGarreau/particles.js -->
+
 </main>
 </body>
 </html>
+

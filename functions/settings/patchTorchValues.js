@@ -29,18 +29,24 @@ exports.patchTorchValues = async function (string, sendData) {
       console.log("[E011] Error on server end.")
       resolve(response.statusCode);
     } else if (response.statusCode != 200){
-      console.log(`[E009] Error accessing remote data with a status code of ${response.statusCode}.`)
+      console.log(`[E009] Error accessing remote data with a status code of ${response.statusCode}.`, response.body)
       resolve(response.statusCode);
     }
     resolve(response.body);
   });
 });
 };
-/* // For debugging
+/*
+ // For debugging
 var patchTorchValues = require(__dirname + '/patchTorchValues.js');
 
 (async () => {
-  console.log(await patchTorchValues.patchTorchValues());
+  console.log(await patchTorchValues.patchTorchValues('Torch.Server.ViewModels.SessionSettingsViewModel', `[
+	{
+		"$type": "enum",
+		"value": "Creative",
+		"name": "gameMode"
+	}]`));
 })();
 */
 //currently broken

@@ -1,52 +1,73 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-<style>
-body {
-    text-align: center;
-}
-.aligntocenter {
-    text-align: left;
-    width: 50vw;
-}
-.center {
-    text-align: center;
-}
-
-@media (max-width:600px){
-.aligntocenter {
-    width: 75vw;
-}
-}
-</style>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AMPLink Control Panel</title>
+<link href="style.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 </head>
 <body>
-    <h1>AMPLink</h1>
-<div class="container mt-4 aligntocenter">
-    <form action="/users"><button type="submit" class="btn btn-primary">Go back</button></form>
-        <div class="card">            
-            <div class="card-header center">Register user</div>    
+
+<div class="sidenav">
+  <img src="resources/images/branding.png" alt="branding" width="200" height="80">
+  <a href="/">Home</a>
+  <a href="/panel">Server Control Panel&nbsp;</a>
+  <a href="/console">Server Console</a>
+  <a href="/players">Chat/Players</a>
+  <a href="/users">Users</a>
+  <a href="/about">About</a>
+  <div class="brightercolor"><a href="#">Welcome, <b>{{#if message }}{{message}}{{/if}}</b><br><form action="/logout"><input type="submit" value="Logout" class="btn btn-danger"></form></a></div>
+</div>
+<main class="content">
+<h2>Register a User</h2>
+<div class="row">
+<div class="col-xl-10">
+  <div class="callout-info mt-4 aligntocenter">          
+            <div><strong>Register a User</strong><hr></div>    
             <div class="card-body">
             <form action="/register" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Username:</label>
-                <input type="text" class="form-control" id="username" name="username">
+                <input type="text" class="form-control" id="username" name="username" required>
                 <label for="password" class="form-label">Password:</label>
-                <input type="password" class="form-control" id="password" name="password">
+                <input type="password" class="form-control" id="password" name="password" required>
                 <label for="confirmPassword" class="form-label">Confirm Password:</label>
-                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"><br>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required><br>
                 <button type="submit" class="btn btn-primary">Create User</button>
                 </div>
             </form>  
             </div>
             {{#if message }}
             <div style="margin: 5px;">
-				<p class="alert alert-dark">{{message}}</p>
+				<p class="callout-success">{{message}}</p>
 			</div>
             {{/if}}
             
         </div>
     </div>
+</div>
+
+</div>
+
+<script>
+  const updateVariable = () => {
+    fetch('/server/status/')
+  .then(response => response.text())
+  .then(html => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const scriptTag = doc.querySelector('script');
+    const scriptContent = scriptTag.textContent;
+    const targetElement = document.getElementById('statuscheck');
+    targetElement.innerHTML = html;
+    // execute the script content if necessary
+    eval(scriptContent);
+  }); 
+  };
+setInterval(updateVariable, 1000);
+</script>
+
+
+</main>
 </body>
 </html>

@@ -29,9 +29,12 @@ exports.getTorchSchema = async function (string) {
   });
 });
 };
+/*
 // For debugging
 var getTorchSchema = require(__dirname + '/getTorchSchema.js');
 
 (async () => {
-  console.log(JSON.parse(await getTorchSchema.getTorchSchema('Torch.Server.ViewModels.SessionSettingsViewModel')));
+  var stringme = JSON.parse(await getTorchSchema.getTorchSchema('Profiler.ProfilerConfig'));
+  console.log(stringme);
 })();
+*/

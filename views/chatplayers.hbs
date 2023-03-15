@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AMPLink Control Panel</title>
+<link href="style.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="sidenav">
+  <img src="resources/images/branding.png" alt="branding" width="200" height="80">
+  <a href="/">Home</a>
+  <a href="/panel">Server Control Panel&nbsp;</a>
+  <a href="/console">Server Console</a>
+  <a href="/players">Chat/Players</a>
+  <a href="/users">Users</a>
+  <a href="/about">About</a>
+  <div class="brightercolor"><a href="#">Welcome<br><form action="/logout"><input type="submit" value="Logout" class="btn btn-danger"></form></a></div>
+</div>
+<main class="content">
+  <h2>Chat &amp; Players Management</h2>
+  <!--Container-->
+<div class="row">
+
+<!--Divider-->
+		<div class="col-xl-6" name="copyme" style=""><div class="console" id="scroller"><span id="variable">{{variable}}</span></div>
+    
+    <div class="callout-inverted">
+    <form action="/postMessage" method="POST" style="width: 100%">
+      <label for="string" class="form-label">Actions:</label><br>
+      <input type="text" class="form-control" id="command" name="command"><br><br>
+      <button type="submit" class="btn btn-success" style="float:left; margin-right: 10px; margin-top: -40px;">Send Message</button>
+    </form>
+    </div>
+
+    </div>
+
+    
+
+  <!--<div style="position:relative; margin-left:34%; top:-49px;">
+    <button onclick="copy()" class="btn btn-dark">Copy chat</button>
+    <br><br>
+    <script>
+    function copy() {
+    // Get the text field
+    var copyText = document.getElementById("variable").innerText;
+    navigator.clipboard.writeText(copyText);
+    alert("Copied chat.");
+    console.log("Copied chat")
+}
+    </script>
+  </div>-->
+
+  <div class="col-xl-5 callout-info"><strong>Current Connected Players</strong>
+    <hr>
+    <div id="players">Please wait, retrieving info...</div>
+  </div>
+</div>
+<div class="row">
+
+
+
+
+</div>
+</div>
+
+
+
+<script>
+  const updateVariable = () => {
+    fetch('/console/chat')
+      .then((response) => response.text())
+      
+      .then((result) => {
+        //JSON.parse(result)
+        document.getElementById('variable').innerHTML = result;
+        var elem = document.getElementById('scroller');
+        elem.scrollTop = elem.scrollHeight;
+      });
+      
+  };
+
+  setInterval(updateVariable, 1000);
+</script>
+
+<script>
+  const updateVariable2 = () => {
+    fetch('/players/list')
+      .then((response) => response.text())
+      
+      .then((result) => {
+        //JSON.parse(result)
+        document.getElementById('players').innerHTML = result;
+      });
+      
+  };
+
+  setInterval(updateVariable2, 1000);
+</script>
+
+
+</main>
+</body>
+</html>
