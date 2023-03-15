@@ -1,8 +1,8 @@
-# AMPLink
-## (Advanced Moderation Panel Linker)
+![AMPLink Logo](https://cdn.discordapp.com/attachments/617491056652582953/1085417601208946728/image.png)
+## AMPLink (Advanced Moderation Panel Linker)
  AMPLink is a powerful tool that allows Administrators easy access to their Space Engineers servers through an easy to use webpanel.
  
- AMPLink relies on a RestAPI plugin for Torch called "TorchRemote." 
+ AMPLink relies on a RestAPI plugin for Torch called "TorchRemote." You will need to have it installed in order to make the plugin work.
  https://torchapi.com/plugins/view/284017F3-9682-4841-A544-EB04DB8CB9BA
  
  ## ROADMAP:
