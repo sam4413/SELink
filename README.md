@@ -6,52 +6,52 @@
  https://torchapi.com/plugins/view/284017F3-9682-4841-A544-EB04DB8CB9BA
  
  ## ROADMAP:
-[ ] Torch Configuration
-  [X] Configuring Plugins
-  [X] Torch Plugins Search
-  [ ] Post configuration to server
-  [ ] Upload new plugins
-  [ ] Automatic / Scheduled tasks
+- [ ] Torch Configuration
+  - [X] Configuring Plugins
+  - [X] Torch Plugins Search
+  - [ ] Post configuration to server
+  - [ ] Upload new plugins
+  - [ ] Automatic / Scheduled tasks
   
-[ ] Moderation
-  [X] Chat monitoring
-  [X] Kick, ban, promote, and demote players
-  [X] Send Messages through Panel
-  [ ] Entity list
-  [ ] Delete a grid
+- [ ] Moderation
+  - [X] Chat monitoring
+  - [X] Kick, ban, promote, and demote players
+  - [X] Send Messages through Panel
+  - [ ] Entity list
+  - [ ] Delete a grid
   
-[X] Server
-  [X] Console monitoring
-  [X] Start, restart, and stop server
-  [X] Send commands through console
-  [X] Copy console
-  [X] Server info and description
+- [X] Server
+  - [X] Console monitoring
+  - [X] Start, restart, and stop server
+  - [X] Send commands through console
+  - [X] Copy console
+  - [X] Server info and description
   
-[ ] World
-  [ ] Basic world info
-  [ ] World size
+- [ ] World
+  - [ ] Basic world info
+  - [ ] World size
  
-[ ] Users Management
-  [X] Create users
-  [X] Delete users
-  [X] User level management
-  [X] Login page
+- [X] Users Management
+  - [X] Create users
+  - [X] Delete users
+  - [X] User level management
+  - [X] Login page
   
-[ ] VRageRemote API Integration
-  [ ] VRage Moderation
-    [ ] Banned players list
-    [ ] Unban players
-  [ ] Create a new save
-  [ ] Delete planets
-  [ ] Delete asteroids
+- [ ] VRageRemote API Integration
+  - [ ] VRage Moderation
+    - [ ] Banned players list
+    - [ ] Unban players
+  - [ ] Create a new save
+  - [ ] Delete planets
+  - [ ] Delete asteroids
   
-[ ] Other
-  [ ] Automatic Updates
-  [X] Configuratable .env
-  [X] Configuratable style.css
-  [ ] Restart AMPLink server
+- [ ] Other
+  - [X] Configuratable .env
+  - [X] Configuratable style.css
+  - [ ] Automatic Updates
+  - [ ] Restart AMPLink server
   
-[ ] Discord Bot Integration (This is far off, so this might change)
+- [ ] Discord Bot Integration (This is far off, so this might change)
   [ ] Chat monitoring
   [ ] Console monitoring
   [ ] Send server commands through discord bot
