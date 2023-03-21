@@ -84,6 +84,19 @@ But on the other hand, User B, which is a superuser can:
  
 Clearly everything isnt added at the moment, but this is what I plan to add.<br>
 
+## Installation
+AMPLink relies on a MySQL database in order to function, and store the data nessesary for the users system. Obviously, because this is important, if the MySQL server and/or database is not found or running, AMPLink will throw a fatal error and not start up.
+
+Step 1: Install XAMPP (easiest option) or WAMPServer (advanced). 
+I will be going over how to install it using XAMPP.
+
+Step 2: Once XAMPP is installed, start/install the Apache and MySQL services. This is how it should look:
+![XAMPP](https://cdn.discordapp.com/attachments/617491056652582953/1087703768675655730/IMG_7248.png)
+
+Step 3: Open phpMyAdmin by either navigating to http://localhost/phpmyadmin/ OR pressing "Admin" button by the MySQL section for XAMPP.
+
+Step 4: Create the database. 
+
 ## Compatibility
 AMPLink can be ran from any box. For instance: AMPLink can run on box 123.456.789:5000 but the server is on 888.888.888:27016.
 
