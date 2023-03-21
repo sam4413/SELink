@@ -115,14 +115,14 @@ Step 7: Go back to where you extracted the AMPLink folder and open the .env file
 Step 8: Find the config on where it says "DATABASE = amplink" If you have created a database with a different name, you will need to change the name accordingly. If your database has a "PASSWORD =  ", you can fill it here. If not, leave it empty. If any other setting applies to the database, change the config accordingly there as well. Otherwise, you are good to go.
 ![AMP2](https://cdn.discordapp.com/attachments/617491056652582953/1087711506352848937/IMG_7258.png)
 
-Step 9: You have successfully linked your MySQL database to AMPLink. However, if you boot up AMPLink, you will still be greated with another fatal error: this time with a 401 Unauthorized Error. This is because TorchRemote, the torch plugin which allows AMP to function needs the bearer token. To retrieve the bearer token, either navigate to the TorchRemote.cfg file, or go to "Plugins" then "TorchRemote" in your server window. After which, you can copy the "Security Token" and paste it into the "TORCHREMOTE_TOKEN = YOURTOKENHERE= " configuration string (replacing the YOUR TOKEN HERE with the TorchRemote security token from the Torch Instance.
+Step 9: You have successfully linked your MySQL database to AMPLink. However, if you boot up AMPLink, you will still be greated with another fatal error: this time with a 401 Unauthorized Error. This is because TorchRemote, the torch plugin which allows AMP to function needs the bearer token. To retrieve the bearer token, either navigate to the TorchRemote.cfg file, or go to "Plugins" then "TorchRemote" in your server window. After which, you can copy the "Security Token" and paste it into the "TORCHREMOTE_TOKEN = YOURTOKENHERE= " configuration string (replacing the YOUR TOKEN HERE with the TorchRemote security token from the Torch Instance.<br>
 <b>Security Warning: Do NOT share your TorchRemote Security Token with ANYONE! If an attacker gains access to the token, they can easily remotely control your server without your knowledge! You can always go into the TorchRemote.cfg file to change said token to any other value, and is recommended to do that every 1-2 months, just as a extra precaution, especially for larger servers and communities.</b>
 ![AMP3](https://cdn.discordapp.com/attachments/617491056652582953/1087715895310286908/IMG_7259.png)
 
 Step 10: Now that you have linked up your TorchRemote token, you can now start linking up your TorchRemote API Address. This is usually set to 8080, and listener to Http.Sys. However, setting the listener to "Internal" will prevent crashes from occurring from the Torch Server. It is also recommended to change the port to something different for instance, 8000. Here is the recommended settings example:
 ![AMP4](https://cdn.discordapp.com/attachments/617491056652582953/1087720608428732526/IMG_7262.png)
 
-Step 11: If your running AMPLink from the same box as the server, you would need to put in http://localhost:8080, not your box address. It is usually easier and more secure to keep AMP Running on the same box, as you don't have to port forward the API, preventing attackers from trying to attack the server.
+Step 11: If your running AMPLink from the same box as the server, you would need to put in http://localhost:<your-torchremote-port>, not your box address. It is usually easier and more secure to keep AMP Running on the same box, as you don't have to port forward the API, preventing attackers from trying to attack the server.
 TIP: If your running AMPLink from a separate server box from the server, you will need to make sure that the address is set to <b>the server's ip address+TorchRemote port.</b> For example: http://123.456.789.0:8000 as well has having the API port forwarded.
 You can enter your address into the "TORCHREMOTE_ADDRESS = " Likewise, enter the same address into the "TORCHREMOTE_WEBSOCKET = " configuration string, but instead of having http://<yourip:port> it is ws://<yourip:port> 
 ![AMP5](https://cdn.discordapp.com/attachments/617491056652582953/1087720608160301056/IMG_7261.png)
@@ -132,9 +132,9 @@ You are almost done with setting up AMPLink! You just need to edit a few more se
 Step 12: Go back into the configuration file, and find the "AMP_PORT = 6689" setting. This determines what port AMP is running off of, and what port should be forwarded as well. Edit this if you want to change the port on AMPLink.
 
 Step 13: Start the AMP.bat file. You should see a message saying that "[INFO] AMPLink started on port 6687 (or whatever port you set it to)
-If you don't encounter any issues, Congratulations! AMP is running. Navigate to Your box address:the AMPPort to access it. You will then be greeted by the login screen. The premade root users info is 
-Username: root 
-Password: 123
+If you don't encounter any issues, Congratulations! AMP is running.<br> Navigate to Your box address:the AMPPort to access it. You will then be greeted by the login screen. The premade root users info is 
+<br>Username: root<br>
+Password: 123<br>
 <b>It is recommended that you go into the program and create a new username with a stronger password and username. </b>
 
 
