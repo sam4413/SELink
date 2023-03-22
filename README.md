@@ -132,7 +132,7 @@ You are almost done with setting up AMPLink! You just need to edit a few more se
 Step 12: Go back into the configuration file, and find the "AMP_PORT = 6689" setting. This determines what port AMP is running off of, and what port should be forwarded as well. Edit this if you want to change the port on AMPLink.
 
 Step 13: Start the AMP.bat file. You should see a message saying that "[INFO] AMPLink started on port 6687 (or whatever port you set it to)
-If you don't encounter any issues, Congratulations! AMP is running.<br> Navigate to Your box address:the AMPPort to access it. You will then be greeted by the login screen. The premade root users info is 
+If you don't encounter any issues, Congratulations! AMP is running.<br> Navigate to Your box address:the AMPPort to access it. (Make sure the AMPLink Port is Forwarded!) You will then be greeted by the login screen. The premade root users info is 
 <br>Username: root<br>
 Password: 123<br>
 <b>It is recommended that you go into the program and create a new username with a stronger password and username. </b>
