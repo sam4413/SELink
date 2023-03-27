@@ -19,7 +19,8 @@
   - [X] Send Messages through Panel
   - [ ] Entity list
   - [ ] Delete a grid
-  
+  - [ ] Banned players list
+  - [ ] Unban players
 - [X] Server
   - [X] Console monitoring
   - [X] Start, restart, and stop server
@@ -38,10 +39,6 @@
   - [X] Login page
   
 - [ ] VRageRemote API Integration
-  - [ ] VRage Moderation
-    - [ ] Banned players list
-    - [ ] Unban players
-  - [ ] Create a new save
   - [ ] Delete planets
   - [ ] Delete asteroids
   
