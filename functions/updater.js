@@ -71,7 +71,8 @@ async function updateRepository() {
   }
 }
 if (process.env.AUTOMATIC_UPDATES == true) {
-  updateRepository()
+  //updateRepository()
+  notify.notify(2, "Skipping (its on) auto-update system.")
 } else {
   notify.notify(2, "Skipping auto-update system.")
 }

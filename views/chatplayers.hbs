@@ -7,7 +7,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-
+<iframe name="dummy" style="display:none;"></iframe>
 <div class="sidenav">
   <img src="resources/images/branding.png" alt="branding" width="200" height="80">
   <a href="/">Home</a>
@@ -27,11 +27,38 @@
 		<div class="col-xl-6" name="copyme" style=""><div class="console" id="scroller"><span id="variable">{{variable}}</span></div>
     
     <div class="callout-inverted">
-    <form action="/postMessage" method="POST" style="width: 100%">
+    <form action="/postMessage" method="POST" style="width: 100%" target="dummy">
       <label for="string" class="form-label">Actions:</label><br>
-      <input type="text" class="form-control" id="command" name="command"><br><br>
-      <button type="submit" class="btn btn-success" style="float:left; margin-right: 10px; margin-top: -40px;">Send Message</button>
+      <input type="text" class="form-control" id="command" name="command" required><br><br>
+      <button type="submit" class="btn btn-success" id="liveToastBtn" style="float:left; margin-right: 10px; margin-top: -40px;">Send Message</button>
     </form>
+    <!--Toast-->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <img src="./resources/images/configurator/check.png" class="rounded me-2" alt="sent">
+          <strong class="me-auto">Action sent.</strong>
+          <small>Now</small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          Message has been sent to server.
+        </div>
+      </div>
+    </div>
+    <script>
+    const toastTrigger = document.getElementById('liveToastBtn')
+    const toastLiveExample = document.getElementById('liveToast')
+
+    if (toastTrigger) {
+      const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+      toastTrigger.addEventListener('click', () => {
+        toastBootstrap.show()
+      })
+    }
+    </script>
+    <!--End Toast-->
+
     </div>
 
     </div>
@@ -55,6 +82,12 @@
   <div class="col-xl-5 callout-info"><strong>Current Connected Players</strong>
     <hr>
     <div id="players">Please wait, retrieving info...</div>
+    0 = Normal<br>
+    1 = Scripter<br>
+    2 = Observer<br>
+    3 = Space Master<br>
+    4 = Administrator<br>
+    5 = Operator (Owner)
   </div>
 </div>
 <div class="row">
@@ -98,6 +131,10 @@
 
   setInterval(updateVariable2, 1000);
 </script>
+
+
+
+
 
 
 </main>

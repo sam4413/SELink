@@ -18,6 +18,7 @@ const WebSocket = require('ws')
 var jp = require('jsonpath');
 var JSONbig = require('json-bigint');
 var sqlEscape = require('sql-escape');
+var randomstring = require("randomstring");
 
 //Config
 require('dotenv').config()
@@ -90,10 +91,15 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 
 //Randomize some letters to make key
-var randomLetters = Math.random(30);
-//console.log(randomLetters)
+var token = randomstring.generate();
+
+if (process.env.USE_AMP_TOKEN = true) {
+  notify.notify(2,"USE_AMP_TOKEN = true")
+  var token = process.env.AMP_SESSION_TOKEN;
+}
+//notify.notify(3,token)
 app.use(session({
-  secret: `41vP*5${randomLetters}`,
+  secret: token,
   resave: false,
   saveUninitialized: true,
 }));
@@ -103,92 +109,7 @@ const limiter = RateLimit({
     max: 5, // limit each IP to 5 requests per windowMs
     delayMs: 0, // disable delaying - full speed until the max limit is reached
     message: `
-    <!doctype html>
-    <html>
-    <head>
-    <meta charset="utf-8">
-    <title>AMPLink Control Panel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <link href="style.css" rel="stylesheet" type="text/css">
-    <style>
-  body {
-      text-align: center;
-      overflow-y: hidden;
-      margin: 0px;
-  }
-  main {
-      margin: 0px;
-  }
-  .aligntocenter {
-      text-align: left;
-      width: 50vw;
-  }
-  .center {
-      text-align: center;
-  }
-  
-  
-  @media (max-width:600px){
-  .aligntocenter {
-      width: 75vw;
-  }
-  }
-  @media (prefers-color-scheme: dark) {
-      .bg-adapt {
-          background-color: #333333;
-          
-      }
-      .bg-adapt-txt {
-          background-color: #4e4e4e;
-          border: none;
-      }
-  }
-  @media (prefers-color-scheme: light) {
-      .bg-adapt {
-          background-color: #EEEEEE;
-          color: #000000;
-      }
-      .bg-adapt-txt {
-          background-color: #ffffff;
-          color: #000000;
-          
-      }
-  }
-  
-  }
-  </style>
-    </head>
-    <body>
-    <main>
-    <div class="container mt-4 aligntocenter">
-    <h1 class="alert center"><b>AMPLink</b></h1>
-        <div class="card bg-adapt">            
-            <div class="card-header center">Login</div>    
-            <div class="card-body">
-                <form action="/login" method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username:</label><br>
-                        <input type="text" class="form-control bg-adapt-txt" disabled>                        
-
-                        <label for="password" class="form-label">Password:</label><br>
-                        <input type="password" class="form-control bg-adapt-txt" disabled>
-                    </div>
-
-                    <button class="btn btn-primary" disabled>Submit</button>
-                    <div style="padding: 3px; float: right; max-width:150px; text-align: center; position: relative; top:10px; z-index:1111;">
-                      <em>Alpha Build v0.06</em>
-                    </div>
-                </form>
-            </div>
-            
-          <div style="margin: 5px;">
-				    <p class="callout-danger">Too many login attempts. Please try again in one minute.</p>
-			    </div>
-        </div>
-    </div>
-    </main>
-    </body>
-    </html>
+    <!doctype html> <html> <head> <meta charset="utf-8"> <title>AMPLink Control Panel</title> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous"> <link href="style.css" rel="stylesheet" type="text/css"> <style>body{text-align: center; overflow-y: hidden; margin: 0px;}main{margin: 0px;}.aligntocenter{text-align: left; width: 50vw;}.center{text-align: center;}@media (max-width:600px){.aligntocenter{width: 75vw;}}@media (prefers-color-scheme: dark){.bg-adapt{background-color: #333333;}.bg-adapt-txt{background-color: #4e4e4e; border: none;}}@media (prefers-color-scheme: light){.bg-adapt{background-color: #EEEEEE; color: #000000;}.bg-adapt-txt{background-color: #ffffff; color: #000000;}}}</style> </head> <body> <main> <div class="container mt-4 aligntocenter"> <h1 class="alert center"><b>AMPLink</b></h1> <div class="card bg-adapt"> <div class="card-header center">Login</div><div class="card-body"> <form action="/login" method="POST"> <div class="mb-3"> <label for="username" class="form-label">Username:</label><br><input type="text" class="form-control bg-adapt-txt" disabled> <label for="password" class="form-label">Password:</label><br><input type="password" class="form-control bg-adapt-txt" disabled> </div><button class="btn btn-primary" disabled>Submit</button> <div style="padding: 3px; float: right; max-width:150px; text-align: center; position: relative; top:10px; z-index:1111;"> <em>AMPLink v0.2-beta Build</em> </div></form> </div><div style="margin: 5px;"> <p class="callout-danger">Too many login attempts. Please try again in one minute.</p></div></div></div></main> </body> </html>
     ` // custom error message
   });
 
@@ -408,7 +329,7 @@ app.get('/logout', (req, res) => {
   app.get('/console/logs', (req, res) => {
     if (req.session.userId) {
       fs.readFile('logs.html', 'utf-8', (err, data) => {
-        if (err) throw notify.notify(3,err);
+        if (err) {notify.notify(3,err);} 
         //console.log(data)
         res.send(data)
       });
@@ -420,7 +341,7 @@ app.get('/logout', (req, res) => {
   app.get('/console/chat', (req, res) => {
     if (req.session.userId) {
       fs.readFile('chat.html', 'utf-8', (err, data) => {
-        if (err) throw notify.notify(3,err);
+        if (err) {notify.notify(3,err);} 
         //console.log(data)
         res.send(data)
       });
@@ -847,9 +768,9 @@ app.get('/users', (req, res) => {
       try {
       //console.log('panel')
       var id = req.params.id;
-        var res = await postBanPlayer.postBanPlayer(id);
+        await postBanPlayer.postBanPlayer(id);
         notify.notify(1, `Player with steam ID of ${id} has been banned.`)
-        res.redirect('/panel')
+        res.redirect('/players');
       } catch (e) {
         notify.notify(3, e)
       }
@@ -863,9 +784,9 @@ app.get('/users', (req, res) => {
       try {
         //console.log('panel')
         var id = req.params.id;
-          var res = await postKickPlayer.postKickPlayer(id);
+          await postKickPlayer.postKickPlayer(id);
           notify.notify(1, `Player with steam ID of ${id} has been kicked.`)
-          res.redirect('/panel')
+          res.redirect('/players');
         } catch (e) {
           notify.notify(3, e)
         }
@@ -879,14 +800,13 @@ app.get('/users', (req, res) => {
   app.post('/panel/players/promote/:id', async (req, res) => {
     if (req.session.userId) {
       try {
-        //console.log('panel')
         var id = req.params.id;
-          var res = await postPromotePlayer.postPromotePlayer(id);
-          notify.notify(1, `Player with steam ID of ${id} has been promoted.`)
-          res.redirect('/panel')
-        } catch (e) {
-           notify.notify(3, e)
-        }
+        await postPromotePlayer.postPromotePlayer(id);
+        notify.notify(1, `Player with steam ID of ${id} has been promoted.`)
+        res.redirect('/players');
+      } catch (e) {
+        notify.notify(3, e)
+      }
     } else {
       res.render('login.hbs');
     }
@@ -896,9 +816,9 @@ app.get('/users', (req, res) => {
       try {
         //console.log('panel')
         var id = req.params.id;
-          var res = await postDemotePlayer.postDemotePlayer(id);
+          await postDemotePlayer.postDemotePlayer(id);
           notify.notify(1, `Player with steam ID of ${id} has been demoted.`)
-          res.redirect('/panel')
+          res.redirect('/players');
         } catch (e) {
           notify.notify(3, e)
         }
@@ -911,9 +831,9 @@ app.get('/users', (req, res) => {
       try {
         //console.log('panel')
         var id = req.params.id;
-          var res = await postDisconnectPlayer.postDisconnectPlayer(id);
+          await postDisconnectPlayer.postDisconnectPlayer(id);
           notify.notify(1, `Player with steam ID of ${id} has been disconnected.`)
-          res.redirect('/panel')
+          res.redirect('/players');
         } catch (e) {
           notify.notify(3, e)
         }
@@ -921,6 +841,8 @@ app.get('/users', (req, res) => {
       res.render('login.hbs');
     }
   });
+
+
 
   app.post('/postMessage', async (req, res) => {
     if (req.session.userId) {
@@ -948,6 +870,17 @@ app.get('/users', (req, res) => {
   SERVER CONFIGURATION EDITOR
   ============================*/
 
+  //Redirect Securely
+  app.post('/postAMPCFG', (req, res) => {
+    if (req.session.userId) {
+      //console.dir("InvokeCommand:", string)
+      //postStop.postStop('!restart 1');
+
+      res.redirect('/ampcfg');
+    } else {
+      res.render('login.hbs');
+    }
+  });
 
   //Redirect Securely
   app.post('/postConfigurator', (req, res) => {
@@ -1409,8 +1342,32 @@ app.post('/configurator/plugins/torchConfig/submit', (req, res) => {
 
 /*=============================
            AMP LINK
-        PLUGIN MANAGEMENT
+        PROGRAM CONFIG
   ============================*/
+
+  app.get('/ampcfg', (req, res) => {
+      if (!req.session.userId) {
+        res.render('login.hbs');
+        return;
+      }
+    
+      const userId = req.session.userId;
+    
+      // Check if the user is a superuser
+      const query = `SELECT is_superuser FROM users WHERE id = ?`;
+      connection.query(query, [userId], async (error, results) => {
+        if (error) {
+          notify.notify(3, `MySQL query error:', ${error}`)
+          res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+        } else if (results[0].is_superuser === 1) {
+          //Result
+          res.render('ampcfg.hbs')
+            } else {
+              res.render('login.hbs');
+            }
+          });
+        }
+      );
 
 
 //run it
