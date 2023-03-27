@@ -31,6 +31,7 @@
     "moment": "^2.29.4",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.20",
+    "randomstring": "^1.2.3",
     "reconnecting-websocket": "^4.4.0",
     "request": "^2.88.2",
     "socket.io": "^4.5.4",

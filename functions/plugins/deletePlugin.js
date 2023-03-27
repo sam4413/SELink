@@ -22,14 +22,11 @@ exports.deletePlugin = async function (string) {
       return;
     }
 
-    if (response.statusCode == 401) {
-      console.log("[E008] Error accessing remote data.")
-    } else if (response.statusCode == 400) {
-      console.log("[E011] Error on server end.")
-    } else if (response.statusCode != 200){
-      console.log(`[E009] Error accessing remote data with a status code of ${response.statusCode}.`)
+    if (response.statusCode != 200){
+      resolve(response.statusCode);
+    } else {
+      resolve(response.statusCode);
     }
-    resolve(response.statusCode);
   });
 });
 };
