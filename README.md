@@ -147,4 +147,4 @@ Message sam44#9932 on discord if you have any questions.
 <b>AMPLink is currently in BETA, and several features don't work, or are unstable! </b>
 
 <br>Main (Stable branch): AMPLink v0.1-beta Build
-<br>Staging (Unstable branch): AMPLink v0.1-beta Build
+<br>Staging (Unstable branch): AMPLink v0.2-beta Build
