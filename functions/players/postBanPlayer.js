@@ -32,10 +32,11 @@ exports.postBanPlayer = async function (string) {
     });
 });
 };
-/* // For debugging
+/*// For debugging
 var postBanPlayer = require(__dirname + '/postBanPlayer.js');
 
 (async () => {
-  console.log(await postBanPlayer.postBanPlayer());
+  console.log(await postBanPlayer.postBanPlayer('your steam id here'));
 })();
-*/ 
+
+//*/

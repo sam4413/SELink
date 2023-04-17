@@ -38,9 +38,9 @@
     var logger = parsed.logger;
 
     fs.appendFile("logs.html", `<b>${date} ${logger}:</b> ${msg}<br>` , (err) => {
-      if (consoleconf == true) {
+      if (consoleconf == 'true') {
         notify.notify(1, `${time} ${logger}: ${msg}`);
-      } else if (consoleconf == false) {
+      } else if (consoleconf == 'false') {
         if (err) throw err; 
       }
       });

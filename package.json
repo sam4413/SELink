@@ -31,6 +31,7 @@
     "moment": "^2.29.4",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.20",
+    "path": "^0.12.7",
     "randomstring": "^1.2.3",
     "reconnecting-websocket": "^4.4.0",
     "request": "^2.88.2",
@@ -38,5 +39,8 @@
     "sql-escape": "^1.0.1",
     "winston": "^3.8.2",
     "ws": "^7.5.0"
+  },
+  "devDependencies": {
+    "electron": "^23.2.1"
   }
 }

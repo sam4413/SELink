@@ -28,6 +28,7 @@ exports.getAllBannedPlayers = async function () {
   });
 });
 };
+
 /*
 // For debugging
 var getAllBannedPlayers = require(__dirname + '/getAllBannedPlayers.js');

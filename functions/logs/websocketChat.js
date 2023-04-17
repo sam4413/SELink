@@ -41,17 +41,17 @@
     //notify.notify(1, wsdata)
     if (channel == 1) {
       fs.appendFile("chat.html", `<b style="color:#ff9100">${date}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${authorname} (${logger}):</b> ${msg}<br>` , (err) => {
-        if (consoleconf == true) {
+        if (consoleconf == 'true') {
           notify.notify(1, `${time} ${logger}: ${msg}`);
-        } else if (consoleconf == false) {
+        } else if (consoleconf == 'false') {
           if (err) throw err; 
         }
         });
     } else {
       fs.appendFile("chat.html", `<b>${date}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${authorname} (${logger}):</b> ${msg}<br>` , (err) => {
-        if (consoleconf == true) {
+        if (consoleconf == 'true') {
           notify.notify(1, `${time} ${logger}: ${msg}`);
-        } else if (consoleconf == false) {
+        } else if (consoleconf == 'false') {
           if (err) throw err; 
         }
         });

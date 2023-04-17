@@ -4,6 +4,9 @@
 // Welcome to the main file. It is not recommended to edit any values here, 
 // unless you know what you are doing. 
 
+// How AMPLink works is that there are a bunch of seperate files, each controlling a certain action, on which the Main file
+// Acts like the "glue" to bring it all together.
+
 //Modules
 const express = require('express');
 const mysql = require('mysql');
@@ -19,6 +22,7 @@ var jp = require('jsonpath');
 var JSONbig = require('json-bigint');
 var sqlEscape = require('sql-escape');
 var randomstring = require("randomstring");
+
 
 //Config
 require('dotenv').config()
@@ -46,11 +50,13 @@ const postSettings = require('./functions/server/postSettings.js');
 const postStart = require('./functions/server/postStart.js');
 const postStop = require('./functions/server/postStop.js');
 const getAllPlayers = require('./functions/players/getAllPlayers.js');
+const getAllBannedPlayers = require('./functions/players/getAllBannedPlayers.js')
 const postBanPlayer = require('./functions/players/postBanPlayer.js');
 const postKickPlayer = require('./functions/players/postKickPlayer.js');
 const postPromotePlayer = require('./functions/players/postPromotePlayer.js');
 const postDemotePlayer = require('./functions/players/postDemotePlayer.js');
 const postDisconnectPlayer = require('./functions/players/postDisconnectPlayer.js');
+const postUnbanPlayer = require('./functions/players/postUnbanPlayer.js');
 //settings
 const getTorchValues = require("./functions/settings/getTorchValues.js")
 const getTorchSchema = require("./functions/settings/getTorchSchema.js")
@@ -63,6 +69,9 @@ const { json } = require('stream/consumers');
 const notify = require("./functions/notify.js");
 const getInstalledPlugins = require('./functions/getInstalledPlugins.js');
 const getRootKeys = require('./functions/getRootKeys.js');
+//steam
+const getSteamPlayerSummaries = require('./functions/steam/getSteamPlayerSummaries.js');
+
 
 require("./functions/updater.js")
 //updater.update()
@@ -93,9 +102,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //Randomize some letters to make key
 var token = randomstring.generate();
 
-if (process.env.USE_AMP_TOKEN = true) {
+if (process.env.USE_AMP_TOKEN == 'true') {
   notify.notify(2,"USE_AMP_TOKEN = true")
   var token = process.env.AMP_SESSION_TOKEN;
+} else {
+
 }
 //notify.notify(3,token)
 app.use(session({
@@ -113,23 +124,25 @@ const limiter = RateLimit({
     ` // custom error message
   });
 
-//initialize the css
+  const embeddedLimiter = RateLimit({
+    windowMs: 60 * 1000, //Limit length 
+    max: process.env.AMP_EMBEDDED_RATELIMIT, // limit each IP to 5 requests per windowMs
+    delayMs: 0, // disable delaying - full speed until the max limit is reached
+    message: `
+    <p class="callout-danger col-md-11">Error: You are sending too many requests.</p>
+    ` // custom error message
+  });
+  const consoleLimiter = RateLimit({
+    windowMs: 60 * 1000, //Limit length 
+    max: process.env.AMP_CLIENT_RATELIMIT, // limit each IP to 120 requests. This equates to 2 AMPLink instances per IP.
+    delayMs: 0, // disable delaying - full speed until the max limit is reached
+    message: `
+    <p class="callout-danger col-md-11">Error: You are sending too many requests.</p>
+    ` // custom error message
+  });
+//initialize Express.JS
 app.use(express.static(__dirname + '/views'));
 
-
-//make the functions
-function getDB() {
-    const query = `SELECT * FROM users`;
-    connection.query(query, (error, results) => {
-        if (error) {
-        notify.notify(4, `MySQL query error:', ${error} \n\nEnsure that the MySQL Database is running, and you have proper access to the database.`)
-        //res.render('error.hbs', {message: 'A 500 error has occured. Please try again.',error});
-        } else {
-            var data = JSON.parse(JSON.stringify(results));
-            return data
-        }
-    });
-}
 
 
 //Set view engine
@@ -247,8 +260,9 @@ app.post('/login', limiter, escapeMiddleware, (req, res) => {
   });
 
   
-app.post('/register', escapeMiddleware, (req, res) => {
+app.post('/register', embeddedLimiter, escapeMiddleware, (req, res) => {
     // Ensure passwords match
+    if (req.session.userId) {
         const { username, password, confirmPassword } = req.body;
         if (password !== confirmPassword) {
         res.render('register.hbs', {message: 'Ensure the passwords match, and try again.'})
@@ -287,7 +301,9 @@ app.post('/register', escapeMiddleware, (req, res) => {
             }
         });
         }
-    //}
+      } else {
+        res.render('login.hbs');
+    }
 });
 
 app.get('/logout', (req, res) => {
@@ -326,7 +342,7 @@ app.get('/logout', (req, res) => {
     }
   });
 
-  app.get('/console/logs', (req, res) => {
+  app.get('/console/logs', consoleLimiter, (req, res) => {
     if (req.session.userId) {
       fs.readFile('logs.html', 'utf-8', (err, data) => {
         if (err) {notify.notify(3,err);} 
@@ -338,7 +354,7 @@ app.get('/logout', (req, res) => {
     }
   });
 
-  app.get('/console/chat', (req, res) => {
+  app.get('/console/chat', consoleLimiter, (req, res) => {
     if (req.session.userId) {
       fs.readFile('chat.html', 'utf-8', (err, data) => {
         if (err) {notify.notify(3,err);} 
@@ -350,7 +366,7 @@ app.get('/logout', (req, res) => {
     }
   });
 
-  app.get('/server/status', async (req, res) => {
+  app.get('/server/status', consoleLimiter, async (req, res) => {
     if (req.session.userId) {
       try {
       //console.log('panel')
@@ -434,7 +450,7 @@ app.get('/users', (req, res) => {
   });
 
 
-  app.post('/users/delete/:id', (req, res) => {
+  app.post('/users/delete/:id', embeddedLimiter, (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -497,7 +513,7 @@ app.get('/users', (req, res) => {
 
   //PromoteUser
 
-  app.post('/users/promote/:id', (req, res) => {
+  app.post('/users/promote/:id', embeddedLimiter, (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -560,7 +576,7 @@ app.get('/users', (req, res) => {
   //demoteuser
 
 
-  app.post('/users/demote/:id', (req, res) => {
+  app.post('/users/demote/:id', embeddedLimiter, (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -663,7 +679,7 @@ app.get('/users', (req, res) => {
   app.post('/serverStop', async (req, res) => {
     if (req.session.userId) {
       var status = (await postStop.postStop());
-      if (status == 400) {
+      if (status != 400) {
         //res.redirect('/console');
         res.render('console.hbs', {errormsg: 'Error: Server has already stopped.'});
       } else {
@@ -726,12 +742,13 @@ app.get('/users', (req, res) => {
     }
   });
 
-  app.get('/players', async (req, res) => {
+
+  app.get('/banned', async (req, res) => {
     if (req.session.userId) {
       try {
       //console.log('panel')
 
-        res.render('chatplayers.hbs');
+        res.render('bannedplayers.hbs');
         } catch (e) {
         notify.notify(3, e)
       }
@@ -739,8 +756,34 @@ app.get('/users', (req, res) => {
       res.render('login.hbs');
     }
   });
+  app.get('/players/banned', consoleLimiter, async (req, res) => {
+    if (req.session.userId) {
+      try {
+      //console.log('panel')
+        var players = await getAllBannedPlayers.getAllBannedPlayers();
+        var playernames = await getSteamPlayerSummaries.getSteamPlayerSummaries(process.env.STEAM_API_TOKEN, players);
+        
+        var playernames2 = JSON.parse(playernames)
+        var playernames3 = jp.query(playernames2, '$.response.players.*')
+        if (players == 500) {
+          res.send(`<h3>Server is offline. Please start it in order to get live player stats.</h3>`);
+        } else {
+        var parsed2 = JSONbig.parse(players)
+        //console.log(parsed)
+        var playersList = jp.query(parsed2, '$.*')
 
-  app.get('/players/list', async (req, res) => {
+        //console.log(playernames)
+        res.render('banned.hbs', {play: playersList, names: playernames3});
+        }
+      } catch (e) {
+        notify.notify(3, e)
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.get('/players/list', consoleLimiter, async (req, res) => {
     if (req.session.userId) {
       try {
       //console.log('panel')
@@ -773,6 +816,24 @@ app.get('/users', (req, res) => {
         res.redirect('/players');
       } catch (e) {
         notify.notify(3, e)
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/panel/players/:id/unban', async (req, res) => {
+    if (req.session.userId) {
+      try {
+      //console.log('panel')
+      var id = req.params.id;
+        await postUnbanPlayer.postUnbanPlayer(id);
+        notify.notify(1, `Player with steam ID of ${id} has been unbanned.`)
+        res.redirect('/banned');
+        //res.render('bannedplayers.hbs', {output: `Player with steam ID of ${id} has been unbanned`});
+      } catch (e) {
+        notify.notify(3, e)
+        res.render('bannedplayers.hbs', {output: e});
       }
     } else {
       res.render('login.hbs');
@@ -841,7 +902,22 @@ app.get('/users', (req, res) => {
       res.render('login.hbs');
     }
   });
-
+  app.post('/manualban', async (req, res) => {
+    if (req.session.userId) {
+      const { banuser } = req.body;
+      try {
+        //console.log('panel')
+        await postBanPlayer.postBanPlayer(banuser);
+          notify.notify(1, `Player with steam ID of ${banuser} has been banned.`)
+          res.render('bannedplayers.hbs', {output: `Player with steam ID of ${banuser} has been banned`});
+        } catch (e) {
+          notify.notify(3, e)
+          res.render('bannedplayers.hbs', {output: e});
+        }
+    } else {
+      res.render('login.hbs');
+    }
+  });
 
 
   app.post('/postMessage', async (req, res) => {
@@ -855,7 +931,7 @@ app.get('/users', (req, res) => {
           res.render('chatplayers.hbs', {errormsg: 'Error: Server is offline.'});
         } else {
         //res.redirect('/console');
-        res.render('chatplayers.hbs', {errormsg: 'Sent message server.'});
+        res.render('chatplayers.hbs', {errormsg: 'Sent message to server.'});
         }
         } catch (e) {
           notify.notify(3, e)
@@ -1090,7 +1166,7 @@ app.get('/pluginsSearch', (req, res) => {
 
 
 
-      app.get('/configurator/plugins/torchConfig', (req, res) => {
+      app.get('/configurator/plugins/torchConfig', consoleLimiter, (req, res) => {
       if (!req.session.userId) {
         res.render('login.hbs');
         return;
@@ -1128,7 +1204,7 @@ app.get('/pluginsSearch', (req, res) => {
       );
 
       
-      app.get('/configurator/plugins/installed', (req, res) => {
+      app.get('/configurator/plugins/installed', consoleLimiter, (req, res) => {
       if (!req.session.userId) {
         res.render('login.hbs');
         return;
@@ -1236,7 +1312,7 @@ app.post('/configurator/plugins/get/:id/post', (req, res) => {
   );
 
 
-  app.get('/configurator/plugins/get/display', (req, res) => {
+  app.get('/configurator/plugins/get/display', consoleLimiter, (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;

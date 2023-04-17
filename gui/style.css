@@ -1,0 +1,264 @@
+@charset "utf-8";
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css");
+/*
+
+AMPLink External Stylesheet
+The majority of AMPLink's styling is handled through Bootstrap 5.1.2, and 5.0.2 (on certain pages).
+However background colors, and the sidebar are managed through this stylesheet.
+
+Recommended colors:
+Set background-color to #222222 for dark mode and #ffffff for color
+and set background-color to #ffffff for light mode and #000000 for color
+*/
+
+:root {
+  /*Background Colors*/
+  --main-bg-color: #ffffff;
+  --main-text-color: #222222;
+
+
+  /*Dark Mode Colors*/
+  --main-bg-color-dark: #222222;
+  --main-text-color-dark: #ffffff;
+
+
+  /*Nav Menu Colors*/
+  --nav-menu-bg-color: #303030;
+  --nav-menu-bg-color-2: #404040;
+
+  /*Accent Colors*/
+  --accent-color: #303030;
+}
+
+
+
+@media (prefers-color-scheme: dark) {
+  body {
+    margin: 0;
+    background-color: var(--main-bg-color-dark);
+    color: var(--main-text-color-dark);
+  }
+  .content {
+    margin-left: 200px;
+    padding-left: 20px;
+    margin-right: 0%;
+    overflow-x: hidden;
+    background-color: var(--main-bg-color-dark);
+    color: var(--main-text-color-dark);
+  }
+  main {
+    background-color: var(--main-bg-color-dark);
+    color: var(--main-text-color-dark);
+    height: 100vh;  
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    margin: 0;
+    background-color: var(--main-bg-color);
+  }
+  .content {
+    margin-left: 200px;
+    padding-left: 20px;
+    margin-right: 0%;
+    overflow-x: hidden;
+    background-color: var(--main-bg-color);
+  }
+  main {
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
+    height: 100vh;  
+  }
+}
+
+
+
+
+
+
+
+
+/*===== Advanced Users only =====*/
+/*===== Advanced Users only =====*/
+/*===== Advanced Users only =====*/
+* {
+  box-sizing: border-box;
+  
+}
+
+legend {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 3px 6px;
+}
+
+.fieldborders {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+body {
+  margin: 0;
+}
+
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: var(--nav-menu-bg-color);
+  overflow-x: hidden;
+ color: #294152;
+}
+
+.sidenav a {
+  color: white;
+  padding: 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.sidenav a:hover {
+  background-color: #ddd;
+  color: #294152;
+}
+
+.content {
+  margin-left: 200px;
+  padding-left: 20px;
+	margin-right: 0%;
+	overflow-x: hidden;
+}
+.sidebarAccentColor {
+  background-color: var(--accent-color);
+}
+main {
+  height: 100vh;  
+}
+
+.warning {
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+	margin: 25px 0;
+	padding: 25px;
+	background-color: rgba(255,155,0,0.25);
+}
+
+.critical {
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+	margin: 25px 0;
+	padding: 25px;
+	background-color: rgba(255,0,0,0.25);
+}
+
+.info {
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+	margin: 25px 0;
+	padding: 25px;
+	background-color: rgba(0,0,255,0.25);
+}
+.subtitle {
+	font-size: 40px;
+	font-weight: 900;
+}
+.subtitle2 {
+	font-size: 20px;
+	font-weight: 900;
+}
+
+.brightercolor {
+  background-color: var(--nav-menu-bg-color-2);
+  color: #294152;
+  position: relative;
+  bottom: 0px;
+}
+
+.console {
+	background-color: #000000;
+	color: #ffffff;
+	padding: 5px;
+	position: relative;
+	height: 500px;
+  overflow-y: scroll;
+}
+
+.setUserWidth {
+  max-width: 1000px;
+}
+
+.setConfigHeight {
+  min-height: 75vh;
+  overflow-y: scroll;
+  position: static;
+}
+
+/*Callouts aka Embed messages on discord*/
+
+.callout-primary {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #0d6efd;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.callout-secondary {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #6c757d;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.callout-success {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #198754;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.callout-warning {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #ffc107;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+
+.callout-danger {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #dc3545;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.callout-info {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #0dcaf0;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+.callout-inverted {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
+/*=================*/
+
+#scroller * {
+  overflow-anchor: none;
+}
+
+#anchor {
+  overflow-anchor: auto;
+  height: 1px;
+}

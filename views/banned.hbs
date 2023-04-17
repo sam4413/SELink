@@ -1,0 +1,23 @@
+<table class="table text-center" style="border: none;" id="myTable">
+  <tr style="background-color: rgba(0, 0, 0, 0.2);">
+    <th class="col text-secondary">Username</th>
+    <th class="col text-secondary">Actions</th>
+  </tr>
+
+  {{#each names}}
+  <tr>
+    <td scope="row text-primary"><span class="text-primary" style="padding-top:15px;"><strong>{{this.personaname}}</strong><br>{{this.steamid}}</span></td>
+    <td scope="row text-primary">
+      <span><form class="btn btn-danger" action="/panel/players/{{this.steamid}}/unban" method="POST">
+          <button style="padding: 0px;" type="submit" value="Unban User" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to unban this user?');">Unban User</button></form>
+      </span>
+    </td>
+  </tr>
+  {{/each}}
+
+  <tr>
+
+  </tr>
+</table>
+
+

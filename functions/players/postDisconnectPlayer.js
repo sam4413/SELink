@@ -29,10 +29,11 @@ exports.postDisconnectPlayer = async function (string) {
   });
 });
 };
-/* // For debugging
+/*
+// For debugging
 var postDisconnectPlayer = require(__dirname + '/postDisconnectPlayer.js');
 
 (async () => {
   console.log(await postDisconnectPlayer.postDisconnectPlayer());
 })();
-*/ 
+*/

@@ -1,5 +1,6 @@
 const process = require('process');
 const chalk = require('chalk');
+const fs = require('fs');
 require('dotenv').config();
 
 exports.notify = async function (level, content) {
