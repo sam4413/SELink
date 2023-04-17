@@ -19,8 +19,8 @@
   - [X] Send Messages through Panel
   - [ ] Entity list
   - [ ] Delete a grid
-  - [ ] Banned players list
-  - [ ] Unban players
+  - [ ] Banned players list (Working on Unstable Branch)
+  - [ ] Unban players (Working on Unstable Branch)
 - [X] Server
   - [X] Console monitoring
   - [X] Start, restart, and stop server
