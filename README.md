@@ -57,7 +57,7 @@
 ## NEW: Staging branch:
  - I have recently added the new staging branch onto AMPLink. Here you can see what the latest new features are. Once all the features from the staging branch are deemed to be stable, and mostly bug free, it will move to the main branch. 
 - Some features im working on are: auto-updates, plugin configuration, and a dedicated Chat/Players page. Keep in mind, however, because it is a staging branch, bugs will be present, as well as missing features. Make a backup of your config and use with caution!
-- Have any more questions? Visit the AMPLink Discord: https://discord.gg/nVxAgZ3P
+- Have any more questions? Visit the AMPLink Discord: https://discord.gg/HDs9QRAmEE
  
  ## Users system:
 
