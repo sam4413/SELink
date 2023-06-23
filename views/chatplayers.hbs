@@ -7,9 +7,9 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-
+<iframe name="dummy" style="display:none;"></iframe>
 <div class="sidenav">
-  <img src="/resources/images/branding.png" alt="branding" width="200" height="80">
+  <img src="resources/images/branding.png" alt="branding" width="200" height="80">
   <a href="/">Home</a>
   <a href="/panel">Server Control Panel&nbsp;</a>
   <a href="/console">Server Console</a>
@@ -21,6 +21,7 @@
 </div>
 <main class="content">
   <h2>Chat &amp; Players Management</h2>
+  <p class="subtitle2">Chat &amp; Players Management</p>
   <!--Container-->
 <div class="row">
 
@@ -30,8 +31,8 @@
     <div class="callout-inverted">
     <form action="/postMessage" method="POST" style="width: 100%">
       <label for="string" class="form-label">Actions:</label><br>
-      <input type="text" class="form-control" id="command" name="command"><br><br>
-      <button type="submit" class="btn btn-success" style="float:left; margin-right: 10px; margin-top: -40px;">Send Message</button>
+      <input type="text" class="form-control" id="command" name="command" required><br><br>
+      <button type="submit" class="btn btn-success" id="liveToastBtn" style="float:left; margin-right: 10px; margin-top: -40px;">Send Message</button>
     </form>
     
     <!--Toast
@@ -81,15 +82,67 @@
     </script>
   </div>-->
 
-  <div class="col-xl-5 callout-info"><strong>Current Connected Players</strong>
+  <div class="col-xl-5 callout-info"><strong>Current Connected Players</strong><br>Filters <i class="bi bi-funnel-fill"></i> | <button class="btn btn-hidden" onclick="sortTableByName()">Sort by Name <i class="bi bi-sort-alpha-down"></i> <button class="btn btn-hidden" onclick="sortTableByStars();">Sort by Level <i class="bi bi-sort-numeric-down-alt"></i></button></button></strong>
     <hr>
     <div id="players">Please wait, retrieving info...</div>
+    <a href="/banned"><button type="submit" class="btn btn-danger">Banned players</button></a>
   </div>
 </div>
 <div class="row">
+</div>
+<script>
+function sortTableByStars() {
+  var table, rows, switching, i, x, y, shouldSwitch;
+  table = document.getElementById("myTable");
+  switching = true;
+  var ascending = table.getAttribute('data-order') === 'asc';
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = parseInt(rows[i].getElementsByTagName("TD")[1].innerHTML);
+      y = parseInt(rows[i + 1].getElementsByTagName("TD")[1].innerHTML);
+      if (ascending ? x > y : x < y) {
+        shouldSwitch = true;
+        break;
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
+  }
+  table.setAttribute('data-order', ascending ? 'desc' : 'asc');
+}
+</script>
+<script>
+function sortTableByName() {
+  var table, rows, switching, i, x, y, shouldSwitch, ascending;
+  table = document.getElementById("myTable");
+  switching = true;
+  ascending = table.getAttribute('data-sort-direction') === 'asc';
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for (i = 1; i < (rows.length - 1); i++) {
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("TD")[0];
+      y = rows[i + 1].getElementsByTagName("TD")[0];
+      if (ascending ? x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase() : x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+        shouldSwitch = true;
+        break;
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
+  }
+  table.setAttribute('data-sort-direction', ascending ? 'desc' : 'asc');
+}
 
-
-
+</script>
 
 </div>
 </div>
@@ -127,6 +180,10 @@
 
   setInterval(updateVariable2, 1000);
 </script>
+
+
+
+
 
 
 </main>

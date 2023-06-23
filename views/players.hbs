@@ -1,11 +1,13 @@
-<table class="table text-center" style="border: none;">
+<table class="table text-center" style="border: none;" id="myTable" data-sort-direction="asc">
   <tr style="background-color: rgba(0, 0, 0, 0.2);">
     <th class="col text-secondary">Username</th>
+    <th class="col text-secondary">Level</th>
     <th class="col text-secondary">Actions</th>
   </tr>
   {{#each play}}
   <tr>
     <td scope="row text-primary"><span class="text-primary" style="padding-top:15px;"><strong>{{this.name}}</strong><br>{{this.clientId}}</span></td>
+    <td scope="row text-primary"><span class="text-primary" style="padding-top:15px;">{{this.promoteLevel}} stars</span></td>
     <td scope="row text-primary">
       <div class="btn-group btn-group-sm" role="group">
         <span><form class="btn btn-primary" action="/panel/players/promote/{{this.clientId}}" method="POST"> 
