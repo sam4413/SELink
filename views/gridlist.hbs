@@ -1,0 +1,44 @@
+  <table class="table text-center" style="border: none;" id="myTable" data-sort-direction="asc">
+    <tr style="background-color: rgba(0, 0, 0, 0.2);">
+      <th class="col text-secondary">Name</th>
+      <th class="col text-secondary">Block Count</th>
+      <th class="col text-secondary">PCU</th>
+      <th class="col text-secondary">Owner ID</th>
+      <th class="col text-secondary">Grid ID</th>
+      <th class="col text-secondary">Actions</th>
+    </tr>
+    <div id="myContainer">
+    {{#each alldata}}
+      <tr>
+        <td scope="row text-primary"><span class="text-primary">{{this.name}}</span></td>
+        <td scope="row text-primary"><span class="text-primary">{{this.blockCount}}</span></td>
+        <td scope="row text-primary"><span class="text-primary">{{this.pcu}}</span></td>
+        <td scope="row text-primary"><span class="text-primary">{{this.biggestOwner}}</span></td>
+        <td scope="row text-primary"><span class="text-primary">{{this.id}}</span></td>
+        <td scope="row text-primary">
+        <span><form class="btn btn-sm btn-danger" action="/grids/delete/{{this.id}}" method="POST">
+            <button style="padding: 0px;" type="submit" value="Delete" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to delete {{this.name}}?');">Delete</button></form>
+        </span></td>
+      </tr>
+    {{/each}}
+    </div>
+  </table>
+
+  <script>
+      // Get the table element
+      const table = document.getElementById('myTable');
+
+      // Get the rows in the table, excluding the header row
+      const rows = Array.from(table.getElementsByTagName('tr')).slice(1);
+
+      // Sort the rows by the 'blockCount' column in descending order
+      rows.sort((a, b) => {
+        const aValue = parseInt(a.cells[1].innerText, 10);
+        const bValue = parseInt(b.cells[1].innerText, 10);
+        return bValue - aValue;
+      });
+
+      // Reattach the sorted rows to the table
+      rows.forEach(row => table.appendChild(row));
+  
+</script>

@@ -5,7 +5,8 @@ const request = require('request');
 require('dotenv').config();
 
 exports.postInvokeCommand = async function (string) {
-  var send = `{"command": "${string}"}`
+  string = JSON.stringify(string)
+  var send = `{"command": ${string} }`
   JSON.parse(send)
   const bearerToken = `${process.env.TORCHREMOTE_TOKEN}`
   const options = {
@@ -37,10 +38,11 @@ exports.postInvokeCommand = async function (string) {
   });
 });
 };
-/* // For debugging
+
+/* For debugging
 var postInvokeCommand = require(__dirname + '/postInvokeCommand.js');
 
 (async () => {
-  console.log(await postInvokeCommand.postInvokeCommand());
+  console.log(await postInvokeCommand.postInvokeCommand('notify "test" 1000'));
 })();
 */

@@ -1,0 +1,6 @@
+Skipping auto-update system.
+AMPLink started on port 6687
+[AMPLink Websockets Manager]: 
+Starting AMPLink...
+[AMPLink Websockets Manager]: 
+Successfully connected to MySQL Database.

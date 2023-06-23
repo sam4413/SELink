@@ -4,6 +4,8 @@
 // Welcome to the main file. It is not recommended to edit any values here, 
 // unless you know what you are doing. 
 
+// The main file defines all the pages, as well as all the server-side actions, as well as calling actions from the TorchRemote API.
+
 //Modules
 const express = require('express');
 const mysql = require('mysql');
@@ -18,11 +20,24 @@ const WebSocket = require('ws')
 var jp = require('jsonpath');
 var JSONbig = require('json-bigint');
 var sqlEscape = require('sql-escape');
+var randomstring = require("randomstring");
+const fileUpload = require('express-fileupload');
+const path = require('path');
+const multer = require('multer');
+const upload = multer({ dest: 'temp/' });
+var moment = require('moment');
 
 //Config
 require('dotenv').config()
-
 //Local Files
+
+// Console formatting
+const notify = require("./functions/notify.js");
+const getInstalledPlugins = require('./functions/getInstalledPlugins.js');
+const getRootKeys = require('./functions/getRootKeys.js');
+const truncate = require("./functions/truncate.js")
+//steam
+const getSteamPlayerSummaries = require('./functions/steam/getSteamPlayerSummaries.js');
 
 //chat
 const postInvokeCommand = require('./functions/chat/postInvokeCommand.js')
@@ -36,8 +51,8 @@ const getAllPlugins = require('./functions/plugins/getAllPlugins.js')
 const putPlugin = require('./functions/plugins/putPlugin.js')
   //plugins download
   const getPluginsDownloadsAll = require('./functions/plugins/downloads/getPluginsDownloadsAll.js')
+  const postPluginsDownload = require("./functions/plugins/downloads/postPluginsDownload.js")
 //server
-
 const getHeartbeat = require('./functions/server/getHeartbeat.js');
 const getSettings = require('./functions/server/getSettings.js');
 const getStatus = require('./functions/server/getStatus.js');
@@ -45,27 +60,31 @@ const postSettings = require('./functions/server/postSettings.js');
 const postStart = require('./functions/server/postStart.js');
 const postStop = require('./functions/server/postStop.js');
 const getAllPlayers = require('./functions/players/getAllPlayers.js');
+const getAllBannedPlayers = require('./functions/players/getAllBannedPlayers.js')
 const postBanPlayer = require('./functions/players/postBanPlayer.js');
 const postKickPlayer = require('./functions/players/postKickPlayer.js');
 const postPromotePlayer = require('./functions/players/postPromotePlayer.js');
 const postDemotePlayer = require('./functions/players/postDemotePlayer.js');
 const postDisconnectPlayer = require('./functions/players/postDisconnectPlayer.js');
+const postUnbanPlayer = require('./functions/players/postUnbanPlayer.js');
 //settings
-const getTorchValues = require("./functions/settings/getTorchValues.js")
-const getTorchSchema = require("./functions/settings/getTorchSchema.js")
-const getTorchSettings = require("./functions/settings/getTorchSettings.js")
-const patchTorchValues = require("./functions/settings/patchTorchValues.js")
-
+const getTorchValues = require("./functions/settings/getTorchValues.js");
+const getTorchSchema = require("./functions/settings/getTorchSchema.js");
+const getTorchSettings = require("./functions/settings/getTorchSettings.js");
+const patchTorchValues = require("./functions/settings/patchTorchValues.js");
+//grids
+const getAllGrids = require("./functions/grids/getAllGrids.js");
+const deleteGridId = require("./functions/grids/deleteGridId.js");
 const { randomInt } = require('crypto');
 const { json } = require('stream/consumers');
-// Console formatting
-const notify = require("./functions/notify.js");
-const getInstalledPlugins = require('./functions/getInstalledPlugins.js');
-const getRootKeys = require('./functions/getRootKeys.js');
+const { platform } = require('os');
+const { del } = require('request');
+
 
 require("./functions/updater.js")
 //updater.update()
 
+notify.notify(1,"Starting AMPLink...")
 try {
 
 
@@ -78,7 +97,7 @@ const connection = mysql.createConnection({
 
 connection.connect((error) => {
   if (error) {
-    notify.notify(4, `MySQL connection error:', ${error}`)
+    notify.notify(4, `MySQL connection error:', ${error}\nAMPLink cannot connect to the MySQL server. Ensure that it is running, then start the program again.`)
   } else {
     notify.notify(1, "Successfully connected to MySQL Database.")
   }
@@ -87,128 +106,55 @@ connection.connect((error) => {
 // Set up the Express app
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json());
+app.use(fileUpload());
+
 
 //Randomize some letters to make key
-var randomLetters = Math.random(30);
-//console.log(randomLetters)
+var token = randomstring.generate();
+
+if (process.env.USE_AMP_TOKEN == 'true') {
+  notify.notify(2,"USE_AMP_TOKEN = true")
+  var token = process.env.AMP_SESSION_TOKEN;
+} else {
+
+}
+//notify.notify(3,token)
 app.use(session({
-  secret: `41vP*5${randomLetters}`,
+  secret: token,
   resave: false,
   saveUninitialized: true,
 }));
 
 const limiter = RateLimit({
     windowMs: 60 * 1000, //Limit length 
-    max: 5, // limit each IP to 5 requests per windowMs
+    max: process.env.AMP_LOGIN_RATELIMIT, // limit each IP to 5 requests per windowMs
     delayMs: 0, // disable delaying - full speed until the max limit is reached
     message: `
-    <!doctype html>
-    <html>
-    <head>
-    <meta charset="utf-8">
-    <title>AMPLink Control Panel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <link href="style.css" rel="stylesheet" type="text/css">
-    <style>
-  body {
-      text-align: center;
-      overflow-y: hidden;
-      margin: 0px;
-  }
-  main {
-      margin: 0px;
-  }
-  .aligntocenter {
-      text-align: left;
-      width: 50vw;
-  }
-  .center {
-      text-align: center;
-  }
-  
-  
-  @media (max-width:600px){
-  .aligntocenter {
-      width: 75vw;
-  }
-  }
-  @media (prefers-color-scheme: dark) {
-      .bg-adapt {
-          background-color: #333333;
-          
-      }
-      .bg-adapt-txt {
-          background-color: #4e4e4e;
-          border: none;
-      }
-  }
-  @media (prefers-color-scheme: light) {
-      .bg-adapt {
-          background-color: #EEEEEE;
-          color: #000000;
-      }
-      .bg-adapt-txt {
-          background-color: #ffffff;
-          color: #000000;
-          
-      }
-  }
-  
-  }
-  </style>
-    </head>
-    <body>
-    <main>
-    <div class="container mt-4 aligntocenter">
-    <h1 class="alert center"><b>AMPLink</b></h1>
-        <div class="card bg-adapt">            
-            <div class="card-header center">Login</div>    
-            <div class="card-body">
-                <form action="/login" method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username:</label><br>
-                        <input type="text" class="form-control bg-adapt-txt" disabled>                        
-
-                        <label for="password" class="form-label">Password:</label><br>
-                        <input type="password" class="form-control bg-adapt-txt" disabled>
-                    </div>
-
-                    <button class="btn btn-primary" disabled>Submit</button>
-                    <div style="padding: 3px; float: right; max-width:150px; text-align: center; position: relative; top:10px; z-index:1111;">
-                      <em>Alpha Build v0.06</em>
-                    </div>
-                </form>
-            </div>
-            
-          <div style="margin: 5px;">
-				    <p class="callout-danger">Too many login attempts. Please try again in one minute.</p>
-			    </div>
-        </div>
-    </div>
-    </main>
-    </body>
-    </html>
+    <!doctype html> <html> <head> <meta charset="utf-8"> <title>AMPLink Control Panel</title> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous"> <link href="style.css" rel="stylesheet" type="text/css"> <style>body{text-align: center; overflow-y: hidden; margin: 0px;}main{margin: 0px;}.aligntocenter{text-align: left; width: 50vw;}.center{text-align: center;}@media (max-width:600px){.aligntocenter{width: 75vw;}}@media (prefers-color-scheme: dark){.bg-adapt{background-color: #333333;}.bg-adapt-txt{background-color: #4e4e4e; border: none;}}@media (prefers-color-scheme: light){.bg-adapt{background-color: #EEEEEE; color: #000000;}.bg-adapt-txt{background-color: #ffffff; color: #000000;}}}</style> </head> <body> <main> <div class="container mt-4 aligntocenter"> <h1 class="alert center"><b>AMPLink</b></h1> <div class="card bg-adapt"> <div class="card-header center">Login</div><div class="card-body"> <form action="/login" method="POST"> <div class="mb-3"> <label for="username" class="form-label">Username:</label><br><input type="text" class="form-control bg-adapt-txt" disabled> <label for="password" class="form-label">Password:</label><br><input type="password" class="form-control bg-adapt-txt" disabled> </div><button class="btn btn-primary" disabled>Submit</button> <div style="padding: 3px; float: right; max-width:150px; text-align: center; position: relative; top:10px; z-index:1111;"> <em>AMPLink v0.3-beta Build</em> </div></form> </div><div style="margin: 5px;"> <p class="callout-danger">Too many login attempts. Please try again in one minute.</p></div></div></div></main> </body> </html>
     ` // custom error message
   });
 
-//initialize the css
+  const embeddedLimiter = RateLimit({
+    windowMs: 60 * 1000, //Limit length 
+    max: process.env.AMP_EMBEDDED_RATELIMIT, // limit each IP to x requests per windowMs
+    delayMs: 0, // disable delaying - full speed until the max limit is reached
+    message: `
+    <p class="callout-danger col-md-11">Error: You are sending too many requests.</p>
+    ` // custom error message
+  });
+  const consoleLimiter = RateLimit({
+    windowMs: 60 * 1000, //Limit length 
+    max: process.env.AMP_CLIENT_RATELIMIT, // limit each IP to 120 requests. This equates to 2 AMPLink instances per IP.
+    delayMs: 0, // disable delaying - full speed until the max limit is reached
+    message: `
+    <p class="callout-danger col-md-11">Error: You are sending too many requests.</p>
+    ` // custom error message
+  });
+//initialize Express.JS
 app.use(express.static(__dirname + '/views'));
 
-
-//make the functions
-function getDB() {
-    const query = `SELECT * FROM users`;
-    connection.query(query, (error, results) => {
-        if (error) {
-        notify.notify(4, `MySQL query error:', ${error} \n\nEnsure that the MySQL Database is running, and you have proper access to the database.`)
-        //res.render('error.hbs', {message: 'A 500 error has occured. Please try again.',error});
-        } else {
-            var data = JSON.parse(JSON.stringify(results));
-            return data
-        }
-    });
-}
 
 
 //Set view engine
@@ -326,8 +272,9 @@ app.post('/login', limiter, escapeMiddleware, (req, res) => {
   });
 
   
-app.post('/register', escapeMiddleware, (req, res) => {
+app.post('/register', embeddedLimiter, escapeMiddleware, (req, res) => {
     // Ensure passwords match
+    if (req.session.userId) {
         const { username, password, confirmPassword } = req.body;
         if (password !== confirmPassword) {
         res.render('register.hbs', {message: 'Ensure the passwords match, and try again.'})
@@ -366,7 +313,9 @@ app.post('/register', escapeMiddleware, (req, res) => {
             }
         });
         }
-    //}
+      } else {
+        res.render('login.hbs');
+    }
 });
 
 app.get('/logout', (req, res) => {
@@ -405,10 +354,10 @@ app.get('/logout', (req, res) => {
     }
   });
 
-  app.get('/console/logs', (req, res) => {
+  app.get('/console/logs', consoleLimiter, (req, res) => {
     if (req.session.userId) {
       fs.readFile('logs.html', 'utf-8', (err, data) => {
-        if (err) throw notify.notify(3,err);
+        if (err) {notify.notify(3,err);} 
         //console.log(data)
         res.send(data)
       });
@@ -417,10 +366,10 @@ app.get('/logout', (req, res) => {
     }
   });
 
-  app.get('/console/chat', (req, res) => {
+  app.get('/console/chat', consoleLimiter, (req, res) => {
     if (req.session.userId) {
       fs.readFile('chat.html', 'utf-8', (err, data) => {
-        if (err) throw notify.notify(3,err);
+        if (err) {notify.notify(3,err);} 
         //console.log(data)
         res.send(data)
       });
@@ -429,7 +378,7 @@ app.get('/logout', (req, res) => {
     }
   });
 
-  app.get('/server/status', async (req, res) => {
+  app.get('/server/status', consoleLimiter, async (req, res) => {
     if (req.session.userId) {
       try {
       //console.log('panel')
@@ -513,7 +462,7 @@ app.get('/users', (req, res) => {
   });
 
 
-  app.post('/users/delete/:id', (req, res) => {
+  app.post('/users/delete/:id', embeddedLimiter, (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -576,7 +525,7 @@ app.get('/users', (req, res) => {
 
   //PromoteUser
 
-  app.post('/users/promote/:id', (req, res) => {
+  app.post('/users/promote/:id', embeddedLimiter, (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -639,7 +588,7 @@ app.get('/users', (req, res) => {
   //demoteuser
 
 
-  app.post('/users/demote/:id', (req, res) => {
+  app.post('/users/demote/:id', embeddedLimiter, (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -706,7 +655,12 @@ app.get('/users', (req, res) => {
   
   app.post('/invokeCommand', async (req, res) => {
     if (req.session.userId) {
-      const { command } = req.body;
+      const command = req.body;
+
+      fs.appendFile('./logs.html', `<span style="color:#00ff99;"><b>00:00:00.0000 Server: </b>Running command: !${JSON.stringify(command)}</span><br>`, (err) => { 
+        if (err) notify.notify(3, err);
+      });
+
       //console.dir("InvokeCommand:", string)
       var status = (await postInvokeCommand.postInvokeCommand(command));
       if (status == 503) {
@@ -742,7 +696,7 @@ app.get('/users', (req, res) => {
   app.post('/serverStop', async (req, res) => {
     if (req.session.userId) {
       var status = (await postStop.postStop());
-      if (status == 400) {
+      if (status != 400) {
         //res.redirect('/console');
         res.render('console.hbs', {errormsg: 'Error: Server has already stopped.'});
       } else {
@@ -769,7 +723,6 @@ app.get('/users', (req, res) => {
       res.render('login.hbs');
     }
   });
-
 
   /*app.get('/panel/getSettings', (req, res) => {
     if (req.session.userId) {
@@ -805,12 +758,13 @@ app.get('/users', (req, res) => {
     }
   });
 
-  app.get('/players', async (req, res) => {
+
+  app.get('/banned', async (req, res) => {
     if (req.session.userId) {
       try {
       //console.log('panel')
 
-        res.render('chatplayers.hbs');
+        res.render('bannedplayers.hbs');
         } catch (e) {
         notify.notify(3, e)
       }
@@ -818,8 +772,72 @@ app.get('/users', (req, res) => {
       res.render('login.hbs');
     }
   });
+  app.get('/players/banned', consoleLimiter, async (req, res) => {
+    if (req.session.userId) {
+      try {
+      //console.log('panel')
+        var players = await getAllBannedPlayers.getAllBannedPlayers();
+        if (process.env.UGC_SERVICE_TYPE == 'eos') {
+          
+          if (players == 500) {
+            res.send(`<h3>Server is offline. Please start it in order to get live player stats.</h3>`);
+          } else {
+            var parsed2 = JSONbig.parse(players)
+            //console.log(parsed)
+            var values = jp.query(parsed2, '$.*')
+            
+            let platform = `{"platformType":[`;
 
-  app.get('/players/list', async (req, res) => {
+            for (let i = 0; i < values.length; i++) {
+              const value = BigInt(values[i]);
+
+              if (value < BigInt('10')) {
+                platform += `"Unknown",`
+              } else if (value < BigInt('9000000000000000')) {
+                platform += `"XBOX",`
+              } else if (value < BigInt('79999999999999999')) {
+                platform += `"Steam",`;
+              } else {
+                platform += `"PlayStation",`;
+              }
+            }
+            platform = platform.slice(0, -1);
+            platform = platform+"]}";
+            var result = JSON.parse(platform);
+            //result = jp.query(result, '$.*.*');
+
+          }
+          //const playernames = "Cannot be determined with current configuration."
+          res.render('banned.hbs', {play: playersList, names: values, platforms: result});
+
+        } else if (process.env.UGC_SERVICE_TYPE == "steam") {
+          var platform = "Steam";
+          var playernames = await getSteamPlayerSummaries.getSteamPlayerSummaries(process.env.STEAM_API_TOKEN, players);
+        
+          var playernames2 = JSON.parse(playernames)
+          var playernames3 = jp.query(playernames2, '$.response.players.*')
+
+          if (players == 500) {
+            res.send(`<h3>Server is offline. Please start it in order to get live player stats.</h3>`);
+          } else {
+          var parsed2 = JSONbig.parse(players)
+          //console.log(parsed)
+          var playersList = jp.query(parsed2, '$.*')
+
+          //console.log(playernames)
+          res.render('banned.hbs', {play: playersList, names: JSONbig.stringify(playernames3), platforms: platform});
+        }
+        
+        }
+      } catch (e) {
+        notify.notify(3, e)
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.get('/players/list', consoleLimiter, async (req, res) => {
     if (req.session.userId) {
       try {
       //console.log('panel')
@@ -847,11 +865,29 @@ app.get('/users', (req, res) => {
       try {
       //console.log('panel')
       var id = req.params.id;
-        var res = await postBanPlayer.postBanPlayer(id);
+        await postBanPlayer.postBanPlayer(id);
         notify.notify(1, `Player with steam ID of ${id} has been banned.`)
-        res.redirect('/panel')
+        res.redirect('/players');
       } catch (e) {
         notify.notify(3, e)
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/panel/players/:id/unban', async (req, res) => {
+    if (req.session.userId) {
+      try {
+      //console.log('panel')
+      var id = req.params.id;
+        await postUnbanPlayer.postUnbanPlayer(id);
+        notify.notify(1, `Player with steam ID of ${id} has been unbanned.`)
+        res.redirect('/banned');
+        //res.render('bannedplayers.hbs', {output: `Player with steam ID of ${id} has been unbanned`});
+      } catch (e) {
+        notify.notify(3, e)
+        res.render('bannedplayers.hbs', {output: e});
       }
     } else {
       res.render('login.hbs');
@@ -863,9 +899,9 @@ app.get('/users', (req, res) => {
       try {
         //console.log('panel')
         var id = req.params.id;
-          var res = await postKickPlayer.postKickPlayer(id);
+          await postKickPlayer.postKickPlayer(id);
           notify.notify(1, `Player with steam ID of ${id} has been kicked.`)
-          res.redirect('/panel')
+          res.redirect('/players');
         } catch (e) {
           notify.notify(3, e)
         }
@@ -879,14 +915,13 @@ app.get('/users', (req, res) => {
   app.post('/panel/players/promote/:id', async (req, res) => {
     if (req.session.userId) {
       try {
-        //console.log('panel')
         var id = req.params.id;
-          var res = await postPromotePlayer.postPromotePlayer(id);
-          notify.notify(1, `Player with steam ID of ${id} has been promoted.`)
-          res.redirect('/panel')
-        } catch (e) {
-           notify.notify(3, e)
-        }
+        await postPromotePlayer.postPromotePlayer(id);
+        notify.notify(1, `Player with steam ID of ${id} has been promoted.`)
+        res.redirect('/players');
+      } catch (e) {
+        notify.notify(3, e)
+      }
     } else {
       res.render('login.hbs');
     }
@@ -896,9 +931,9 @@ app.get('/users', (req, res) => {
       try {
         //console.log('panel')
         var id = req.params.id;
-          var res = await postDemotePlayer.postDemotePlayer(id);
+          await postDemotePlayer.postDemotePlayer(id);
           notify.notify(1, `Player with steam ID of ${id} has been demoted.`)
-          res.redirect('/panel')
+          res.redirect('/players');
         } catch (e) {
           notify.notify(3, e)
         }
@@ -911,9 +946,9 @@ app.get('/users', (req, res) => {
       try {
         //console.log('panel')
         var id = req.params.id;
-          var res = await postDisconnectPlayer.postDisconnectPlayer(id);
+          await postDisconnectPlayer.postDisconnectPlayer(id);
           notify.notify(1, `Player with steam ID of ${id} has been disconnected.`)
-          res.redirect('/panel')
+          res.redirect('/players');
         } catch (e) {
           notify.notify(3, e)
         }
@@ -921,19 +956,49 @@ app.get('/users', (req, res) => {
       res.render('login.hbs');
     }
   });
+  app.post('/manualban', async (req, res) => {
+    if (req.session.userId) {
+      const { banuser } = req.body;
+      try {
+        //console.log('panel')
+        await postBanPlayer.postBanPlayer(banuser);
+          notify.notify(1, `Player with steam ID of ${banuser} has been banned.`)
+          res.render('bannedplayers.hbs', {output: `Player with steam ID of ${banuser} has been banned`});
+        } catch (e) {
+          notify.notify(3, e)
+          res.render('bannedplayers.hbs', {output: e});
+        }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
 
   app.post('/postMessage', async (req, res) => {
     if (req.session.userId) {
       try {
         const { command } = req.body;
         //console.dir("InvokeCommand:", string)
-        var status = (await postSendChatMessage.postSendChatMessage(command, `${process.env.CHAT_AUTHOR}`, 1));
-        if (status == 503) {
-          //res.redirect('/console');
-          res.render('chatplayers.hbs', {errormsg: 'Error: Server is offline.'});
+
+        var checkcase = command.includes('<') || command.includes('</');
+        if (checkcase == true) {
+          res.render('chatplayers.hbs', {errormsg: 'Error: Forbidden characters. Characters cannot resemble HTML tags.'});
+          return;
         } else {
-        //res.redirect('/console');
-        res.render('chatplayers.hbs', {errormsg: 'Sent message server.'});
+          var status = (await postSendChatMessage.postSendChatMessage(command, `${process.env.CHAT_AUTHOR}`, 1));
+
+          fs.appendFile('./chat.html', `<span style="color:#00ff99;"><b>00:00:00.0000&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${process.env.CHAT_AUTHOR} (00000000000000000): </b>${command}</span><br>`, (err) => { 
+            if (err) notify.notify(3, err);
+          });
+
+          if (status == 503) {
+            //res.redirect('/console');
+            res.render('chatplayers.hbs', {errormsg: 'Error: Server is offline.'});
+          } else {
+          //res.redirect('/console');
+          res.render('chatplayers.hbs', {errormsg: 'Sent message to server.'});
+        }
+        
         }
         } catch (e) {
           notify.notify(3, e)
@@ -948,6 +1013,17 @@ app.get('/users', (req, res) => {
   SERVER CONFIGURATION EDITOR
   ============================*/
 
+  //Redirect Securely
+  app.post('/postAMPCFG', (req, res) => {
+    if (req.session.userId) {
+      //console.dir("InvokeCommand:", string)
+      //postStop.postStop('!restart 1');
+
+      res.redirect('/ampcfg');
+    } else {
+      res.render('login.hbs');
+    }
+  });
 
   //Redirect Securely
   app.post('/postConfigurator', (req, res) => {
@@ -1002,10 +1078,8 @@ app.get('/users', (req, res) => {
         res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
       } else if (results[0].is_superuser === 1) {
         (async () => {
-          var string = JSON.parse(await getAllPlugins.getAllPlugins());
           var dataset = JSON.parse(await getTorchSettings.getTorchSettings());
-          var output = jp.query(string, '$..name')
-          res.render('configurator.hbs', {result: output, result2: dataset});
+          res.render('configurator.hbs', {result2: dataset});
         })();
 
           } else {
@@ -1014,7 +1088,21 @@ app.get('/users', (req, res) => {
         });
       }
     );
+
+    
+    app.get('/configurator/installedplugins', (req, res) => {
+      if (!req.session.userId) {
+        res.render('login.hbs');
+        return;
+      }
+      (async () => {
+        var string = JSON.parse(await getAllPlugins.getAllPlugins());
+        //var output = jp.query(string, '$..')
+        res.render('installedplugins.hbs', {result: string});
+      })();
+    })
   
+        
 //GET ALL PLUGINS
 /*
 (async () => {
@@ -1049,16 +1137,7 @@ app.get('/pluginsSearch', (req, res) => {
         res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
       } else if (results[0].is_superuser === 1) {
         //Result
-        var plugins = JSON.parse(await getPluginsDownloadsAll.getPluginsDownloadsAll());
-        var output = jp.query(plugins, '$.*')
-        var shortDescriptions = jp.query(plugins, '$..description').map(function(description) {
-          if (description) {
-            return description.substring(0, 100);
-          }
-          return null;
-        });
-        //console.log(shortDescriptions);
-        res.render('plugins.hbs', {shortdesc: 'shortDescriptions', result: output});
+        res.render('plugins.hbs');
           } else {
             res.send('You do not have permission to access this page.');
           }
@@ -1066,7 +1145,38 @@ app.get('/pluginsSearch', (req, res) => {
       }
     );
 
+    app.get('/plugins/list', (req, res) => {
+      if (!req.session.userId) {
+        res.render('login.hbs');
+        return;
+      }
     
+      const userId = req.session.userId;
+    
+      // Check if the user is a superuser
+      const query = `SELECT is_superuser FROM users WHERE id = ?`;
+      connection.query(query, [userId], async (error, results) => {
+        if (error) {
+          notify.notify(3, `MySQL query error:', ${error}`)
+          res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+        } else if (results[0].is_superuser === 1) {
+          //Result
+          var plugins = JSON.parse(await getPluginsDownloadsAll.getPluginsDownloadsAll());
+          var output = jp.query(plugins, '$.*')
+          var shortDescriptions = jp.query(plugins, '$..description').map(function(description) {
+            if (description) {
+              return description.substring(0, 100);
+            }
+            return null;
+          });
+          //console.log(shortDescriptions);
+          res.render('pluginslist.hbs', {shortdesc: 'shortDescriptions', result: output});
+            } else {
+              res.send('You do not have permission to access this page.');
+            }
+          });
+        }
+      );
 
       app.post('/configurator/plugin/info/:guid', (req, res) => {
         if (!req.session.userId) {
@@ -1093,60 +1203,8 @@ app.get('/pluginsSearch', (req, res) => {
               var latestVersion = jp.query(plugins, `$[?(@.guid=="${guid}")].latestVersion`)
               var pluginGuid = jp.query(plugins, `$[?(@.guid=="${guid}")].guid`)
               var icon = jp.query(plugins, `$[?(@.guid=="${guid}")].icon`)
-              res.send(`    
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>AMPLink Control Panel</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-</head>
-<body class="bg-black text-white">
-<h1><br></h1>
-<main class="col-md-8 mx-auto text-center">
-<div class="alert bg-dark">
-<h2 class="text-left">${pluginName}</h2><img alt="logo" align="right" src="${icon}" width="100px" height="100px"><br><br><br>
-<div class="card-header">
-        <div class="row">
-            <div class="col-md-4">
-                <h4 class="card-title">Author:
-                    ${author}
-                </h4>
-            </div>
-            <!--display latest version of plugin-->
-            <div class="col-md-4">
-                <h4 class="card-title">Latest Version:
-                    ${latestVersion}
-                </h4>
-            </div>
-            <!---display cumulative downloads of plugin-->
-            <div class="col-md-4">
-                <h4 class="card-title">Cumulative Downloads:
-                    ${downloads}
-                </h4>
-            </div>
-        </div>
-    </div>
-    <div class="card-body" style="color: white;">
-        <div class="col-md-12 bg-dark" id="default-desc-display">
-          <p>${description}</p>
-            </div>
-        </div>
-    </div>
-    <div class="card-footer" style="background-color: #1c1919 !important;">
-        <div class="row">
-          <div class="col-md-12">
-              <p style="color: white;">Plugin Guid: ${pluginGuid}<br><a href="https://torchapi.com/plugins/view/${pluginGuid}">Plugin Page</a></p>
-          </div>
-    </div>
-</div>
-<br>
-<form action="/pluginsSearch" ><input type="submit" value="Go back" class="btn btn-primary" style="float:left; margin-right: 10px;" ></form>
-</div>
-</main>
-</body>
-</html>
-            `);
+            
+            res.render('pluginsinfo.hbs', {pluginName: pluginName, author: author, downloads: downloads, description: description, latestVersion: latestVersion, pluginGuid: pluginGuid, icon: icon})
             })();
               } else {
                 res.send('You do not have permission to access this page.');
@@ -1157,7 +1215,7 @@ app.get('/pluginsSearch', (req, res) => {
 
 
 
-      app.get('/configurator/plugins/torchConfig', (req, res) => {
+      /*app.get('/configurator/plugins/torchConfig', consoleLimiter, (req, res) => {
       if (!req.session.userId) {
         res.render('login.hbs');
         return;
@@ -1194,8 +1252,8 @@ app.get('/pluginsSearch', (req, res) => {
         }
       );
 
-      
-      app.get('/configurator/plugins/installed', (req, res) => {
+      */
+      app.get('/configurator/plugins/installed', consoleLimiter, (req, res) => {
       if (!req.session.userId) {
         res.render('login.hbs');
         return;
@@ -1290,7 +1348,7 @@ app.post('/configurator/plugins/get/:id/post', (req, res) => {
         //console.log(keys)
         var getLayout = (await getTorchValues.getTorchValues(`${id}`, JSON.stringify(keys)))
         //notify.notify(3,getLayout)
-        fs.writeFile('plugins.json', getLayout, (err) => {
+        fs.writeFile('./temp/plugins.json', getLayout, (err) => {
           if (err) notify.notify(3, err);
         });
 
@@ -1303,7 +1361,7 @@ app.post('/configurator/plugins/get/:id/post', (req, res) => {
   );
 
 
-  app.get('/configurator/plugins/get/display', (req, res) => {
+  app.get('/configurator/plugins/get/display', consoleLimiter, (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -1318,8 +1376,8 @@ app.post('/configurator/plugins/get/:id/post', (req, res) => {
         notify.notify(3, `MySQL query error:', ${error}`)
         res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
       } else if (results[0].is_superuser === 1) {
-        fs.readFile('plugins.json', 'utf-8', (err, data) => {
-        if (err) throw notify.notify(3,err);
+        fs.readFile('./temp/plugins.json', 'utf-8', (err, data) => {
+        if (err) {notify.notify(3,err);}
         res.send(data)
         })
       }
@@ -1382,6 +1440,111 @@ app.post('/configurator/plugins/torchConfig/submit', (req, res) => {
     }
   );
 
+  
+  app.post('/uploadplugin', (req, res) => {
+    // Check if user is logged in
+    if (!req.session.userId) {
+      return res.render('login.hbs');
+    }
+  
+    // Check if user is a superuser
+    const userId = req.session.userId;
+    const query = 'SELECT is_superuser FROM users WHERE id = ?';
+    connection.query(query, [userId], async (error, results) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).send('Server error');
+      }
+  
+      if (results[0].is_superuser !== 1) {
+        return res.status(403).send('Forbidden');
+      }
+  
+      // Check if the request has a formFile field
+      if (!req.files || !req.files.formFile) {
+        return res.status(400).send('Missing file data');
+      }
+      // Extract the file from the request
+      const file = req.files.formFile;
+      
+      // Save the file to disk
+
+      //var fileName = `${Date.now()}.zip"`
+
+      file.mv('./temp/storedPlugin.zip', async (error) => {
+        if (error) {
+          console.error(error);
+          return res.status(500).send('Failed to save file');
+        }
+        
+        var result = await putPlugin.putPlugin('./temp/storedPlugin.zip'); 
+        res.render('configurator.hbs', {output: result});
+      });
+    });
+  });
+  
+
+  app.post('/installplugin/:id', (req, res) => {
+    // Check if user is logged in
+    if (!req.session.userId) {
+      return res.render('login.hbs');
+    }
+  
+    // Check if user is a superuser
+    const userId = req.session.userId;
+    const query = 'SELECT is_superuser FROM users WHERE id = ?';
+    connection.query(query, [userId], async (error, results) => {
+      if (error) {
+        console.error(error);
+        return res.status(500).send('Server error');
+      }
+      if (results[0].is_superuser !== 1) {
+        return res.status(403).send('Forbidden');
+      }
+      const id = req.params.id; 
+      var result = await postPluginsDownload.postPluginsDownload(id); 
+      notify.notify(1,result.body)
+      if (result.statusCode !== 200) {
+        //var result = await postPluginsDownload.postPluginsDownload(id); 
+        res.send(`<!doctypehtml><meta charset=utf-8><title>AMPLink Control Panel</title><link href=https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css rel=stylesheet crossorigin=anonymous integrity=sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT><link href=style.css rel=stylesheet><main><div class=content><h2>An error occured while trying to upload the plugin.</h2><p>${result.body}<br><form action=/pluginsSearch><input class="btn btn-primary"style=float:left;margin-right:10px type=submit value="Go back"></form></div></main>`);
+      } else {
+        
+        res.send(`<!doctypehtml><meta charset=utf-8><title>AMPLink Control Panel</title><link href=https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css rel=stylesheet crossorigin=anonymous integrity=sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT><link href=style.css rel=stylesheet><main><div class=content><h2>Plugin with ID of ${id} has been installed.</h2><p>Status Code: ${result.statusCode}<br>Restart the server for changes to take place.<br><form action=/pluginsSearch><input class="btn btn-primary"style=float:left;margin-right:10px type=submit value="Go back"></form></div></main>`);
+      }
+        
+      });
+    });
+
+    app.post('/deleteplugin/:id', (req, res) => {
+      // Check if user is logged in
+      if (!req.session.userId) {
+        return res.render('login.hbs');
+      }
+    
+      // Check if user is a superuser
+      const userId = req.session.userId;
+      const query = 'SELECT is_superuser FROM users WHERE id = ?';
+      connection.query(query, [userId], async (error, results) => {
+        if (error) {
+          console.error(error);
+          return res.status(500).send('Server error');
+        }
+        if (results[0].is_superuser !== 1) {
+          return res.status(403).send('Forbidden');
+        }
+        const delID = req.body.delID;
+        const id = req.params.id; 
+        if (delID == undefined) {
+          var result = await deletePlugin.deletePlugin(id); 
+          res.render('configurator.hbs', {output: result});
+        } else {
+          var result = await deletePlugin.deletePlugin(delID); 
+          res.render('configurator.hbs', {output: result});
+        }
+          
+        });
+      });
+
 /*=============================
            AMP LINK
          SERVER PANEL
@@ -1405,12 +1568,180 @@ app.post('/configurator/plugins/torchConfig/submit', (req, res) => {
     }
   });
 
-    
+  /*=============================
+           AMP LINK
+         GRIDS PANEL
+  ============================*/
+  
+  //Grid Listing System
+  app.get('/grids/gridlist', consoleLimiter, async (req, res) => {
+    if (req.session.userId) {
+      try {
+        // Your JSON string
+        var gridlist = await getAllGrids.getAllGrids()
+        // Parse the JSON string with JSONbig library
+        const jsonData = JSONbig.parse(gridlist);
+
+        // Convert the jsonData to a regular JavaScript object
+        const jsonObject = JSON.parse(JSON.stringify(jsonData));
+
+        // Perform JSONPath query to obtain all values with the key "id"
+        const alldata = jp.query(jsonObject, '$.*');
+        // Output the results
+        res.render('gridlist.hbs', {alldata: alldata});
+      } catch(err) {
+        notify.notify(3,"An error occured while trying to parse current grids.")
+      }
+      
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.get('/grids', async (req, res) => {
+    if (req.session.userId) {
+        res.render('grids.hbs');
+      
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/grids/delete/:id', async (req, res) => {
+    if (req.session.userId) {
+      try {
+        const id = req.params.id; 
+        var delGrid = await deleteGridId.deleteGridId(id);
+        var resmsg = "SUCCESS: "+delGrid;
+        res.render('grids.hbs', {errormsg: resmsg});
+      } catch(err) {
+        var resmsg = "ERROR: "+err;
+        res.render('grids.hbs', {errormsg: resmsg});
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/cleanup/blocks', async (req, res) => {
+    if (req.session.userId) {
+      var status = (await postInvokeCommand.postInvokeCommand(`${process.env.AC_TRASH_REMOVAL_BLOCKS}`));
+      if (status == 500) {
+        //res.redirect('/console');
+        res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
+      } else {
+      //res.redirect('/console');
+      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_TRASH_REMOVAL_BLOCKS}`});
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/cleanup/voxels/planets', async (req, res) => {
+    if (req.session.userId) {
+      var status = (await postInvokeCommand.postInvokeCommand(`${process.env.AC_VOXEL_CLEANUP_PLANETS}`));
+      if (status == 500) {
+        //res.redirect('/console');
+        res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
+      } else {
+      //res.redirect('/console');
+      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_VOXEL_CLEANUP_PLANETS}`});
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/cleanup/voxels', async (req, res) => {
+    if (req.session.userId) {
+      var status = (await postInvokeCommand.postInvokeCommand(`${process.env.AC_VOXEL_CLEANUP_ALL}`));
+      if (status == 500) {
+        //res.redirect('/console');
+        res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
+      } else {
+      //res.redirect('/console');
+      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_VOXEL_CLEANUP_ALL}`});
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/cleanup/unowned', async (req, res) => {
+    if (req.session.userId) {
+      var status = (await postInvokeCommand.postInvokeCommand(`${process.env.AC_CLEANUP_UNOWNED}`));
+      if (status == 500) {
+        //res.redirect('/console');
+        res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
+      } else {
+      //res.redirect('/console');
+      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_CLEANUP_UNOWNED}`});
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/cleanup/unnamed/:id', async (req, res) => {
+    if (req.session.userId) {
+      const gridName = req.params.id;
+      var status = (await postInvokeCommand.postInvokeCommand(`${AC_CLEANUP_UNNAMED}`+gridName));
+      if (status == 500) {
+        //res.redirect('/console');
+        res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
+      } else {
+      //res.redirect('/console');
+      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_CLEANUP_UNNAMED + gridName}`});
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
+
+  app.post('/cleanup/floating', async (req, res) => {
+    if (req.session.userId) {
+      var status = (await postInvokeCommand.postInvokeCommand(`${process.env.AC_FLOATING_CLEANUP}`));
+      if (status != 200) {
+        //res.redirect('/console');
+        res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
+      } else {
+      //res.redirect('/console');
+      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_FLOATING_CLEANUP}`});
+      }
+    } else {
+      res.render('login.hbs');
+    }
+  });
 
 /*=============================
            AMP LINK
-        PLUGIN MANAGEMENT
+        PROGRAM CONFIG
   ============================*/
+
+  app.get('/ampcfg', (req, res) => {
+      if (!req.session.userId) {
+        res.render('login.hbs');
+        return;
+      }
+    
+      const userId = req.session.userId;
+    
+      // Check if the user is a superuser
+      const query = `SELECT is_superuser FROM users WHERE id = ?`;
+      connection.query(query, [userId], async (error, results) => {
+        if (error) {
+          notify.notify(3, `MySQL query error:', ${error}`)
+          res.render('error.hbs', {message: results[0].username, errormsg: 'A 500 server error has occured.', error});
+        } else if (results[0].is_superuser === 1) {
+          //Result
+          res.render('ampcfg.hbs')
+            } else {
+              res.render('login.hbs');
+            }
+          });
+        }
+      );
 
 
 //run it
@@ -1428,6 +1759,17 @@ app.listen(`${process.env.AMP_PORT}`, ()=> {
     
 })
 
+//Initialize the truncating system
+  if (process.env.TRUNCATE_LOGS == 'true') {
+      setInterval(() => {
+        //notify.notify(2,"Truncate")
+        truncate.truncate("./logs.html", process.env.TRUNCATE_MAX_SIZE, process.env.TRUNCATE_MAX_SIZE)
+        truncate.truncate("./chat.html", process.env.TRUNCATE_MAX_SIZE, process.env.TRUNCATE_MAX_SIZE)
+      }, process.env.TRUNCATE_TIME);
+  } else {
+    return;
+  }
+
 } catch(err) {
-  notify.notify(3, "[AMPLink]: An error occured: ", err)
+  notify.notify(3, err)
 }

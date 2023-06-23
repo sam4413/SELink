@@ -1,9 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\functions",
-    "\\functions\\grids"
+    ""
   ],
-  "SelectedNode": "\\functions\\grids\\getGroupGridId.js",
+  "SelectedNode": "\\app.js",
   "PreviewInSolutionExplorer": false
 }

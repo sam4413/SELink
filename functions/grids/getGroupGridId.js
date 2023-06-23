@@ -5,11 +5,11 @@ const request = require('request');
 require('dotenv').config();
 var JSONbig = require('json-bigint');
 
-exports.getGroupGridId = async function () {
+exports.getGroupGridId = async function (string) {
 
   const bearerToken = `${process.env.TORCHREMOTE_TOKEN}`
   const options = {
-    url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/grids/86768568801471620`,
+    url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/grids/${string}/group`,
     headers: {
       'Authorization': `Bearer ${bearerToken}`
     }
@@ -38,10 +38,11 @@ exports.getGroupGridId = async function () {
   })
 })
 }
-
+/*
 // For debugging
 var getGroupGridId = require(__dirname + '/getGroupGridId.js');
 
 (async () => {
   console.log(await getGroupGridId.getGroupGridId());
 })();
+*/

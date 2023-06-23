@@ -38,9 +38,9 @@
     var logger = parsed.logger;
 
     fs.appendFile("logs.html", `<b>${date} ${logger}:</b> ${msg}<br>` , (err) => {
-      if (consoleconf == true) {
+      if (consoleconf == 'true') {
         notify.notify(1, `${time} ${logger}: ${msg}`);
-      } else if (consoleconf == false) {
+      } else if (consoleconf == 'false') {
         if (err) throw err; 
       }
       });
@@ -54,7 +54,8 @@
     try {
     if (err.code === 'ECONNREFUSED') {
       notify.notify(3, '[AMPLink Websockets Manager]: Connection refused. Please check the server is running and the port is correct.');
-      
+      //EHOSTUNREACH
+      //ECONNABORTED
       fs.writeFile('logs.html', '<b style="color:#0099ff;">[AMPLink Websockets Manager]: Connection refused. Please check the server is running and the port is correct.</b><br>', (err) => {
         if (err) notify.notify(3, '[AMPLink Websockets Manager]: ',err);
         //console.log('Connecting to server logs & clearing data...');

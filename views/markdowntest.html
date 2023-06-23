@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Markdown to HTML Converter</title>
+  <script src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
+</head>
+<body>
+  <textarea id="markdown-input">Adds rest api for configuring torch ### Clients **Currently client app is under development** ### 3rd party clients [AMPLink panel](https://github.com/sam4413/AMPLink) developed by sam4413 ### Bearer Token Authtorization token is located in config `Instance\TorchRemote.cfg` ### Troubleshooting If you're getting access denied exception on torch startup try running torch as admin or run this command in admin cmd `netsh http add urlacl url=<webserverURl> user=<username>` replace `<webserverURl>` with yours from config and `<username>` with actual username on which torch is running ### Usage in 3rd party apps Docs for developers [here](https://documenter.getpostman.com/view/7341829/2s83tJFqL6) ### GitHub [![](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/PveTeam/TorchRemote) ### Discord [![](https://dcbadge.vercel.app/api/server/VAb2zgXHAN)](https://discord.gg/VAb2zgXHAN)</textarea>
+  <div id="output"></div>
+
+  <script>
+    window.onload = function() {
+      convertMarkdownToHTML();
+    };
+
+    function convertMarkdownToHTML() {
+      var markdownText = document.getElementById("markdown-input").innerHTML.trim();
+      var converter = new showdown.Converter();
+      var parsedHTML = converter.makeHtml(markdownText);
+      document.getElementById("output").innerHTML = parsedHTML;
+    }
+  </script>
+</body>
+</html>

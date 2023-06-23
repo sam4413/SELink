@@ -46,10 +46,11 @@ exports.getInstalledPlugins = async function () {
 })
 }
 
-
+/*
 //For debugging
 var getInstalledPlugins = require(__dirname + '/getInstalledPlugins.js');
 
 (async () => {
     console.log(await getInstalledPlugins.getInstalledPlugins())
 })()
+*/
