@@ -10,17 +10,17 @@
   - [X] Configuring Plugins
   - [X] Torch Plugins Search
   - [ ] Post configuration to server
-  - [ ] Upload new plugins
+  - [X] Upload new plugins
   - [ ] Automatic / Scheduled tasks
   
-- [ ] Moderation
+- [X] Moderation
   - [X] Chat monitoring
   - [X] Kick, ban, promote, and demote players
   - [X] Send Messages through Panel
-  - [ ] Entity list
-  - [ ] Delete a grid
-  - [ ] Banned players list (Working on Unstable Branch)
-  - [ ] Unban players (Working on Unstable Branch)
+  - [X] Entity list
+  - [X] Delete a grid
+  - [X] Banned players list (Working on Unstable Branch)
+  - [X] Unban players (Working on Unstable Branch)
 - [X] Server
   - [X] Console monitoring
   - [X] Start, restart, and stop server
@@ -38,10 +38,6 @@
   - [X] User level management
   - [X] Login page
   
-- [ ] VRageRemote API Integration
-  - [ ] Delete planets
-  - [ ] Delete asteroids
-  
 - [ ] Other
   - [X] Configuratable .env
   - [X] Configuratable style.css
@@ -49,10 +45,10 @@
   - [ ] Restart AMPLink server
   
 - [ ] Discord Bot Integration (This is far off, so this might change)
-  - [ ] Chat monitoring
+  - [X] Chat monitoring
   - [ ] Console monitoring
   - [ ] Send server commands through discord bot
-  - [ ] Send chat messages through discord bot
+  - [X] Send chat messages through discord bot
 
 ## NEW: Staging branch:
  - I have recently added the new staging branch onto AMPLink. Here you can see what the latest new features are. Once all the features from the staging branch are deemed to be stable, and mostly bug free, it will move to the main branch. 
@@ -142,9 +138,9 @@ It is not recommended to run AMPLink if you are running it through a server host
 <b>Anything using TCPanel will cause conflicts with both panels and if your running a server and the provider already has a control panel to control your SE Server from, it's recommended to just stick with the provided panel from the provider.</b><br>
 This program is to allow servers that are running Space Engineers Torch on a Dedicated box, or their own server. On which they dont have their own panel.<br>
 
-Message sam44#9932 on discord if you have any questions.
+Message @sam44 on discord if you have any questions.
 
 <b>AMPLink is currently in BETA, and several features don't work, or are unstable! </b>
 
-<br>Main (Stable branch): AMPLink v0.1-beta Build
+<br>Main (Stable branch): AMPLink v0.3-beta Build
 <br>Staging (Unstable branch): AMPLink v0.2-beta Build
