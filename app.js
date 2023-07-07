@@ -803,29 +803,29 @@ app.get('/users', (req, res) => {
             }
             platform = platform.slice(0, -1);
             platform = platform+"]}";
-            var result = JSON.parse(platform);
+            platform = JSON.parse(platform)
+            var result = jp.query(platform, '$.*')
             //result = jp.query(result, '$.*.*');
 
           }
           //const playernames = "Cannot be determined with current configuration."
-          res.render('banned.hbs', {play: playersList, names: values, platforms: result});
+          res.render('banned.hbs', {play: playersList, eosnames: values, names: undefined, platforms: result});
 
         } else if (process.env.UGC_SERVICE_TYPE == "steam") {
           var platform = "Steam";
+          var players = await getAllBannedPlayers.getAllBannedPlayers();
           var playernames = await getSteamPlayerSummaries.getSteamPlayerSummaries(process.env.STEAM_API_TOKEN, players);
-        
+          
           var playernames2 = JSON.parse(playernames)
           var playernames3 = jp.query(playernames2, '$.response.players.*')
-
           if (players == 500) {
             res.send(`<h3>Server is offline. Please start it in order to get live player stats.</h3>`);
           } else {
           var parsed2 = JSONbig.parse(players)
           //console.log(parsed)
           var playersList = jp.query(parsed2, '$.*')
-
-          //console.log(playernames)
-          res.render('banned.hbs', {play: playersList, names: JSONbig.stringify(playernames3), platforms: platform});
+          //console.log(playernames3)
+          res.render('banned.hbs', {play: playersList, names: playernames3, platforms: platform});
         }
         
         }
