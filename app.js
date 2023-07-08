@@ -31,7 +31,7 @@ var moment = require('moment');
 require('dotenv').config()
 //Local Files
 
-// Console formatting
+// Internal
 const notify = require("./functions/notify.js");
 const getInstalledPlugins = require('./functions/getInstalledPlugins.js');
 const getRootKeys = require('./functions/getRootKeys.js');
@@ -82,6 +82,7 @@ const { del } = require('request');
 
 
 require("./functions/updater.js")
+require('./functions/autoRestartInterval.js')
 //updater.update()
 
 notify.notify(1,"Starting AMPLink...")
@@ -1756,10 +1757,12 @@ app.listen(`${process.env.AMP_PORT}`, ()=> {
     } else {
       notify.notify(1, `[AMPLink]: LOG_CONSOLE = ${process.env.LOG_CONSOLE}`)
     }
+
     
 })
 
 //Initialize the truncating system
+try {
   if (process.env.TRUNCATE_LOGS == 'true') {
       setInterval(() => {
         //notify.notify(2,"Truncate")
@@ -1769,6 +1772,10 @@ app.listen(`${process.env.AMP_PORT}`, ()=> {
   } else {
     return;
   }
+} catch(err) {
+  notify.notify(3,err)
+}
+
 
 } catch(err) {
   notify.notify(3, err)
