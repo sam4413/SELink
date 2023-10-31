@@ -377,12 +377,5 @@ require('./functions/errorHandler.js')
 var chanid = `${process.env.CHAT_LOGGING_ID}`;
 console.log(chanid)
 
-
-
-
-
-
-
 //Start bot
 client.login(process.env.BOT_TOKEN);
-
