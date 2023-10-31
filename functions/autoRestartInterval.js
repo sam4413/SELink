@@ -11,6 +11,3 @@ if (process.env.AUTO_RESTART == 'true') {
 } else {
     notify.notify(2,"AUTO_RESTART is disabled.")
 }
- 
-
-
