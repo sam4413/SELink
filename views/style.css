@@ -17,7 +17,7 @@ and set background-color to #ffffff for light mode and #000000 for color
   /*Background Colors*/
   --main-bg-color: #ffffff;
   --main-text-color: #222222;
-
+  
 
   /*Dark Mode Colors*/
   --main-bg-color-dark: #222222;
@@ -46,6 +46,7 @@ and set background-color to #ffffff for light mode and #000000 for color
     margin-right: 0%;
     overflow-x: hidden;
     background-color: var(--main-bg-color-dark);
+    /*background-image: url('resources/images/branding-bg.png');*/
     color: var(--main-text-color-dark);
   }
   .text-adaptive {
@@ -69,6 +70,7 @@ and set background-color to #ffffff for light mode and #000000 for color
     margin-right: 0%;
     overflow-x: hidden;
     background-color: var(--main-bg-color);
+    /*background-image: url('resources/images/branding-bg.png');*/
   }
   .text-adaptive {
     color: var(--main-text-color-light);
@@ -93,6 +95,11 @@ and set background-color to #ffffff for light mode and #000000 for color
 * {
   box-sizing: border-box;
   
+}
+
+.btn-purple {
+  background-color: #9900ff;
+  color: #ffffff;
 }
 
 legend {
@@ -203,8 +210,22 @@ main {
   position: static;
 }
 
-/*Callouts aka Embed messages on discord*/
-
+/*Callout Styling Light Mode*/
+@media (prefers-color-scheme: light) {
+.callout {
+  padding: 20px;
+  margin: 20px 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+.callout-inverted {
+  padding: 20px;
+  margin: 20px 0;
+  border: 0px solid #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left-width: 5px;
+  border-radius: 3px;
+}
 .callout-primary {
   padding: 20px;
   margin: 20px 0;
@@ -254,14 +275,74 @@ main {
   border-left-width: 5px;
   border-radius: 3px;
 }
-.callout-inverted {
-  padding: 20px;
-  margin: 20px 0;
-  border: 0px solid #ffffff;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-left-width: 5px;
-  border-radius: 3px;
+
+/*Callout Styling Dark Mode*/
 }
+@media (prefers-color-scheme: dark) {
+  .callout {
+    padding: 20px;
+    margin: 20px 0;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+  .callout-inverted {
+    padding: 20px;
+    margin: 20px 0;
+    border: 0px solid #ffffff;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left-width: 5px;
+    border-radius: 3px;
+  }
+  .callout-primary {
+    padding: 20px;
+    margin: 20px 0;
+    border: 0px solid #0d6efd;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left-width: 5px;
+    border-radius: 3px;
+  }
+  .callout-secondary {
+    padding: 20px;
+    margin: 20px 0;
+    border: 0px solid #6c757d;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left-width: 5px;
+    border-radius: 3px;
+  }
+  .callout-success {
+    padding: 20px;
+    margin: 20px 0;
+    border: 0px solid #198754;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left-width: 5px;
+    border-radius: 3px;
+  }
+  .callout-warning {
+    padding: 20px;
+    margin: 20px 0;
+    border: 0px solid #ffc107;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left-width: 5px;
+    border-radius: 3px;
+  }
+  
+  .callout-danger {
+    padding: 20px;
+    margin: 20px 0;
+    border: 0px solid #dc3545;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left-width: 5px;
+    border-radius: 3px;
+  }
+  .callout-info {
+    padding: 20px;
+    margin: 20px 0;
+    border: 0px solid #0dcaf0;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left-width: 5px;
+    border-radius: 3px;
+  }
+  }
 /*=================*/
 
 #scroller * {
@@ -272,3 +353,55 @@ main {
   overflow-anchor: auto;
   height: 1px;
 }
+
+/* ==== Toast System ====*/
+
+ /* The snackbar - position it at the bottom and in the middle of the screen */
+ #snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 250px; /* Set a default minimum width */
+  max-height: fit-content;
+  margin-left: -125px; /* Divide value of min-width by 2 */
+  background-image: url('./resources/images/exclamation.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: rgba(0, 50, 0, 0.5);
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 10px; /* Rounded borders */
+  padding: 16px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  left: 90%; /* Center the snackbar */
+  bottom: 30px; /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+  visibility: visible; /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+} 

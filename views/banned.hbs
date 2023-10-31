@@ -10,7 +10,7 @@
   <tr>
     <td scope="row text-primary"><span class="text-primary" style="position:relative;"><strong>{{this.personaname}}</strong><br>{{this.steamid}}</td>
     <td scope="row text-primary">
-      <span><form class="btn btn-danger" action="/panel/players/{{this.steamid}}/unban" method="POST">
+      <span><form class="btn btn-danger" action="/players/{{this.steamid}}/unban" method="POST">
           <button style="padding: 0px;" type="submit" value="Unban User" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to unban this user?');">Unban User</button></form>
       </span>
   {{/each}}
@@ -19,7 +19,7 @@
   <tr>
     <td scope="row text-primary"><span class="text-primary" style="position:relative;"><strong>{{this}}</strong></td>
     <td scope="row text-primary">
-      <span><form class="btn btn-danger" action="/panel/players/{{this}}/unban" method="POST">
+      <span><form class="btn btn-danger" action="/players/{{this}}/unban" method="POST">
           <button style="padding: 0px;" type="submit" value="Unban User" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to unban this user?');">Unban User</button></form>
       </span>
   {{/each}}

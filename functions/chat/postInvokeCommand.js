@@ -38,11 +38,11 @@ exports.postInvokeCommand = async function (string) {
   });
 });
 };
-
-/* For debugging
+/*
+//For debugging
 var postInvokeCommand = require(__dirname + '/postInvokeCommand.js');
 
 (async () => {
-  console.log(await postInvokeCommand.postInvokeCommand('notify "test" 1000'));
+  console.log(await postInvokeCommand.postInvokeCommand('cleanup delete blockslessthan 20'));
 })();
 */

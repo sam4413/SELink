@@ -117,7 +117,7 @@ canvas {
 
                     <button type="submit" class="btn btn-primary">Submit</button>
                     <div style="padding: 3px; float: right; max-width:150px; text-align: center; position: relative; top:10px; z-index:1111;">
-                      <em>AMPLink v0.3-beta Build</em>
+                      <em>AMPLink v1.0-release Build</em>
                     </div>
                 </form>
             </div>
@@ -126,6 +126,11 @@ canvas {
             {{#if message }}
             <div style="margin: 5px;">
 				      <p class="callout-warning">{{message}}</p>
+			      </div>
+            {{/if}}
+            {{#if ratemsg }}
+            <div style="margin: 5px;">
+				      <p class="callout-error">{{ratemsg}}</p>
 			      </div>
             {{/if}}
             

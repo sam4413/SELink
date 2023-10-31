@@ -36,7 +36,7 @@ exports.notify = async function (level, content) {
             });
             
             fs.close(fsdescriptor, (err) => {
-                if (err) throw err
+                if (err) console.log(chalk.yellow("[ERROR] ",`${err.message}`))
             })
         }      
         

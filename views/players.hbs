@@ -10,16 +10,16 @@
     <td scope="row text-primary"><span class="text-primary" style="padding-top:15px;">{{this.promoteLevel}} stars</span></td>
     <td scope="row text-primary">
       <div class="btn-group btn-group-sm" role="group">
-        <span><form class="btn btn-primary" action="/panel/players/promote/{{this.clientId}}" method="POST"> 
+        <span><form class="btn btn-primary" action="/players/promote/{{this.clientId}}" method="POST"> 
         <button style="padding: 0px;" type="submit" value="Promote" value="Promote" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to promote this user?');">Promote</button></form>
         </span>
-        <span><form class="btn btn-secondary" action="/panel/players/demote/{{this.clientId}}" method="POST"> 
+        <span><form class="btn btn-secondary" action="/players/demote/{{this.clientId}}" method="POST"> 
         <button style="padding: 0px;" type="submit" value="Demote" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to demote this user?');">Demote</button></form>
         </span>
-        <span><form class="btn btn-warning" action="/panel/players/kick/{{this.clientId}}" method="POST"> 
+        <span><form class="btn btn-warning" action="/players/kick/{{this.clientId}}" method="POST"> 
         <button style="padding: 0px;" type="submit" value="Kick" class="btn btn-hidden" onclick="return confirm('Are you sure you want to kick this user?');">Kick</button></form>
         </span>
-        <span><form class="btn btn-danger" action="/panel/players/ban/{{this.clientId}}" method="POST"> 
+        <span><form class="btn btn-danger" action="/players/ban/{{this.clientId}}" method="POST"> 
         <button style="padding: 0px;" type="submit" value="Ban" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to ban this user?');">Ban</button></form>
         </span>
       </div>

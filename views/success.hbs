@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AMPLink Control Panel</title>
+<link href="/style.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+<link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/editor/editor.main.min.css">
+
+<script>var require = { paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs' } }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/editor/editor.main.nls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/editor/editor.main.js"></script>
+</script>
+<style type="text/css" media="screen">
+    #editor { 
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+    }
+    .parent {
+    width:100%;
+    height: 400px;
+    display:inline-block;
+    position:relative;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 98.5%;
+  height: 100%;
+  background-color: rgba(128,128,128,0.1);
+  z-index: 10;
+  overflow: auto;
+}
+
+</style>
+</head>
+<body>
+
+<div class="sidenav">
+  <img src="/resources/images/branding.png" alt="branding" width="200" height="80">
+  <a href="/">Home</a>
+  <a href="/panel">Server Control Panel&nbsp;</a>
+  <a href="/console">Server Console</a>
+  <a href="/players">Chat/Players</a>
+  <a href="/grids">Grids/Entities</a>
+  <a href="/users">Users</a>
+  <a href="/about">About</a>
+  <div class="brightercolor"><a href="#">Welcome, <b>{{#if message }}{{message}}{{/if}}</b><br><form action="/logout"><input type="submit" value="Logout" class="btn btn-danger"></form></a></div>
+</div>
+<main>
+<div class="content">
+  <h2>The configuration for {{data}} has been applied to the server.&nbsp;</h2>
+  <div class="col-md-10 callout-info">
+    <p>It is recommended to restart the server in order for changes to take effect.<br>Result: {{result}}</p>
+  </div>
+  <div class="col-md-10 callout-primary">
+    <p><b>Edited config:</b><hr>
+    <div class="parent"><div class="overlay"></div><div id="editor">{{torchParse}}</div></div>
+    </p>
+  </div>
+<form action="/configurator"><input type="submit" value="Go back" class="btn btn-primary" style="float:left;"></form>
+</div>
+<script>
+    // Initialize the Ace editor
+        // require is provided by loader.min.js.
+        const torchValues = `{{torchParse}}`;
+  var editor = monaco.editor.create(document.getElementById('editor'), {
+    value: torchValues,
+    language: 'json',
+    theme: 'vs-dark',
+    wordWrap: true
+  });
+</script>
+</main>
+</body>
+</html>

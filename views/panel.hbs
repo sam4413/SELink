@@ -21,6 +21,7 @@
 </div>
 <main class="content">
   <h2>Server Control Panel</h2>
+  <p class="subtitle2">Server Control Panel</p>
 	
   <!--Container-->
 <div class="row">
@@ -56,9 +57,9 @@
 <!--Divider-->
 		<div class="col-xl-11 callout-danger"><strong>Configuration&nbsp;</strong>
 		  <hr>
-		<form style="float:left; margin-right: 10px;" action="/postConfigurator" method="POST"><input type="submit" value="Plugins Management" class="btn btn-danger"></form>
-    <form style="float:left; margin-right: 10px;" action="/postInstance" method="POST"><input type="submit" value="Torch Instance" class="btn btn-danger"></form>
-    <form style="float:left; margin-right: 10px;" action="/postScheduled" method="POST"><input type="submit" value="Scheduled Tasks" class="btn btn-danger"></form>
+		<form style="float:left; margin-right: 10px;" action="/configurator" method="GET"><input type="submit" value="Plugins Management" class="btn btn-danger"></form>
+    <form style="float:left; margin-right: 10px;" action="/postFtpManager" method="GET"><input type="submit" value="FTP Manager" class="btn btn-danger"></form>
+    <form style="float:left; margin-right: 10px;" action="/postScheduled" method="GET"><input type="submit" value="Scheduled Tasks" class="btn btn-danger"></form>
 	  </div>
 </div>
 

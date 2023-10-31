@@ -1,5 +1,7 @@
   <table class="table text-center" style="border: none;" id="myTable" data-sort-direction="asc">
+    {{#if success}}
     <tr style="background-color: rgba(0, 0, 0, 0.2);">
+      <th class="col text-secondary"><button class="btn btn-warning selectAll" style="max-width:10px;max-height:25px;"></i><span style="visibility: hidden; display:none; ">{{this.id}}</span><i class="bi bi-check-all"  style="position: relative; left:-10px;up:-10px"></button></th>
       <th class="col text-secondary">Name</th>
       <th class="col text-secondary">Block Count</th>
       <th class="col text-secondary">PCU</th>
@@ -10,6 +12,7 @@
     <div id="myContainer">
     {{#each alldata}}
       <tr>
+        <td scope="row text-primary"><div class="selectable" style="max-width:10px;max-height:10px;"><span style="visibility: hidden; display:none; ">{{this.id}}</span></div></td>
         <td scope="row text-primary"><span class="text-primary">{{this.name}}</span></td>
         <td scope="row text-primary"><span class="text-primary">{{this.blockCount}}</span></td>
         <td scope="row text-primary"><span class="text-primary">{{this.pcu}}</span></td>
@@ -23,7 +26,18 @@
     {{/each}}
     </div>
   </table>
-
+    {{else}}
+      <table class="table text-center" style="border: none;" id="myTable" data-sort-direction="asc">
+      <tr style="background-color: rgba(0, 0, 0, 0.2);">
+        <th class="col text-secondary">Error</th>
+      </tr>
+     <td scope="row text-primary"><span class="text-primary">The gridlist cannot connect to the server. Please contact your Administrator if this issue persists.<br>
+     <button class="btn btn-sm btn-primary" onClick="window.location.reload();">Reload Page</button></span>
+     </td>
+     </table>
+     <div style="background-color: rgba(0,0,0,0.1); border-radius:5px; padding:5px; word-wrap: break-word;"><pre>Error:<br>{{errormsg.message}}</pre></div>
+     
+     {{/if}}
   <script>
       // Get the table element
       const table = document.getElementById('myTable');
@@ -33,8 +47,8 @@
 
       // Sort the rows by the 'blockCount' column in descending order
       rows.sort((a, b) => {
-        const aValue = parseInt(a.cells[1].innerText, 10);
-        const bValue = parseInt(b.cells[1].innerText, 10);
+        const aValue = parseInt(a.cells[2].innerText, 10);
+        const bValue = parseInt(b.cells[2].innerText, 10);
         return bValue - aValue;
       });
 

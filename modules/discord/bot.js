@@ -31,52 +31,18 @@ const getRootKeys = require('../../functions/getRootKeys.js');
 const getSteamPlayerSummaries = require('../../functions/steam/getSteamPlayerSummaries.js');
 */
 //chat
-const postInvokeCommand = require('../../functions/chat/postInvokeCommand.js')
-const postSendChatMessage = require('../../functions/chat/postSendChatMessage.js')
-/*
-//logs 
-const websocketChat = require('./events/DBwebsocketChat.js')
-const websocketLogs = require('./functions/DBwebsocketLogs.js')
-//plugins
-const deletePlugin = require('../../functions/plugins/deletePlugin.js')
-const getAllPlugins = require('../../functions/plugins/getAllPlugins.js')
-const putPlugin = require('../../functions/plugins/putPlugin.js')
-  //plugins download
-  const getPluginsDownloadsAll = require('../../functions/plugins/downloads/getPluginsDownloadsAll.js')
-//server
-const getHeartbeat = require('../../functions/server/getHeartbeat.js');
-*/const getSettings = require('../../functions/server/getSettings.js');
-const getStatus = require('../../functions/server/getStatus.js');/*
-const postSettings = require('../../functions/server/postSettings.js');
-const postStart = require('../../functions/server/postStart.js');
-const postStop = require('../../functions/server/postStop.js');*/
-const getAllPlayers = require('../../functions/players/getAllPlayers.js');
-/*const getAllBannedPlayers = require('../../functions/players/getAllBannedPlayers.js')
-const postBanPlayer = require('../../functions/players/postBanPlayer.js');
-const postKickPlayer = require('../../functions/players/postKickPlayer.js');
-const postPromotePlayer = require('../../functions/players/postPromotePlayer.js');
-const postDemotePlayer = require('../../functions/players/postDemotePlayer.js');
-const postDisconnectPlayer = require('../../functions/players/postDisconnectPlayer.js');
-const postUnbanPlayer = require('../../functions/players/postUnbanPlayer.js');
-//settings
-const getTorchValues = require("../../functions/settings/getTorchValues.js")
-const getTorchSchema = require("../../functions/settings/getTorchSchema.js")
-const getTorchSettings = require("../../functions/settings/getTorchSettings.js")
-const patchTorchValues = require("../../functions/settings/patchTorchValues.js")
-*/
+const chatSystem = require('../../functions/chat/chatSystem.js')
+const serverSystem = require('../../functions/server/serverSystem.js');
+const playerSystem = require('../../functions/players/playerSystem.js');
+
 const { randomInt } = require('crypto');
 const { json } = require('stream/consumers');
 const { guildId, clientId } = require('./config.json');
 
-
-
 const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 
 //Discord
-const embedManager = require("./functions/embeds/embedManager.js")
-
-//const websocketChat = require('./events/DBwebsocketChat');
-//const { token } = require('./config.json');
+//const embedManager = require("./functions/embeds/embedManager.js")
 
 const client = new Client({ intents: [
 	GatewayIntentBits.DirectMessages,
@@ -88,23 +54,6 @@ const client = new Client({ intents: [
 	GatewayIntentBits.GuildEmojisAndStickers
 ] });
 
-client.commands = new Collection();
-
-const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles) {
-	const filePath = path.join(commandsPath, file);
-	const command = require(filePath);
-	// Set a new item in the Collection with the key as the command name and the value as the exported module
-	if ('data' in command && 'execute' in command) {
-		client.commands.set(command.data.name, command);
-	} else {
-		notify.notify(2,`The command at ${filePath} is missing a required "data" or "execute" property.`);
-	}
-}
-var chanid = `${process.env.CHAT_LOGGING_ID}`;
-console.log(chanid)
 
 
 client.on('ready', async () => {
@@ -147,27 +96,27 @@ client.on('ready', async () => {
 				notify.notify(2,"User attempted to ping another!")
 				return;
 			} else {
-				client.channels.cache.get(chanid).send(`:rocket:**${authorname}:** ${msg}`);
-			}
-
-			
-		
-		
-			if (channel == 1) {
-				if (consoleconf == 'true') {
-				  notify.notify(1, `${time} ${authorname}: ${msg}`);
-				} else if (consoleconf == 'false') {
-				  if (err) notify.notify(3, err); 
+				if (channel == 3) {
+					if (process.env.SHOW_PRIVATE_MSG == 'true') {
+					  if (consoleconf == 'true') { notify.notify(1, `${date} (Private) ${authorname}: ${msg}`); }
+					  client.channels.cache.get(chanid).send(`:rocket:**(Private) ${authorname}:** ${msg}`);
+					  
+					} else if (process.env.SHOW_PRIVATE_MSG == 'false') {
+					  if (consoleconf == 'true') { notify.notify(1, `${date} (Private) ${authorname}: ${msg}`); }
+					}
+				} else if (channel == 2) {
+					if (process.env.SHOW_PRIVATE_MSG == 'true') {
+						if (consoleconf == 'true') { notify.notify(1, `${date} (Faction) ${authorname}: ${msg}`); }
+						client.channels.cache.get(chanid).send(`:rocket:**(Faction) ${authorname}:** ${msg}`);
+						
+					  } else if (process.env.SHOW_PRIVATE_MSG == 'false') {
+						if (consoleconf == 'true') { notify.notify(1, `${date} (Faction) ${authorname}: ${msg}`); }
+					  }
+				} else {
+					  if (consoleconf == 'true') { notify.notify(1, `${date} ${authorname}: ${msg}`); }
+					  client.channels.cache.get(chanid).send(`:rocket:**${authorname}:** ${msg}`);
 				}
-			} else {
-				if (consoleconf == 'true') {
-				  notify.notify(1, `${time} ${authorname}: ${msg}`);
-				} else if (consoleconf == 'false') {
-				  if (err) notify.notify(3, err); 
-				}
 			}
-			
-			
 		  } catch (err) {
 			notify.notify(3, '[AMPLink Discord Websockets]: ',err);
 		    client.channels.cache.get(chanid).send(`:warning: **An error occured:** ${err}`);
@@ -239,13 +188,20 @@ client.on('ready', async () => {
 
 //Websockets 
 client.on('messageCreate', async message => {
-
+	
     if (message.channelId != chanid) return; //only check chanid
 	if (message.author.bot) return; //prevent bot
+	if (process.env.EXCLUDE_MESSAGES == 'true') { //Message exclusion system
+		const excluded = process.env.EXCLUDE_MESSAGES_KEY
+		if (message.content.includes(`${excluded}`)) {
+			message.react('⏭');
+			return;
+	}
 
+	}
 	//await notify.notify(3,message.content)
 	message.react('✅');
-	postSendChatMessage.postSendChatMessage(message.content,"[Discord] "+message.author.username,1)
+	chatSystem.postSendChatMessage(message.content,"[Discord] "+message.author.username,1)
 	//notify.notify(3,'success')
 })
 
@@ -289,9 +245,9 @@ client.on('messageCreate', async message => {
 			client.channels.cache.get(message.channelId).send("Please wait, retrieving info...");
 			notify.notify(3,"Retrieving statistics from server.")
 			//Get all relavent information.
-			var serversettings = await(getSettings.getSettings())
-			var serverstats = await(getStatus.getStatus())
-			var serverplayers = await(getAllPlayers.getAllPlayers())
+			var serversettings = await(serverSystem.getSettings())
+			var serverstats = await(serverSystem.getStatus())
+			var serverplayers = await(playerSystem.getAllPlayers())
 			serversettings = JSON.parse(serversettings)
 			serverstats = JSON.parse(serverstats)
 			serverplayers = JSON.parse(serverplayers)
@@ -408,7 +364,25 @@ client.on('messageCreate', async message => {
 
 
 //								//
-// 		 	Run AMP DB	 		//
+// 		Command Handler	 		//
 //								//
+
+//Command Initializer
+require("./functions/commandInitializer.js")
+//Command Deployer
+require('./functions/deploy.js')
+//Error Handler
+require('./functions/errorHandler.js')
+
+var chanid = `${process.env.CHAT_LOGGING_ID}`;
+console.log(chanid)
+
+
+
+
+
+
+
+//Start bot
 client.login(process.env.BOT_TOKEN);
 

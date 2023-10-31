@@ -5,6 +5,14 @@
 <title>AMPLink Control Panel</title>
 <link href="/style.css" rel="stylesheet" type="text/css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+<script>
+  function myFunction() {
+    // Get the snackbar DIV
+    var x = document.getElementById("snackbar");
+    x.className = "show";
+    setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+  } 
+</script>
 </head>
 <body>
 
@@ -23,7 +31,7 @@
 
 <div class="content">
   <h2>User Management</h2>
-  <p class="subtitle2">Add / Remove Panel Users</p>
+  <p class="subtitle2"><a href="/users">Your Account</a> > Add / Remove Panel Users</p>
 
 
 <div class="col-xl-6 callout-info">
@@ -59,6 +67,8 @@
   </tr>
 </table>
 
+<button onclick="myFunction()">Show Snackbar</button>
+<div id="snackbar">Message blah blah</div>
 
 </div>
 <div class="callout-info col-md-6">TIP: It is recommended to edit users in the user page, versus editing it directly in phpMyAdmin.</div>

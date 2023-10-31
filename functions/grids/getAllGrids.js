@@ -1,11 +1,11 @@
-//AMPLink Server Controllers
+//AMPLink Grid Controllers
 //Made by sam
 
 const request = require('request');
 require('dotenv').config();
 const JSONbig = require('json-bigint');
 const notify = require('../notify');
-
+//LEGACY CODE
 exports.getAllGrids = async function() {
   try {
     const bearerToken = `${process.env.TORCHREMOTE_TOKEN}`;

@@ -37,16 +37,16 @@
     </script>
   </div>
   <div class="col-md-10 callout-inverted" style="position: relative; top:-50px;">
-  <form action="/invokeCommand" method="POST" style="width: 100%">
+  <form action="/server/invokeCommand" method="POST" style="width: 100%">
   <label for="string" class="form-label">Actions:</label><br>
   <input type="text" class="form-control" id="command" name="command">
   <button type="submit" class="btn btn-success" style="float:left; margin-right: 10px; margin-top: 10px;">Send Command</button>
   
   
   </form>
-  <form style="float:left; margin-right: 10px; margin-top: 10px"action="/serverStart" method="POST"><input type="submit" value="Start" class="btn btn-secondary"></form>
-  <form style="float:left; margin-right: 10px; margin-top: 10px" action="/serverRestart" method="POST"><input type="submit" value="Restart" class="btn btn-warning"></form>
-  <form style="float:left; margin-right: 10px; margin-top: 10px"action="/serverStop" method="POST"><input type="submit" value="Shutdown" class="btn btn-danger"></form>
+  <form style="float:left; margin-right: 10px; margin-top: 10px"action="/server/Start" method="POST"><input type="submit" value="Start" class="btn btn-secondary"></form>
+  <form style="float:left; margin-right: 10px; margin-top: 10px" action="/server/Restart" method="POST"><input type="submit" value="Restart" class="btn btn-warning"></form>
+  <form style="float:left; margin-right: 10px; margin-top: 10px"action="/server/Stop" method="POST"><input type="submit" value="Shutdown" class="btn btn-danger"></form>
   <br>{{errormsg}}<br></div>
   
 </div>

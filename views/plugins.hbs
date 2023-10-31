@@ -41,12 +41,12 @@
     Filters <i class="text-adaptive bi bi-funnel-fill"></i> | <input type="text" class="col-md-5" id="myInput" placeholder="Search..." name="myInput" oninput="myFunction()">-->
   </span>
   <hr>
-  <div id="pluginlist">Pleaes wait, retrieving info...</div>
+  <div id="pluginlist">Please wait, retrieving info...</div>
 </div>
 
 <script>
   const staticData = () => {
-    fetch('/plugins/list/')
+    fetch('/configurator/plugins/list/')
   .then(response => response.text())
   .then(html => {
     const parser = new DOMParser();
