@@ -76,4 +76,3 @@ var settingSystem = require(__dirname + '/settings/settingSystem.js');
   console.log(await settingSystem.getTorchValues(configOption, array)); //Get the config data.
 })()
 */
-

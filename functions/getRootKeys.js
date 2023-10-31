@@ -21,4 +21,3 @@ var getRootKeys = require(__dirname + '/getRootKeys.js');
     console.log(await getRootKeys.getRootKeys(`{"name":"Profiler","schema":{"type":"object","properties":{"enabled":{"type":"boolean"},"silenceInvalidPatch":{"type":"boolean"},"suppressWpfOutput":{"type":"boolean"},"enableLoggingTrace":{"type":"boolean"},"enableLoggingDebug":{"type":"boolean"},"logFilePath":{"type":"string"}}}}`))
 })()
 */
-
