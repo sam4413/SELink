@@ -77,66 +77,69 @@ exports.getAllGridIds = async function() {
 }
 
 exports.getAllGridInfo = async function(ids) {
-  try {
-    const batchSize = 100;
-    const delayBetweenBatches = 1000;
-    const responses = [];
-    ids = JSONbig.parse(ids);
+  const batchSize = 10;
+  const delayBetweenBatches = 100;
+  const responses = [];
 
-    async function performBatchRequests(ids) {
+  ids = JSONbig.parse(ids);
 
-      if (ids.length === 0) {
-        notify.notify(3,`==================== Complete ====================`)
-        var fixArray = responses.slice(0, -1);
-        var fixArray2 = "[" + fixArray + "]";
-        return Promise.resolve(fixArray2);
-      }
-      //console.log(ids)
+  async function performBatchRequests(ids) {
 
-      const batch = ids.slice(0, batchSize);
-      ids = ids.slice(batchSize);
+    if (ids.length === 0) {
+      notify.notify(3,`==================== Complete ====================`)
+      var fixArray = responses.slice(0, -1);
+      var fixArray2 = "[" + fixArray + "]";
+      return Promise.resolve(fixArray2);
+    }
+    //console.log(ids)
 
-      if (!Array.isArray(batch)) {
-        notify.notify(3,'Invalid batch:', batch);
-        return Promise.reject(new Error('Invalid batch'));
-      }
-      const batchPromises = batch.map(id => {
-        return new Promise((resolve, reject) => {
-            const options = {
-              url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/grids/${id}`,
-              headers: {
-                'Authorization': `Bearer ${bearerToken}`
-              }
-            };
+    const batch = ids.slice(0, batchSize);
+    ids = ids.slice(batchSize);
+
+    if (!Array.isArray(batch)) {
+      notify.notify(3,'Invalid batch:', batch);
+      return Promise.reject(new Error('Invalid batch'));
+    }
+    const batchPromises = batch.map(id => {
+      return new Promise((resolve, reject) => {
+          const options = {
+            url: `${process.env.TORCHREMOTE_ADDRESS}/api/v1/grids/${id}`,
+            headers: {
+              'Authorization': `Bearer ${bearerToken}`
+            }
+          };
+          try {
             request.get(options, (error, response, body) => {
               if (response.statusCode != 200) {
                 notify.notify(3, `Grid id ${id} no longer exists (${response.statusCode}).`);
-                reject(`Grid id ${id} no longer exists (${response.statusCode}).`); //Do not include grids that do not exist anymore.
-              } else {
+                reject(`Grid id ${id} no longer exists (${response.statusCode}).`); //Do not include grids that do not exist anymore. Just indicate they dont exist via console.
+              } else if (response.statusCode == 200) {
                 responses.push(body);
                 resolve(body);
+              } else {
+                notify.notify(3, `Grid id ${id} no longer exists (${response.statusCode}).`);
+                reject(`Grid id ${id} no longer exists (${response.statusCode}).`); //Do not include grids that do not exist anymore. Just indicate they dont exist via console.
               }
             });
-          });
-        });
-      return Promise.all(batchPromises).then(() => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            notify.notify(3,`==================== ${ids.length} / 0 ====================`)
-            performBatchRequests(ids)
-              .then(result => resolve(result))
-              .catch(error => resolve(error));
-          }, delayBetweenBatches);
+          } catch (e) {
+            notify.notify(3,e.message)
+          }
+          
         });
       });
-    }
-    return performBatchRequests(ids);
-  } catch(e) {
-    notify.notify(3, err.message);
+    return Promise.all(batchPromises).then(() => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          notify.notify(3,`==================== ${ids.length} / 0 ====================`)
+          performBatchRequests(ids)
+            .then(result => resolve(result))
+            .catch(error => resolve(error));
+        }, delayBetweenBatches);
+      });
+    });
   }
-  
+  return performBatchRequests(ids);
 }
-
 /*
 // For debugging
 const getAllGrids = require(__dirname + '/getAllGrids.js');

@@ -46,7 +46,7 @@ exports.getAllGridIds = async function() {
 
 exports.getAllGridInfo = async function(ids) {
   const batchSize = 10;
-  const delayBetweenBatches = 1000;
+  const delayBetweenBatches = 100;
   const responses = [];
 
   ids = JSONbig.parse(ids);
@@ -76,15 +76,20 @@ exports.getAllGridInfo = async function(ids) {
               'Authorization': `Bearer ${bearerToken}`
             }
           };
-          request.get(options, (error, response, body) => {
-            if (response.statusCode != 200) {
-              notify.notify(3, `Grid id ${id} no longer exists (${response.statusCode}).`);
-              //reject(`Grid id ${id} no longer exists (${response.statusCode}).`); //Do not include grids that do not exist anymore. Just indicate they dont exist via console.
-            } else {
-              responses.push(body);
-              resolve(body);
-            }
-          });
+          try {
+            request.get(options, (error, response, body) => {
+              if (response.statusCode != 200) {
+                notify.notify(3, `Grid id ${id} no longer exists (${response.statusCode}).`);
+                reject(`Grid id ${id} no longer exists (${response.statusCode}).`); //Do not include grids that do not exist anymore. Just indicate they dont exist via console.
+              } else {
+                responses.push(body);
+                resolve(body);
+              }
+            });
+          } catch (e) {
+            notify.notify(3,e.message)
+          }
+          
         });
       });
     return Promise.all(batchPromises).then(() => {
