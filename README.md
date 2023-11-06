@@ -1,4 +1,5 @@
 ![AMPLink Logo](https://cdn.discordapp.com/attachments/617491056652582953/1085417601208946728/image.png)
+## Warning! You are on the really unstable branch! Features are destined to break, and bugs will occur. If you don't want that, please switch to the `main` branch!
 ## AMPLink (Advanced Moderation Panel Linker)
  AMPLink is a powerful tool that allows Administrators easy access to their Space Engineers servers through an easy to use webpanel.
  
