@@ -1,2 +1,4 @@
 .env
-logs.txt
+logs
+chat.html
+logs.html
