@@ -24,14 +24,8 @@ exports.postInvokeCommand = async function (string) {
       return;
     }
 
-    if (response.statusCode == 401) {
-      console.log("[E008] Error accessing remote data.")
-      resolve(response.statusCode);
-    } else if (response.statusCode == 503) {
-      console.log("[E012] Server connection cannot be established. This could be due to the server being down or offline.")
-      resolve(response.statusCode);
-    } else if (response.statusCode != 200){
-      console.log(`[E009] Error accessing remote data with a status code of ${response.statusCode}.`)
+    if (response.statusCode != 200){
+      notify.notify(3, `Error accessing remote data with a status code of ${response.statusCode}.`);
       resolve(response.statusCode);
     }
     resolve(response.body);

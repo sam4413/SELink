@@ -39,10 +39,13 @@ module.exports = function(app){
     if (req.session.userId) {
       try {
         // Your JSON string
-        var gridlist = await gridSystem.getAllGrids()
+
+        const ids = await gridSystem.getAllGridIds();
+        const gridlist = await gridSystem.getAllGridInfo(ids);
+
         // Parse the JSON string with JSONbig library
         const jsonData = JSONbig.parse(gridlist);
-
+        
         // Convert the jsonData to a regular JavaScript object
         const jsonObject = JSON.parse(JSON.stringify(jsonData));
 
