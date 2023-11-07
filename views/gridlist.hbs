@@ -1,5 +1,32 @@
   <table class="table text-center" style="border: none;" id="myTable" data-sort-direction="asc">
-    {{#if success}}
+      {{#if usingvrage}}
+      <tr style="background-color: rgba(0, 0, 0, 0.2);">
+        <th class="col text-secondary"><button class="btn btn-warning selectAll" style="max-width:10px;max-height:25px;"></i><span style="visibility: hidden; display:none; ">{{this.id}}</span><i class="bi bi-check-all"  style="position: relative; left:-10px;up:-10px"></button></th>
+        <th class="col text-secondary">Name</th>
+        <th class="col text-secondary">Block Count</th>
+        <th class="col text-secondary">PCU</th>
+        <th class="col text-secondary">Owner Name</th>
+        <th class="col text-secondary">Grid ID</th>
+        <th class="col text-secondary">Actions</th>
+      </tr>
+      <div id="myContainer">
+      {{#each alldata}}
+        <tr>
+          <td scope="row text-primary"><div class="selectable" style="max-width:10px;max-height:10px;"><span style="visibility: hidden; display:none; ">{{this.id}}</span></div></td>
+          <td scope="row text-primary"><span class="text-primary">{{this.DisplayName}}</span></td>
+          <td scope="row text-primary"><span class="text-primary">{{this.BlocksCount}}</span></td>
+          <td scope="row text-primary"><span class="text-primary">{{this.PCU}}</span></td>
+          <td scope="row text-primary"><span class="text-primary">{{this.OwnerDisplayName}}</span></td>
+          <td scope="row text-primary"><span class="text-primary">{{this.EntityId}}</span></td>
+          <td scope="row text-primary">
+          <span><form class="btn btn-sm btn-danger" action="/grids/delete/{{this.EntityId}}" method="POST">
+              <button style="padding: 0px;" type="submit" value="Delete" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to delete {{this.DisplayName}}?');">Delete</button></form>
+          </span></td>
+        </tr>
+      {{/each}}
+      </div>
+    </table>
+    {{else}}{{#if success}}
     <tr style="background-color: rgba(0, 0, 0, 0.2);">
       <th class="col text-secondary"><button class="btn btn-warning selectAll" style="max-width:10px;max-height:25px;"></i><span style="visibility: hidden; display:none; ">{{this.id}}</span><i class="bi bi-check-all"  style="position: relative; left:-10px;up:-10px"></button></th>
       <th class="col text-secondary">Name</th>
@@ -37,6 +64,7 @@
      </table>
      <div style="background-color: rgba(0,0,0,0.1); border-radius:5px; padding:5px; word-wrap: break-word;"><pre>Error:<br>{{errormsg.message}}</pre></div>
      
+     {{/if}}
      {{/if}}
   <script>
       // Get the table element

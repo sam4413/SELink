@@ -77,8 +77,8 @@ exports.getAllGridIds = async function() {
 }
 
 exports.getAllGridInfo = async function(ids) {
-  const batchSize = 10;
-  const delayBetweenBatches = 100;
+  const batchSize = process.env.GET_ALL_GRIDS_BATCHSIZE;
+  const delayBetweenBatches = process.env.GET_ALL_GRIDS_TIMEOUT;
   const responses = [];
 
   ids = JSONbig.parse(ids);
@@ -110,15 +110,15 @@ exports.getAllGridInfo = async function(ids) {
           };
           try {
             request.get(options, (error, response, body) => {
-              if (response.statusCode != 200) {
-                notify.notify(3, `Grid id ${id} no longer exists (${response.statusCode}).`);
-                reject(`Grid id ${id} no longer exists (${response.statusCode}).`); //Do not include grids that do not exist anymore. Just indicate they dont exist via console.
+              if (error) {
+                notify.notify(3, `Grid id ${id} no longer exists (${error}).`);
+                reject(`Grid id ${id} no longer exists (${error}).`); //Do not include grids that do not exist anymore. Just indicate they dont exist via console.
               } else if (response.statusCode == 200) {
                 responses.push(body);
                 resolve(body);
               } else {
-                notify.notify(3, `Grid id ${id} no longer exists (${response.statusCode}).`);
-                reject(`Grid id ${id} no longer exists (${response.statusCode}).`); //Do not include grids that do not exist anymore. Just indicate they dont exist via console.
+                notify.notify(3, `Grid id ${id} no longer exists (Unknown).`);
+                reject(`Grid id ${id} no longer exists (Unknown).`); //Do not include grids that do not exist anymore. Just indicate they dont exist via console.
               }
             });
           } catch (e) {

@@ -7,7 +7,7 @@ notify.notify(1,"Initializing grids route...")
 
 const chatSystem = require('../functions/chat/chatSystem.js');
 const gridSystem = require('../functions/grids/gridSystem.js');
-
+const vrageSessionSystem = require('../functions/vrageapi/vrageSessionSystem.js');
 
 //Modules
 const RateLimit = require('express-rate-limit');
@@ -37,27 +37,39 @@ module.exports = function(app){
   //Grid Listing System
   app.get('/grids/gridlist', consoleLimiter, async (req, res) => {
     if (req.session.userId) {
-      try {
-        // Your JSON string
-
-        const ids = await gridSystem.getAllGridIds();
-        const gridlist = await gridSystem.getAllGridInfo(ids);
-
-        // Parse the JSON string with JSONbig library
-        const jsonData = JSONbig.parse(gridlist);
-        
-        // Convert the jsonData to a regular JavaScript object
-        const jsonObject = JSON.parse(JSON.stringify(jsonData));
-
-        // Perform JSONPath query to obtain all values with the key "id"
-        const alldata = jp.query(jsonObject, '$.*');
-        // Output the results
-        res.render('gridlist.hbs', {alldata: alldata, success: true});
-      } catch(err) {
-        notify.notify(3,err.message);
-        res.render('gridlist.hbs', {errormsg: err});
+      if (process.env.USE_REMOTECLIENT_API == 'true') {
+        try {
+          // Your JSON string
+          const gridlist = await vrageSessionSystem.session.grids();
+          // Parse the JSON string with JSONbig library
+          const jsonData = JSONbig.parse(gridlist);
+          // Convert the jsonData to a regular JavaScript object
+          const jsonObject = JSON.parse(JSON.stringify(jsonData));
+          // Perform JSONPath query to obtain all values with the key "id"
+          const alldata = jp.query(jsonObject, '$..data.Grids.*');
+          // Output the results
+          res.render('gridlist.hbs', {usingvrage: true, alldata: alldata, success: true});
+        } catch(err) {
+          notify.notify(3,err.message);
+          res.render('gridlist.hbs', {errormsg: err});
+        }
+      } else {
+        try {
+          const ids = await gridSystem.getAllGridIds();
+          const gridlist = await gridSystem.getAllGridInfo(ids);
+          // Parse the JSON string with JSONbig library
+          const jsonData = JSONbig.parse(gridlist);
+          // Convert the jsonData to a regular JavaScript object
+          const jsonObject = JSON.parse(JSON.stringify(jsonData));
+          // Perform JSONPath query to obtain all values with the key "id"
+          const alldata = jp.query(jsonObject, '$.*');
+          // Output the results
+          res.render('gridlist.hbs', {usingvrage: false, alldata: alldata, success: true});
+        } catch(err) {
+          notify.notify(3,err.message);
+          res.render('gridlist.hbs', {errormsg: err});
+        }
       }
-      
     } else {
       res.render('login.hbs');
     }
