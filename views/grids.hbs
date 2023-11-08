@@ -38,7 +38,8 @@
   <div></div>
   <h2>Grids/Entities&nbsp;</h2>
   <noscript><div class="col-xl-12 callout-danger"><b>JavaScript needs to be enabled to display this section properly. Please either reload the page, or enable JavaScript in your browser settings.</b></div></noscript>
-  <p><div class="callout-danger">Grid Data gets queried every 5 seconds.</div></p>
+  <p><div class="callout-info">Grid Data gets queried every {{#if usingvrage}}<b>1</b>{{else}}<b>10</b>{{/if}} seconds.</div></p>
+  <p><div class="callout-success">Currently connected to: {{#if usingvrage}}<b>VRage Remote API</b>{{else}}<b>Torch Remote API</b>{{/if}}.</div></p>
 </div><br>
 
 <script>
@@ -100,8 +101,6 @@
       <form action="/grids/cleanup/voxels/planets" method="POST"><button style="padding: 0px;" type="submit" value="Reset Planet Voxels" value="Reset Planet Voxels" class="btn btn-danger text-white" onclick="return confirm('Are you sure you want to Reset Planet Voxels?');">Reset Planet Voxels</button></form>
 
       <form action="/grids/cleanup/voxels" method="POST"><button style="padding: 0px;" type="submit" value="Reset All Voxels" value="Reset All Voxels" class="btn btn-danger text-white" onclick="return confirm('Are you sure you want to Reset All Voxels?');">Reset All Voxels</button><br><br></form>
-      
-      <div style="background-color: rgba(0,0,0,0.1); border-radius:5px; padding:5px; word-wrap: break-word;"><pre>Output:<br>{{errormsg}}</pre></div>
 
     </div>
   </div>
@@ -199,7 +198,27 @@
       });
       
     
+{{#if usingvrage}}
+  const updateVariable = () => {
+    fetch('/grids/gridlist')
+  .then(response => response.text())
+  .then(html => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const scriptTag = doc.querySelector('script');
+    const scriptContent = scriptTag.textContent;
+    const targetElement = document.getElementById('gridlist');
+    targetElement.innerHTML = html;
+    // execute the script content if necessary
+    eval(scriptContent);
+    search()
+    loadSelectedItemsFromLocalStorage() 
+    
+  });
+  };
+setInterval(updateVariable, 1000);
 
+{{else}}
   const updateVariable = () => {
     fetch('/grids/gridlist')
   .then(response => response.text())
@@ -218,6 +237,7 @@
   });
   };
 setInterval(updateVariable, 5000);
+{{/if}}
 </script>
 
 </main>

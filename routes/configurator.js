@@ -200,10 +200,6 @@ app.get('/configurator/plugins', async (req, res) => {
             }
           });
 
-
-
-
-
 //Posts
 app.post('/configurator/plugins/get/:id/post', async (req, res) => {
   if (!req.session.userId) {
@@ -252,6 +248,8 @@ app.get('/configurator/plugins/get/display', consoleLimiter, async (req, res) =>
       if (err) {notify.notify(3,err);}
       res.send(data)
       })
+    } else {
+        res.send('You do not have permission to access this page.');
     }
 });
 

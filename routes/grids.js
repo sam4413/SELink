@@ -77,7 +77,11 @@ module.exports = function(app){
 
   app.get('/grids', async (req, res) => {
     if (req.session.userId) {
-        res.render('grids.hbs');
+      if (process.env.USE_REMOTECLIENT_API == 'true') {
+        res.render('grids.hbs', {usingvrage: true});
+      } else {
+        res.render('grids.hbs',  {usingvrage: false});
+      }
       
     } else {
       res.render('login.hbs');
@@ -89,11 +93,11 @@ module.exports = function(app){
       try {
         const id = req.params.id; 
         var delGrid = await gridSystem.deleteGridId(id);
-        var resmsg = "SUCCESS: "+delGrid;
-        res.render('grids.hbs', {errormsg: resmsg});
+        notify.notify(1, "Deleted grid with Entity ID "+id)
+        res.redirect('/grids');
       } catch(err) {
-        var resmsg = "ERROR: "+err;
-        res.render('grids.hbs', {errormsg: resmsg});
+        notify.notify(3,err.message)
+        res.redirect('/grids');
       }
     } else {
       res.render('login.hbs');

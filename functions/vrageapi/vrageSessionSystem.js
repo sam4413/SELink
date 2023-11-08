@@ -467,7 +467,7 @@ exports.session.grids.delete = async function (data) {
  * @returns Metadata
  */
 
-exports.session.poweredGrids.powerUp = async function (data) {
+exports.session.grids.powerUp = async function (data) {
     if (process.env.USE_REMOTECLIENT_API != 'true') {
         return null;
     }
@@ -512,7 +512,7 @@ exports.session.poweredGrids.powerUp = async function (data) {
  * @returns Metadata
  */
 
-exports.session.poweredGrids.powerDown = async function (data) {
+exports.session.grids.powerDown = async function (data) {
     if (process.env.USE_REMOTECLIENT_API != 'true') {
         return null;
     }
@@ -766,6 +766,6 @@ var vrageSessionSystem = require(__dirname + '/vrageSessionSystem.js');
 var vrageSessionSystem = require(__dirname + '/vrageSessionSystem.js');
 
 (async () => {
-    console.log(await vrageSessionSystem.session.())
+    console.log(await vrageSessionSystem.session())
 })();
 */

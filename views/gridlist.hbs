@@ -46,7 +46,7 @@
         <td scope="row text-primary"><span class="text-primary">{{this.biggestOwner}}</span></td>
         <td scope="row text-primary"><span class="text-primary">{{this.id}}</span></td>
         <td scope="row text-primary">
-        <span><form class="btn btn-sm btn-danger" action="/grids/delete/{{this.id}}" method="POST">
+        <span><form class="btn btn-sm btn-danger" action="/grids/delete/{{this.id}}" method="POST" target="dummyframe"></form>
             <button style="padding: 0px;" type="submit" value="Delete" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to delete {{this.name}}?');">Delete</button></form>
         </span></td>
       </tr>
@@ -84,3 +84,4 @@
       rows.forEach(row => table.appendChild(row));
   
 </script>
+<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
