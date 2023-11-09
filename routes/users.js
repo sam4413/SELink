@@ -44,7 +44,7 @@ app.get('/users', embeddedLimiter, async (req, res) => {
         // Init db connection
         
         var results = await userSystem.listAll();
-            var superuser = results[0].is_superuser;
+            var superuser = req.session.userId;
             if (superuser == 0) {
               superuser = "Regular User";
               
@@ -59,7 +59,7 @@ app.get('/users', embeddedLimiter, async (req, res) => {
             }
 
 
-            res.render('account.hbs', {username: results[0].username, is_superuser: superuser, userId: results[0].id});
+            res.render('account.hbs', {username: req.session.username, is_superuser: superuser, userId: req.session.userId});
             
           /*} else {
         // Limited page

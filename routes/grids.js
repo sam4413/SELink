@@ -108,11 +108,11 @@ module.exports = function(app){
     if (req.session.userId) {
       var status = (await chatSystem.postInvokeCommand(`${process.env.AC_TRASH_REMOVAL_BLOCKS}`));
       if (status == 500) {
-        //res.redirect('/console');
+        //res.redirect('/grids');
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
-      //res.redirect('/console');
-      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_TRASH_REMOVAL_BLOCKS}`});
+      //res.redirect('/grids');
+        res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_TRASH_REMOVAL_BLOCKS}`});
       }
     } else {
       res.render('login.hbs');
@@ -123,10 +123,10 @@ module.exports = function(app){
     if (req.session.userId) {
       var status = (await chatSystem.postInvokeCommand(`${process.env.AC_VOXEL_CLEANUP_PLANETS}`));
       if (status == 500) {
-        //res.redirect('/console');
+        //res.redirect('/grids');
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
-      //res.redirect('/console');
+      //res.redirect('/grids');
       res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_VOXEL_CLEANUP_PLANETS}`});
       }
     } else {
@@ -138,10 +138,10 @@ module.exports = function(app){
     if (req.session.userId) {
       var status = (await chatSystem.postInvokeCommand(`${process.env.AC_VOXEL_CLEANUP_ALL}`));
       if (status == 500) {
-        //res.redirect('/console');
+        //res.redirect('/grids');
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
-      //res.redirect('/console');
+      //res.redirect('/grids');
       res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_VOXEL_CLEANUP_ALL}`});
       }
     } else {
@@ -153,10 +153,10 @@ module.exports = function(app){
     if (req.session.userId) {
       var status = (await chatSystem.postInvokeCommand(`${process.env.AC_CLEANUP_UNOWNED}`));
       if (status == 500) {
-        //res.redirect('/console');
+        //res.redirect('/grids');
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
-      //res.redirect('/console');
+      //res.redirect('/grids');
       res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_CLEANUP_UNOWNED}`});
       }
     } else {
@@ -169,10 +169,10 @@ module.exports = function(app){
       const gridName = req.params.id;
       var status = (await chatSystem.postInvokeCommand(`${AC_CLEANUP_UNNAMED}`+gridName));
       if (status == 500) {
-        //res.redirect('/console');
+        //res.redirect('/grids');
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
-      //res.redirect('/console');
+      //res.redirect('/grids');
       res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_CLEANUP_UNNAMED + gridName}`});
       }
     } else {
@@ -184,10 +184,10 @@ module.exports = function(app){
     if (req.session.userId) {
       var status = (await chatSystem.postInvokeCommand(`${process.env.AC_FLOATING_CLEANUP}`));
       if (status != 200) {
-        //res.redirect('/console');
+        //res.redirect('/grids');
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
-      //res.redirect('/console');
+      //res.redirect('/grids');
       res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_FLOATING_CLEANUP}`});
       }
     } else {
