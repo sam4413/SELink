@@ -190,45 +190,10 @@ function sortTable() {
   
   <!--<form action="/configurator/plugins/get/{{this}}/display" method="POST">-->
   <div class="form-group">
-    
-    <fieldset class="fieldborders" >
-      <legend for="textarea2"><strong>Choose a Configuration Group</strong></legend>
-      <div class="btn-group btn-group-sm" style="display:inline; max-width: 900px;">
-      {{#each result2}}
-      <form action="/configurator/plugins/get/{{this}}/post" method="POST" target="dummyframe" > <button  style="border: 1px solid #868686;border-radius:3px;margin:5px;background-color:rgba(0, 0, 0, 0.1);" type="submit" name="dataset" onclick="setTimeout(staticData2(), 1000);">{{this}}</button> </form>
-      {{/each}}
-      </div>
-</fieldset><br>
-<script>
+<dummy style="display: none;" id="pluginData">{{result2}}</dummy>  
+<select id="myDropdown">
+</select>
 
-// Get a reference to the form element
-const form = document.querySelector('form');
-
-// Add a submit event listener to the form
-form.addEventListener('submit', async (event) => {
-  // Prevent the default form submission behavior
-  event.preventDefault();
-
-  // Get the form data
-  const formData = new FormData(form);
-
-  // Make a POST request using the fetch API
-  const response = await fetch(form.action, {
-    method: 'POST',
-    body: formData
-  });
-
-  // Parse the response JSON
-  const jsonResponse = await response.json();
-
-  // Get a reference to the result <div>
-  const resultDiv = document.querySelector('editor2');
-
-  // Update the result <div> with the parsed JSON response
-  resultDiv.innerHTML = JSON.stringify(jsonResponse);
-});
-
-    </script>
   <!--</form>-->
   </div>
 
@@ -253,9 +218,9 @@ form.addEventListener('submit', async (event) => {
     wordWrap: true
   });
   const editorContent = editor.getValue();
-function staticData2() {
+async function staticData2() {
   
-  fetch('/configurator/plugins/get/display')
+  await fetch('/configurator/plugins/get/display')
     .then((response) => response.text())
     
     .then((result) => {
@@ -272,6 +237,48 @@ function staticData2() {
     console.log(elem)
   }
 
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Assuming result2 is a global variable set by Handlebars
+    var myArray = document.getElementById("pluginData").innerText;
+    console.log(myArray)
+    myArray = JSON.parse(myArray);
+    // Get the select element
+    const dropdown = document.getElementById('myDropdown');
+
+    // Function to handle the onchange event
+    async function handleDropdownChange() {
+      const selectedValue = dropdown.value;
+      
+      // Make a POST request using the fetch API
+      const response = fetch(`/configurator/plugins/get/${selectedValue}/post`, {
+        method: 'POST'
+      });
+      console.log("done")
+      // Parse the response JSON
+
+      // Get a reference to the result <div>
+      const resultDiv = document.querySelector('editor2');
+      
+      // Update the result <div> with the parsed JSON response
+      //resultDiv.innerHTML = editor.setValue("Please wait, retrieving info...");
+      console.log("do the 2")
+      resultDiv.innerHTML = setTimeout(staticData2, 3000);
+
+      // You can replace the alert with any action you want to perform based on the selected value.
+    }
+
+    // Iterate through the array and add options to the dropdown
+    myArray.forEach(optionValue => {
+      const option = document.createElement('option');
+      option.value = optionValue;
+      option.textContent = optionValue;
+      dropdown.appendChild(option);
+    });
+
+    // Add the onchange event listener to the dropdown
+    dropdown.addEventListener('change', handleDropdownChange);
+  });
   
 </script>
   </div>

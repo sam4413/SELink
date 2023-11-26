@@ -1,5 +1,5 @@
   <table class="table text-center" style="border: none;" id="myTable" data-sort-direction="asc">
-      {{#if usingvrage}}
+      {{#if usingvrage}} <!--VRageAPI-->
       <tr style="background-color: rgba(0, 0, 0, 0.2);">
         <th class="col text-secondary"><button class="btn btn-warning selectAll" style="max-width:10px;max-height:25px;"></i><span style="visibility: hidden; display:none; ">{{this.id}}</span><i class="bi bi-check-all"  style="position: relative; left:-10px;up:-10px"></button></th>
         <th class="col text-secondary">Name</th>
@@ -26,7 +26,8 @@
       {{/each}}
       </div>
     </table>
-    {{else}}{{#if success}}
+    {{else}} <!--TorchRemote-->
+    {{#if success}}
     <tr style="background-color: rgba(0, 0, 0, 0.2);">
       <th class="col text-secondary"><button class="btn btn-warning selectAll" style="max-width:10px;max-height:25px;"></i><span style="visibility: hidden; display:none; ">{{this.id}}</span><i class="bi bi-check-all"  style="position: relative; left:-10px;up:-10px"></button></th>
       <th class="col text-secondary">Name</th>

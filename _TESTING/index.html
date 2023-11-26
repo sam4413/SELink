@@ -1,4 +1,4 @@
-<!doctype html>
+<!--<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -46,5 +46,62 @@
 </ol>
  
  
+</body>
+</html>-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Array to Dropdown</title>
+  <style>
+    /* Add some basic styling for the dropdown */
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Create a select element to hold the dropdown -->
+<select id="myDropdown">
+</select>
+
+<script>
+  // Your array
+  const myArray = ["Torch.Server.TorchConfig", "Torch.Server.ViewModels.SessionSettingsViewModel", "CoreController.CoreControllerConfig", "TorchRemote.Plugin.Config", "BlockLimiter.Settings.BlockLimiterConfig", "ScriptLogger.ScriptLoggerConfig", "BlockLogger.BlockLoggerConfig", "DePatch.DeConfig", "Essentials.EssentialsConfig", "AdminLogger.Configs.Settings", "Profiler.ProfilerConfig"];
+
+  // Get the select element
+  const dropdown = document.getElementById('myDropdown');
+
+  // Function to handle the onchange event
+  function handleDropdownChange() {
+    const selectedValue = dropdown.value;
+    alert(`Selected option: ${selectedValue}`);
+    // You can replace the alert with any action you want to perform based on the selected value.
+  }
+
+  // Iterate through the array and add options to the dropdown
+  myArray.forEach(optionValue => {
+    const option = document.createElement('option');
+    option.value = optionValue;
+    option.textContent = optionValue;
+    dropdown.appendChild(option);
+  });
+
+  // Add the onchange event listener to the dropdown
+  dropdown.addEventListener('change', handleDropdownChange);
+</script>
+
 </body>
 </html>

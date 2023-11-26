@@ -38,7 +38,7 @@
   <div></div>
   <h2>Grids/Entities&nbsp;</h2>
   <noscript><div class="col-xl-12 callout-danger"><b>JavaScript needs to be enabled to display this section properly. Please either reload the page, or enable JavaScript in your browser settings.</b></div></noscript>
-  <p><div class="callout-info">Grid Data gets queried every {{#if usingvrage}}<b>1</b>{{else}}<b>10</b>{{/if}} seconds.</div></p>
+  <p><div class="callout-info">Grid Data gets queried every {{#if usingvrage}}<b>2</b>{{else}}<b>10</b>{{/if}} seconds.</div></p>
   <p><div class="callout-success">Currently connected to: {{#if usingvrage}}<b>VRage Remote API</b>{{else}}<b>Torch Remote API</b>{{/if}}.</div></p>
 </div><br>
 
@@ -148,7 +148,7 @@
               selectedItems.push(item.textContent);
           }
           saveSelectedItemsToLocalStorage();
-          item.classList.toggle('selected');
+          //item.classList.toggle('selected');
       }
       function selectAll() {
       var container = document.getElementById('gridlist'); // Use the container containing selectable items
@@ -216,7 +216,7 @@
     
   });
   };
-setInterval(updateVariable, 1000);
+setInterval(updateVariable, 2000);
 
 {{else}}
   const updateVariable = () => {
@@ -236,7 +236,7 @@ setInterval(updateVariable, 1000);
     
   });
   };
-setInterval(updateVariable, 5000);
+setInterval(updateVariable, 10W000);
 {{/if}}
 </script>
 

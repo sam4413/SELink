@@ -71,7 +71,7 @@ module.exports = function(app){
         }
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login')
     }
   });
 
@@ -84,7 +84,7 @@ module.exports = function(app){
       }
       
     } else {
-      res.render('login.hbs');
+      res.redirect('/login')
     }
   });
 

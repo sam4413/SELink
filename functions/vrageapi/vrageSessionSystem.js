@@ -740,7 +740,7 @@ var vrageSessionSystem = require(__dirname + '/vrageSessionSystem.js');
 
 (async () => {
     
-    var gridlist = await vrageSessionSystem.grids();
+    var gridlist = await vrageSessionSystem.session.grids();
     // Parse the JSON string with JSONbig library
     const jsonData = JSONbig.parse(gridlist);
     // Convert the jsonData to a regular JavaScript object

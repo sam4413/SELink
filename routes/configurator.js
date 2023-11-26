@@ -45,7 +45,7 @@ module.exports = function(app){
   
       if (await userSystem.isSuperuser(userId) == true){
         (async () => {
-          var dataset = JSON.parse(await settingSystem.getTorchSettings());
+          var dataset = await settingSystem.getTorchSettings();
           res.render('configurator.hbs', {result2: dataset});
         })();
       } else {

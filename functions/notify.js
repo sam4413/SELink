@@ -30,7 +30,7 @@ exports.notify = async function (level, content) {
                 }
             });
         } else {
-            const fsdescriptor = fs.writeFile(log_file_name, log_file_content, function (err) {
+            const fsdescriptor = fs.writeFileSync(log_file_name, log_file_content, function (err) {
                 if (err) throw err;
                 console.log("[WARN]  ",`Creating new log file ${log_file_name}`)
             });

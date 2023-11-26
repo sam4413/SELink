@@ -133,10 +133,11 @@ exports.admin.promotedPlayers.demote = async function (data) {
 }
 
 
-
+/*
 //For debugging
 var vrageAdminSystem = require(__dirname + '/vrageAdminSystem.js');
 
 (async () => {
     console.log(await vrageAdminSystem.promotedPlayers())
 })();
+*/

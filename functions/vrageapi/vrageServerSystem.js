@@ -14,6 +14,11 @@ var jp = require('jsonpath');
 var JSONbig = require('json-bigint');
 const { resolve } = require("path");
 
+/**
+ * Get information of the server, such as CPU Usage, Number of players, and Sim Speed.
+ * @returns Metadata
+ */
+
 exports.server = async function () {
     if (process.env.USE_REMOTECLIENT_API != 'true') {
         return null;
@@ -53,7 +58,10 @@ exports.server = async function () {
         });
     });
 }
-
+/**
+ * Stops the server.
+ * @returns Metadata
+ */
 exports.server.stop = async function () {
     if (process.env.USE_REMOTECLIENT_API != 'true') {
         return null;
@@ -93,7 +101,10 @@ exports.server.stop = async function () {
         });
     });
 }
-
+/**
+ * 
+ * @returns Metadata
+ */
 exports.server.ping = async function () {
     if (process.env.USE_REMOTECLIENT_API != 'true') {
         return null;
