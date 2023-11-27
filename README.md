@@ -10,7 +10,7 @@
 - [ ] Torch Configuration
   - [X] Configuring Plugins
   - [X] Torch Plugins Search
-  - [ ] Post configuration to server
+  - [X] Post configuration to server
   - [X] Upload new plugins
   - [ ] Automatic / Scheduled tasks
   
@@ -45,7 +45,7 @@
   - [ ] Automatic Updates
   - [ ] Restart AMPLink server
   
-- [ ] Discord Bot Integration (This is far off, so this might change)
+- [ ] Discord Bot Integration (Delayed for after v.1.0 due to time)
   - [X] Chat monitoring
   - [ ] Console monitoring
   - [ ] Send server commands through discord bot
