@@ -7,10 +7,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/editor/editor.main.min.css">
 
-<script>var require = { paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs' } }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/editor/editor.main.nls.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/editor/editor.main.js"></script>
+<script src="https://www.unpkg.com/ace-builds@latest/src-noconflict/ace.js"></script>
 </script>
 <style type="text/css" media="screen">
     #editor { 
@@ -34,8 +31,14 @@
   width: 98.5%;
   height: 100%;
   background-color: rgba(128,128,128,0.1);
-  z-index: 10;
+  z-index: 999999;
   overflow: auto;
+}
+
+.textarea {
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 20px;
 }
 
 </style>
@@ -61,22 +64,12 @@
   </div>
   <div class="col-md-10 callout-primary">
     <p><b>Edited config:</b><hr>
-    <div class="parent"><div class="overlay"></div><div id="editor">{{torchParse}}</div></div>
+    <div class="parent"><div class="overlay textarea">{{torchParse}}</div>
+    </div>
     </p>
   </div>
 <form action="/configurator"><input type="submit" value="Go back" class="btn btn-primary" style="float:left;"></form>
 </div>
-<script>
-    // Initialize the Ace editor
-        // require is provided by loader.min.js.
-        const torchValues = `{{torchParse}}`;
-  var editor = monaco.editor.create(document.getElementById('editor'), {
-    value: torchValues,
-    language: 'json',
-    theme: 'vs-dark',
-    wordWrap: true
-  });
-</script>
 </main>
 </body>
 </html>

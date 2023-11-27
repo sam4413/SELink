@@ -199,15 +199,15 @@ function sortTable() {
 
   <label for="textarea">Configuration Text Area:</label><br>
   <!-- ### Ace Editor ### -->
-<form action="/configurator/plugins/get/submit" method="POST">
-<div class="parent">
-  <div id="editor" ></div>
-  <input type="hidden" name="torchConfig" id="torchConfig">
-  <h1><br><br><br><br><br><br><br><br></h1>
-  <input type="submit" style="margin-top:10px;" value="Save and Apply Changes" class="btn btn-success"  onclick="updateStaticData() ">
-  <input type="reset" style="margin-top:10px;" value="Revert Changes" class="btn btn-warning" onclick="staticData2()">
-</div>
+  <div class="parent">
+      <div id="editor"></div>
 
+          <!-- Add your additional form elements here if needed -->
+          <h1><br><br><br><br><br><br><br><br><br><br></h1>
+          <button type="submit" style="margin-top:10px;" value="Save and Apply Changes" class="btn btn-success" onclick="updateStaticData()">Save and Apply Changes</button>
+          <input type="reset" style="margin-top:10px;" value="Revert Changes" class="btn btn-warning" onclick="staticData2()">
+  </div>
+<div style="position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;display:none;" id="successScreen"></div>
 
 <script>
     // require is provided by loader.min.js.
@@ -218,6 +218,7 @@ function sortTable() {
     wordWrap: true
   });
   const editorContent = editor.getValue();
+
 async function staticData2() {
   
   await fetch('/configurator/plugins/get/display')
@@ -231,10 +232,31 @@ async function staticData2() {
  
   
   function updateStaticData() {
-    confirm('Are you sure you want to upload changes to the plugin?');
-    var editor = editor.getValue()
-    var elem = document.getElementById('editor').value = editor;
-    console.log(elem)
+    //confirm('Are you sure you want to upload changes to the plugin?');
+    
+    var MyEditor = editor.getValue();
+
+    const requestOptions = {
+    method: 'POST',
+    headers: { "Content-Type": "application/json" }, 
+    body: MyEditor // Set the request body with the JSON data
+    };
+
+    // Make the POST request
+    fetch('/configurator/plugins/get/submit', requestOptions)
+      .then(response => response.text())
+      .then(data => {
+        var target = document.getElementById('successScreen')
+          // Handle the response data
+          target.style.display = "block";
+          target.innerHTML = data;
+          console.log('Response:', data);
+      })
+      .catch(error => {
+          // Handle errors
+          console.error('Error:', error);
+    });
+  
   }
 
 
@@ -254,7 +276,7 @@ async function staticData2() {
       const response = fetch(`/configurator/plugins/get/${selectedValue}/post`, {
         method: 'POST'
       });
-      console.log("done")
+      //console.log("done")
       // Parse the response JSON
 
       // Get a reference to the result <div>
@@ -262,8 +284,8 @@ async function staticData2() {
       
       // Update the result <div> with the parsed JSON response
       //resultDiv.innerHTML = editor.setValue("Please wait, retrieving info...");
-      console.log("do the 2")
-      resultDiv.innerHTML = setTimeout(staticData2, 3000);
+      //console.log("do the 2")
+      resultDiv.innerHTML = setTimeout(staticData2, 500);
 
       // You can replace the alert with any action you want to perform based on the selected value.
     }

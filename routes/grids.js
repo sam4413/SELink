@@ -112,7 +112,7 @@ module.exports = function(app){
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
       //res.redirect('/grids');
-        res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_TRASH_REMOVAL_BLOCKS}`});
+      res.redirect('/grids');
       }
     } else {
       res.render('login.hbs');
@@ -127,7 +127,7 @@ module.exports = function(app){
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
       //res.redirect('/grids');
-      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_VOXEL_CLEANUP_PLANETS}`});
+      res.redirect('/grids');
       }
     } else {
       res.render('login.hbs');
@@ -142,7 +142,7 @@ module.exports = function(app){
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
       //res.redirect('/grids');
-      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_VOXEL_CLEANUP_ALL}`});
+      res.redirect('/grids');
       }
     } else {
       res.render('login.hbs');
@@ -157,7 +157,7 @@ module.exports = function(app){
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
       //res.redirect('/grids');
-      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_CLEANUP_UNOWNED}`});
+      res.redirect('/grids');
       }
     } else {
       res.render('login.hbs');
@@ -173,7 +173,7 @@ module.exports = function(app){
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
       //res.redirect('/grids');
-      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_CLEANUP_UNNAMED + gridName}`});
+      res.redirect('/grids');
       }
     } else {
       res.render('login.hbs');
@@ -188,7 +188,7 @@ module.exports = function(app){
         res.render('grids.hbs', {errormsg: 'An error occured while preforming the action (500).'});
       } else {
       //res.redirect('/grids');
-      res.render('grids.hbs', {errormsg: `Sent cleanup request to server. ${process.env.AC_FLOATING_CLEANUP}`});
+      res.redirect('/grids');
       }
     } else {
       res.render('login.hbs');

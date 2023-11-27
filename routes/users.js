@@ -10,6 +10,7 @@ const mysql = require('mysql');
 var jp = require('jsonpath');
 var JSONbig = require('json-bigint');
 var sqlEscape = require('sql-escape');
+const bodyParser = require('body-parser');
 
 const userSystem = require("../functions/userSystem.js");
 
@@ -26,6 +27,13 @@ const embeddedLimiter = RateLimit({
 
 module.exports = function(app){
 
+// Init db connection
+const connection = mysql.createConnection({
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_ROOT,
+  password: process.env.DATABASE_PASSWORD, // leave empty to '' if none
+  database: process.env.DATABASE
+});
 
 /*=============================
            AMP LINK
@@ -33,7 +41,7 @@ module.exports = function(app){
 ============================*/
 
 
-app.get('/users', embeddedLimiter, async (req, res) => {
+app.get('/users', embeddedLimiter, bodyParser.json(), async (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -67,7 +75,7 @@ app.get('/users', embeddedLimiter, async (req, res) => {
       }*/
     });
 
-  app.get('/users/list', embeddedLimiter, async (req, res) => {
+  app.get('/users/list', embeddedLimiter, bodyParser.json(), async (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -106,17 +114,16 @@ app.get('/users', embeddedLimiter, async (req, res) => {
   });
   
 
-  app.post('/users/delete/:id', embeddedLimiter, (req, res) => {
+  app.post('/users/delete/:id', embeddedLimiter, async (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
     }
   
-    const userId = req.session.userId;
-  
     const userToDeleteId = req.params.id;
   
-    if (userSystem.isSuperuser(userId) == true){
+    const userId = req.session.userId;
+    if (await userSystem.isSuperuser(userId) == true){
         // Delete the user from the database
         const query = `DELETE FROM users WHERE id = ?`;
         connection.query(query, [userToDeleteId], (error, results) => {
@@ -163,7 +170,7 @@ app.get('/users', embeddedLimiter, async (req, res) => {
 
   //PromoteUser
 
-  app.post('/users/promote/:id', embeddedLimiter, (req, res) => {
+  app.post('/users/promote/:id', embeddedLimiter, async (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -173,7 +180,7 @@ app.get('/users', embeddedLimiter, async (req, res) => {
   
     const userToDeleteId = req.params.id;
   
-    if (userSystem.isSuperuser(userId) == true){
+    if (await userSystem.isSuperuser(userId) == true){
               const userId = req.params.id;
 
         // Update the is_superuser column for the user with the given ID
@@ -219,7 +226,7 @@ app.get('/users', embeddedLimiter, async (req, res) => {
   //demoteuser
 
 
-  app.post('/users/demote/:id', embeddedLimiter, (req, res) => {
+  app.post('/users/demote/:id', embeddedLimiter, async (req, res) => {
     if (!req.session.userId) {
       res.render('login.hbs');
       return;
@@ -229,7 +236,7 @@ app.get('/users', embeddedLimiter, async (req, res) => {
   
     const userToDeleteId = req.params.id;
   
-    if (userSystem.isSuperuser(userId) == true){
+    if (await userSystem.isSuperuser(userId) == true){
               const userId = req.params.id;
 
         // Update the is_superuser column for the user with the given ID

@@ -11,6 +11,8 @@ var jp = require('jsonpath');
 var JSONbig = require('json-bigint');
 const path = require('path');
 const { jsonrepair } = require('jsonrepair');
+var bodyParser = require('body-parser')
+
 
 const utilitySystem = require("../functions/utilitySystem.js");
 const pluginSystem = require('../functions/plugins/pluginSystem.js');
@@ -253,26 +255,40 @@ app.get('/configurator/plugins/get/display', consoleLimiter, async (req, res) =>
     }
 });
 
-app.post('/configurator/plugins/get/submit', async (req, res) => {
+app.post('/configurator/plugins/get/submit', bodyParser.json(), async (req, res) => {
   if (!req.session.userId) {
-    res.render('login.hbs');
+    res.redirect('/login')
     return;
   }
 
   const userId = req.session.userId;
 
   if (await userSystem.isSuperuser(userId) == true){
-      //Result
-      const { torchConfig } = req.body; //First grab the data from client.
-      var torchParse = jsonrepair(torchConfig); //Repair json for any errors
+        //Result
+        const torchConfig = req.body; //First grab the data from client.
+        //console.log(torchConfig)
+        try {
+          //var torchParse = jsonrepair(torchConfig); //Repair json for any errors
 
-      const data = fs.readFileSync('./temp/pluginName.tmp', 'utf8',);
+          const data = fs.readFileSync('./temp/pluginName.tmp', 'utf8'); //Get selected plugin
 
-      
+          var result = (await settingSystem.patchTorchValues(data, JSONbig.stringify(torchConfig)))
+          notify.notify(1,`Sending settings at ${data} with contents:\n${JSONbig.stringify(torchConfig)}\nWith status code of ${result}`)
 
-      var result = (await settingSystem.patchTorchValues(data, torchParse))
-      notify.notify(1,`Sending settings at ${data} with contents:\n${torchParse}\nWith status code of ${result}`)
-      res.render("success.hbs", {data: data, torchParse: torchParse, result: result})
+          if (result == 400) {
+            res.render("success.hbs", {data: data, torchParse: JSON.stringify(torchConfig, null, 2), result: result + " (Bad Request. Please try again.)"})
+          } else if (result == 500) {
+            res.render("success.hbs", {data: data, torchParse: JSON.stringify(torchConfig, null, 2), result: result + " (A server error has occured. Please try again with a smaller configuration.)"})
+          } else {
+            res.render("success.hbs", {data: data, torchParse: JSON.stringify(torchConfig, null, 2), result: result})
+          }
+          
+
+        } catch (err) {
+          res.render("error.hbs", {errormsg: err})
+          notify.notify(3, err.message)
+        }
+
       } else {
         res.send('You do not have permission to access this page.');
       }
@@ -285,6 +301,8 @@ app.post('/configurator/plugins/get/submit', async (req, res) => {
     if (!req.session.userId) {
       return res.render('login.hbs');
     }
+
+    const userId = req.session.userId;
 
     if (await userSystem.isSuperuser(userId) == true){
       return res.status(403).send('Forbidden');
@@ -317,8 +335,10 @@ app.post('/configurator/plugins/get/submit', async (req, res) => {
     if (!req.session.userId) {
       return res.render('login.hbs');
     }
-  
-      if (await userSystem.isSuperuser(userId) == true){
+    
+    const userId = req.session.userId;
+
+      if (await userSystem.isSuperuser(userId) != true){
         return res.status(403).send('Forbidden');
       }
       const id = req.params.id; 
@@ -326,10 +346,10 @@ app.post('/configurator/plugins/get/submit', async (req, res) => {
       notify.notify(1,result.body)
       if (result.statusCode !== 200) {
         //var result = await pluginSystem.postPluginsDownload(id); 
-        res.send(`<!doctypehtml><meta charset=utf-8><title>AMPLink Control Panel</title><link href=https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css rel=stylesheet crossorigin=anonymous integrity=sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT><link href=style.css rel=stylesheet><main><div class=content><h2>An error occured while trying to upload the plugin.</h2><p>${result.body}<br><form action=/pluginsSearch><input class="btn btn-primary"style=float:left;margin-right:10px type=submit value="Go back"></form></div></main>`);
+        res.send(`<!doctypehtml><meta charset=utf-8><title>AMPLink Control Panel</title><link href=https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css rel=stylesheet crossorigin=anonymous integrity=sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT><link href=style.css rel=stylesheet><main><div class=content><h2>An error occured while trying to upload the plugin.</h2><p>${result.body}<br><form action=/configurator/plugins><input class="btn btn-primary"style=float:left;margin-right:10px type=submit value="Go back"></form></div></main>`);
       } else {
         
-        res.send(`<!doctypehtml><meta charset=utf-8><title>AMPLink Control Panel</title><link href=https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css rel=stylesheet crossorigin=anonymous integrity=sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT><link href=style.css rel=stylesheet><main><div class=content><h2>Plugin with ID of ${id} has been installed.</h2><p>Status Code: ${result.statusCode}<br>Restart the server for changes to take place.<br><form action=/pluginsSearch><input class="btn btn-primary"style=float:left;margin-right:10px type=submit value="Go back"></form></div></main>`);
+        res.send(`<!doctypehtml><meta charset=utf-8><title>AMPLink Control Panel</title><link href=https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css rel=stylesheet crossorigin=anonymous integrity=sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT><link href=style.css rel=stylesheet><main><div class=content><h2>Plugin with ID of ${id} has been installed.</h2><p>Status Code: ${result.statusCode}<br>Restart the server for changes to take place.<br><form action=/configurator/plugins><input class="btn btn-primary"style=float:left;margin-right:10px type=submit value="Go back"></form></div></main>`);
       }
         
       });
@@ -340,7 +360,9 @@ app.post('/configurator/plugins/get/submit', async (req, res) => {
         return res.render('login.hbs');
       }
     
-        if (await userSystem.isSuperuser(userId) == true){
+      const userId = req.session.userId;
+
+        if (await userSystem.isSuperuser(userId) != true){
           return res.status(403).send('Forbidden');
         }
         const { delID } = req.body;
