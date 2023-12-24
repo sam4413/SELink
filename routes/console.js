@@ -28,7 +28,7 @@ app.get('/console', (req, res) => {
     if (req.session.userId) {
       res.render("console.hbs")
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 

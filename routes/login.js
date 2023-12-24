@@ -80,11 +80,15 @@ app.get('/', (req, res) => {
 
 
 app.get("/register", escapeMiddleware, (req, res) => {
+  if (req.session.userId) {
     res.render("register.hbs")
+  } else {
+    res.redirect("/login")
+  }
 })
 
 app.get('/login'), (req, res) => {
-    res.render("login.hbs")
+    res.redirect("/")
 }
 
 
@@ -162,7 +166,7 @@ app.post('/register', embeddedLimiter, escapeMiddleware, (req, res) => {
         });
         }
       } else {
-        res.render('login.hbs');
+        res.redirect('/login');
     }
 });
 
@@ -182,7 +186,7 @@ app.get('/logout', (req, res) => {
     if (req.session.userId) {
       res.send('This is a restricted page.');
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -190,7 +194,7 @@ app.get('/logout', (req, res) => {
     if (req.session.userId) {
       res.render('home.hbs');
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 

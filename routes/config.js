@@ -41,7 +41,7 @@ function escapeMiddleware(req, res, next) {
   
     app.get('/ampcfg', async (req, res) => {
     if (!req.session.userId) {
-      res.render('login.hbs');
+      res.redirect('/login');
       return;
     }
   

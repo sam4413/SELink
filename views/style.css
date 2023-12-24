@@ -218,6 +218,25 @@ main {
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 3px;
 }
+.red-callout {
+  padding: 20px;
+  margin: 20px 0;
+  background-color: rgba(255, 0, 0, 0.35);
+  border-radius: 3px;
+}
+.green-callout {
+  padding: 20px;
+  margin: 20px 0;
+  background-color: rgba(0, 0.1, 0, 0.1);
+  border-radius: 3px;
+}
+.blue-callout {
+  padding: 20px;
+  margin: 20px 0;
+  background-color: rgba(0, 0, 0.1, 0.1);
+  border-radius: 3px;
+}
+
 .callout-inverted {
   padding: 20px;
   margin: 20px 0;
@@ -285,6 +304,25 @@ main {
     background-color: rgba(255, 255, 255, 0.05);
     border-radius: 3px;
   }
+  .red-callout {
+    padding: 20px;
+    margin: 20px 0;
+    background-color: rgba(255, 0, 0, 0.3);
+    border-radius: 3px;
+  }
+  .green-callout {
+    padding: 20px;
+    margin: 20px 0;
+    background-color: rgba(0, 255, 0, 0.3);
+    border-radius: 3px;
+  }
+  .blue-callout {
+    padding: 20px;
+    margin: 20px 0;
+    background-color: rgba(0, 0, 255, 0.3);
+    border-radius: 3px;
+  }
+
   .callout-inverted {
     padding: 20px;
     margin: 20px 0;

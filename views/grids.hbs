@@ -38,7 +38,7 @@
   <div></div>
   <h2>Grids/Entities&nbsp;</h2>
   <noscript><div class="col-xl-12 callout-danger"><b>JavaScript needs to be enabled to display this section properly. Please either reload the page, or enable JavaScript in your browser settings.</b></div></noscript>
-  <p><div class="callout-info">Grid Data gets queried every {{#if usingvrage}}<b>2</b>{{else}}<b>10</b>{{/if}} seconds.</div></p>
+  <p><div class="callout-info">Grid Data gets queried every {{#if usingvrage}}<b>5</b>{{else}}<b>10</b>{{/if}} seconds.</div></p>
   <p><div class="callout-success">Currently connected to: {{#if usingvrage}}<b>VRage Remote API</b>{{else}}<b>Torch Remote API</b>{{/if}}.</div></p>
 </div><br>
 
@@ -50,8 +50,8 @@
       const rows = Array.from(blockCount).slice(1);
 
       rows.forEach(row => {
-        const nameValue = row.cells[1].innerText.toUpperCase();
-        const blockCountValue = row.cells[2].innerText;
+        const nameValue = row.cells[0].innerText.toUpperCase();
+        const blockCountValue = row.cells[1].innerText;
         if (nameValue.indexOf(input) > -1 || blockCountValue.indexOf(input) > -1) {
           row.style.display = "";
         } else {
@@ -216,7 +216,7 @@
     
   });
   };
-setInterval(updateVariable, 2000);
+setInterval(updateVariable, 5000);
 
 {{else}}
   const updateVariable = () => {

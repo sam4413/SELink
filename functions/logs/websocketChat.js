@@ -80,6 +80,11 @@
       }, process.env.WSM_RECONNECT_INTERVAL);
     } else {
       notify.notify(3, '[AMPLink Websockets Manager]: ',err);
+      setTimeout(() => {
+        notify.notify(2, '[AMPLink Websockets Manager]: Reconnecting...');
+        ws.terminate();
+        connect()
+      }, process.env.WSM_RECONNECT_INTERVAL);
     }
   } catch(err) {
     notify.notify(3, '[AMPLink Websockets Manager]: ',err);
@@ -100,6 +105,12 @@
   })
 } catch(err) {
   notify.notify(3, '[AMPLink Websockets Manager]: ',err);
+  setTimeout(() => {
+    notify.notify(2, '[AMPLink Websockets Manager]: Reconnecting...');
+    ws.terminate();
+    connect()
+  }, process.env.WSM_RECONNECT_INTERVAL);
+
 }
 });
 

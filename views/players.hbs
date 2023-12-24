@@ -1,15 +1,18 @@
-<table class="table text-center" style="border: none;" id="myTable" data-sort-direction="asc">
-  <tr style="background-color: rgba(0, 0, 0, 0.2);">
-    <th class="col text-secondary">Username</th>
-    <th class="col text-secondary">Level</th>
-    <th class="col text-secondary">Actions</th>
-  </tr>
+<table class="table table-hover" id="myTable">
+  <thead class="callout">
+    <tr class="text-adaptive">
+      <th class="col">Username</th>
+      <th class="col">Level</th>
+      <th class="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
   {{#each play}}
   <tr>
-    <td scope="row text-primary"><span class="text-primary" style="padding-top:15px;"><strong>{{this.name}}</strong><br>{{this.clientId}}</span></td>
-    <td scope="row text-primary"><span class="text-primary" style="padding-top:15px;">{{this.promoteLevel}} stars</span></td>
-    <td scope="row text-primary">
-      <div class="btn-group btn-group-sm" role="group">
+    <td scope="row"><span class="text-adaptive" style="padding-top:15px;"><strong style="font-size:18px;">{{this.name}}</strong><br>{{this.clientId}}</span></td>
+    <td scope="row"><span class="text-adaptive" style="padding-top:15px;">{{this.promoteLevel}} stars</span></td>
+    <td scope="row">
+      <div class="btn-group" role="group">
         <span><form class="btn btn-primary" action="/players/promote/{{this.clientId}}" method="POST"> 
         <button style="padding: 0px;" type="submit" value="Promote" value="Promote" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to promote this user?');">Promote</button></form>
         </span>
@@ -23,7 +26,9 @@
         <button style="padding: 0px;" type="submit" value="Ban" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to ban this user?');">Ban</button></form>
         </span>
       </div>
+      
     </td>
   </tr>
   {{/each}}
+  </tbody>
 </table>

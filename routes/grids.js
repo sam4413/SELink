@@ -100,7 +100,7 @@ module.exports = function(app){
         res.redirect('/grids');
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -115,7 +115,7 @@ module.exports = function(app){
       res.redirect('/grids');
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -130,7 +130,7 @@ module.exports = function(app){
       res.redirect('/grids');
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -145,7 +145,7 @@ module.exports = function(app){
       res.redirect('/grids');
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -160,7 +160,7 @@ module.exports = function(app){
       res.redirect('/grids');
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -176,7 +176,7 @@ module.exports = function(app){
       res.redirect('/grids');
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -191,7 +191,7 @@ module.exports = function(app){
       res.redirect('/grids');
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 }

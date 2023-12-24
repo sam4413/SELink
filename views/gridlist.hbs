@@ -1,72 +1,80 @@
-  <table class="table text-center" style="border: none;" id="myTable" data-sort-direction="asc">
-      {{#if usingvrage}} <!--VRageAPI-->
-      <tr style="background-color: rgba(0, 0, 0, 0.2);">
-        <th class="col text-secondary"><button class="btn btn-warning selectAll" style="max-width:10px;max-height:25px;"></i><span style="visibility: hidden; display:none; ">{{this.id}}</span><i class="bi bi-check-all"  style="position: relative; left:-10px;up:-10px"></button></th>
-        <th class="col text-secondary">Name</th>
-        <th class="col text-secondary">Block Count</th>
-        <th class="col text-secondary">PCU</th>
-        <th class="col text-secondary">Owner Name</th>
-        <th class="col text-secondary">Grid ID</th>
-        <th class="col text-secondary">Actions</th>
+<table class="table table-hover" id="myTable">
+    {{#if usingvrage}} <!--VRageAPI-->
+    <thead class="callout">
+      <tr class="text-adaptive">
+        <th class="col">Name</th>
+        <th class="col">Block Count</th>
+        <th class="col">PCU</th>
+        <th class="col">Owner Name</th>
+        <th class="col">Grid ID</th>
+        <th class="col">Actions</th>
       </tr>
+    </thead>
+    <tbody>
       <div id="myContainer">
       {{#each alldata}}
-        <tr>
-          <td scope="row text-primary"><div class="selectable" style="max-width:10px;max-height:10px;"><span style="visibility: hidden; display:none; ">{{this.id}}</span></div></td>
-          <td scope="row text-primary"><span class="text-primary">{{this.DisplayName}}</span></td>
-          <td scope="row text-primary"><span class="text-primary">{{this.BlocksCount}}</span></td>
-          <td scope="row text-primary"><span class="text-primary">{{this.PCU}}</span></td>
-          <td scope="row text-primary"><span class="text-primary">{{this.OwnerDisplayName}}</span></td>
-          <td scope="row text-primary"><span class="text-primary">{{this.EntityId}}</span></td>
-          <td scope="row text-primary">
+        <tr class="text-adaptive">
+          <td scope="row">{{this.DisplayName}}</td>
+          <td scope="row">{{this.BlocksCount}}</td>
+          <td scope="row">{{this.PCU}}</td>
+          <td scope="row">{{this.OwnerDisplayName}}</td>
+          <td scope="row">{{this.EntityId}}</td>
+          <td scope="row">
           <span><form class="btn btn-sm btn-danger" action="/grids/delete/{{this.EntityId}}" method="POST">
               <button style="padding: 0px;" type="submit" value="Delete" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to delete {{this.DisplayName}}?');">Delete</button></form>
           </span></td>
         </tr>
       {{/each}}
       </div>
+      </tbody>
     </table>
     {{else}} <!--TorchRemote-->
     {{#if success}}
-    <tr style="background-color: rgba(0, 0, 0, 0.2);">
-      <th class="col text-secondary"><button class="btn btn-warning selectAll" style="max-width:10px;max-height:25px;"></i><span style="visibility: hidden; display:none; ">{{this.id}}</span><i class="bi bi-check-all"  style="position: relative; left:-10px;up:-10px"></button></th>
-      <th class="col text-secondary">Name</th>
-      <th class="col text-secondary">Block Count</th>
-      <th class="col text-secondary">PCU</th>
-      <th class="col text-secondary">Owner ID</th>
-      <th class="col text-secondary">Grid ID</th>
-      <th class="col text-secondary">Actions</th>
+    <thead class="callout">
+    <tr class="text-adaptive">
+      <th class="col">Name</th>
+      <th class="col">Block Count</th>
+      <th class="col">PCU</th>
+      <th class="col">Owner ID</th>
+      <th class="col">Grid ID</th>
+      <th class="col">Actions</th>
     </tr>
+    </thead>
+    <tbody>
     <div id="myContainer">
     {{#each alldata}}
-      <tr>
-        <td scope="row text-primary"><div class="selectable" style="max-width:10px;max-height:10px;"><span style="visibility: hidden; display:none; ">{{this.id}}</span></div></td>
-        <td scope="row text-primary"><span class="text-primary">{{this.name}}</span></td>
-        <td scope="row text-primary"><span class="text-primary">{{this.blockCount}}</span></td>
-        <td scope="row text-primary"><span class="text-primary">{{this.pcu}}</span></td>
-        <td scope="row text-primary"><span class="text-primary">{{this.biggestOwner}}</span></td>
-        <td scope="row text-primary"><span class="text-primary">{{this.id}}</span></td>
-        <td scope="row text-primary">
+      <tr class="text-adaptive">
+        <td scope="row">{{this.name}}</td>
+        <td scope="row">{{this.blockCount}}</td>
+        <td scope="row">{{this.pcu}}</td>
+        <td scope="row">{{this.biggestOwner}}</td>
+        <td scope="row">{{this.id}}</td>
+        <td scope="row">
         <span><form class="btn btn-sm btn-danger" action="/grids/delete/{{this.id}}" method="POST" target="dummyframe"></form>
             <button style="padding: 0px;" type="submit" value="Delete" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to delete {{this.name}}?');">Delete</button></form>
         </span></td>
       </tr>
     {{/each}}
     </div>
+    </tbody>
   </table>
     {{else}}
-      <table class="table text-center" style="border: none;" id="myTable" data-sort-direction="asc">
-      <tr style="background-color: rgba(0, 0, 0, 0.2);">
-        <th class="col text-secondary">Error</th>
-      </tr>
-     <td scope="row text-primary"><span class="text-primary">The gridlist cannot connect to the server. Please contact your Administrator if this issue persists.<br>
+<table class="table">
+  <thead class="red-callout">
+    <tr class="text-adaptive">
+      <th scope="col">Error</th>
+    </tr>
+  </thead>
+  <tbody>
+     <td scope="row"><span class="text-adaptive"><i class="bi bi-wifi-off" style="font-size: 36px;"></i>&nbsp;&nbsp;&nbsp;&nbsp; The gridlist cannot connect to the server. Please contact your Administrator if this issue persists.<br>
      <button class="btn btn-sm btn-primary" onClick="window.location.reload();">Reload Page</button></span>
      </td>
      </table>
-     <div style="background-color: rgba(0,0,0,0.1); border-radius:5px; padding:5px; word-wrap: break-word;"><pre>Error:<br>{{errormsg.message}}</pre></div>
-     
+     <div class="callout"><pre>Error:<br>{{errormsg.message}}</pre></div>
+    
      {{/if}}
-     {{/if}}
+  {{/if}}
+
   <script>
       // Get the table element
       const table = document.getElementById('myTable');
@@ -76,8 +84,8 @@
 
       // Sort the rows by the 'blockCount' column in descending order
       rows.sort((a, b) => {
-        const aValue = parseInt(a.cells[2].innerText, 10);
-        const bValue = parseInt(b.cells[2].innerText, 10);
+        const aValue = parseInt(a.cells[1].innerText, 10);
+        const bValue = parseInt(b.cells[1].innerText, 10);
         return bValue - aValue;
       });
 

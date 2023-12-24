@@ -45,7 +45,7 @@ module.exports = function(app){
         notify.notify(3, e)
       } 
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -60,7 +60,7 @@ module.exports = function(app){
         notify.notify(3, e)
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
   app.get('/players/banned', consoleLimiter, async (req, res) => {
@@ -124,7 +124,7 @@ module.exports = function(app){
         notify.notify(3, e)
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -147,7 +147,7 @@ module.exports = function(app){
         notify.notify(3, e)
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -163,7 +163,7 @@ module.exports = function(app){
         notify.notify(3, e)
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -181,7 +181,7 @@ module.exports = function(app){
         res.render('bannedplayers.hbs', {output: e});
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -197,7 +197,7 @@ module.exports = function(app){
           notify.notify(3, e)
         }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -214,7 +214,7 @@ module.exports = function(app){
         notify.notify(3, e)
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
   app.post('/players/demote/:id', async (req, res) => {
@@ -229,7 +229,7 @@ module.exports = function(app){
           notify.notify(3, e)
         }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
   app.post('/players/disconnect/:id', async (req, res) => {
@@ -244,7 +244,7 @@ module.exports = function(app){
           notify.notify(3, e)
         }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
   app.post('/players/manualban', async (req, res) => {
@@ -260,7 +260,7 @@ module.exports = function(app){
           res.render('bannedplayers.hbs', {output: e});
         }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -295,7 +295,7 @@ module.exports = function(app){
           notify.notify(3, e)
         }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 }

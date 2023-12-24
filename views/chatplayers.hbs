@@ -27,62 +27,22 @@
 
 <!--Divider-->
 		<div class="col-xl-6" name="copyme" style=""><div class="console" id="scroller"><span id="variable">{{variable}}</span></div>
-    
+    <div style="position:relative; margin-left:85%; top:0px;">
+      <button onclick="copy()" class="btn btn-dark">Copy chat</button>
+    </div>
     <div class="callout-inverted">
+    
     <form action="/players/postmessage" method="POST" style="width: 100%">
       <label for="string" class="form-label">Actions:</label><br>
       <input type="text" class="form-control" id="command" name="command" required><br><br>
       <button type="submit" class="btn btn-success" id="liveToastBtn" style="float:left; margin-right: 10px; margin-top: -40px;">Send Message</button>
     </form>
-    
-    <!--Toast
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-          <img src="./resources/images/configurator/check.png" class="rounded me-2" alt="sent">
-          <strong class="me-auto">Action sent.</strong>
-          <small>Now</small>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-          Message has been sent to server.
-        </div>
-      </div>
-    </div>
-    <script>
-    const toastTrigger = document.getElementById('liveToastBtn')
-    const toastLiveExample = document.getElementById('liveToast')
-
-    if (toastTrigger) {
-      const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
-      toastTrigger.addEventListener('click', () => {
-        toastBootstrap.show()
-      })
-    }
-    </script>-->
-    <!--End Toast-->
     {{errormsg}}
     </div>
 
     </div>
 
-    
-
-  <!--<div style="position:relative; margin-left:34%; top:-49px;">
-    <button onclick="copy()" class="btn btn-dark">Copy chat</button>
-    <br><br>
-    <script>
-    function copy() {
-    // Get the text field
-    var copyText = document.getElementById("variable").innerText;
-    navigator.clipboard.writeText(copyText);
-    alert("Copied chat.");
-    console.log("Copied chat")
-}
-    </script>
-  </div>-->
-
-  <div class="col-xl-5 callout-info"><strong>Current Connected Players</strong><br>Filters <i class="bi bi-funnel-fill"></i> | <button class="btn btn-hidden" onclick="sortTableByName()">Sort by Name <i class="bi bi-sort-alpha-down"></i> <button class="btn btn-hidden" onclick="sortTableByStars();">Sort by Level <i class="bi bi-sort-numeric-down-alt"></i></button></button></strong>
+  <div class="col-xl-5 callout-info"><strong>Current Connected Players</strong>
     <hr>
     <div id="players">Please wait, retrieving info...</div>
     <a href="/banned"><button type="submit" class="btn btn-danger">Banned players</button></a>
@@ -90,82 +50,35 @@
 </div>
 <div class="row">
 </div>
-<script>
-function sortTableByStars() {
-  var table, rows, switching, i, x, y, shouldSwitch;
-  table = document.getElementById("myTable");
-  switching = true;
-  var ascending = table.getAttribute('data-order') === 'asc';
-  while (switching) {
-    switching = false;
-    rows = table.rows;
-    for (i = 1; i < (rows.length - 1); i++) {
-      shouldSwitch = false;
-      x = parseInt(rows[i].getElementsByTagName("TD")[1].innerHTML);
-      y = parseInt(rows[i + 1].getElementsByTagName("TD")[1].innerHTML);
-      if (ascending ? x > y : x < y) {
-        shouldSwitch = true;
-        break;
-      }
-    }
-    if (shouldSwitch) {
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-    }
-  }
-  table.setAttribute('data-order', ascending ? 'desc' : 'asc');
-}
-</script>
-<script>
-function sortTableByName() {
-  var table, rows, switching, i, x, y, shouldSwitch, ascending;
-  table = document.getElementById("myTable");
-  switching = true;
-  ascending = table.getAttribute('data-sort-direction') === 'asc';
-  while (switching) {
-    switching = false;
-    rows = table.rows;
-    for (i = 1; i < (rows.length - 1); i++) {
-      shouldSwitch = false;
-      x = rows[i].getElementsByTagName("TD")[0];
-      y = rows[i + 1].getElementsByTagName("TD")[0];
-      if (ascending ? x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase() : x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-        shouldSwitch = true;
-        break;
-      }
-    }
-    if (shouldSwitch) {
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-    }
-  }
-  table.setAttribute('data-sort-direction', ascending ? 'desc' : 'asc');
-}
-
-</script>
 
 </div>
 </div>
-
-
 
 <script>
   const updateVariable = () => {
     fetch('/console/chat')
       .then((response) => response.text())
-      
       .then((result) => {
-        //JSON.parse(result)
+        const consoleBox = document.getElementById('scroller');
+        const isScrolledToBottom = consoleBox.scrollHeight - consoleBox.clientHeight <= consoleBox.scrollTop + 1;
+
         document.getElementById('variable').innerHTML = result;
-        var elem = document.getElementById('scroller');
-        elem.scrollTop = elem.scrollHeight;
+
+        if(isScrolledToBottom) {
+           consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
       });
-      
   };
 
   setInterval(updateVariable, 1000);
-</script>
 
+  function copy() {
+      var copyText = document.getElementById("variable").innerText;
+      navigator.clipboard.writeText(copyText);
+      alert("Copied chat.");
+      console.log("Copied chat")
+  }
+</script>
 <script>
   const updateVariable2 = () => {
     fetch('/players/list')
@@ -180,12 +93,6 @@ function sortTableByName() {
 
   setInterval(updateVariable2, 1000);
 </script>
-
-
-
-
-
-
 </main>
 </body>
 </html>

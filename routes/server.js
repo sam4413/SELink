@@ -40,17 +40,14 @@ module.exports = function(app){
       fs.appendFile('./logs.html', `<span style="color:#00ff99;"><b>00:00:00.0000 Server: </b>Running command: ${JSON.stringify(command.command)}</span><br>`, (err) => { 
         if (err) notify.notify(3, err);
       });
-
-      //console.dir("InvokeCommand:", string)
       var status = (await chatSystem.postInvokeCommand(command.command));
       if (status == 503) {
-        //res.redirect('/console');
         res.render('console.hbs', {errormsg: 'Error: Server is offline.'});
       } else {
-      //res.redirect('/console');
       res.render('console.hbs', {errormsg: 'Sent command request to server.'});
       }
-      //res.redirect('/console');
+    } else {
+      res.redirect('/login');
     }
   });
 
@@ -68,7 +65,7 @@ module.exports = function(app){
       }
       //res.redirect('/console');
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -85,7 +82,7 @@ module.exports = function(app){
       }
       //res.redirect('/console');
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -100,7 +97,7 @@ module.exports = function(app){
       res.render('console.hbs', {errormsg: 'Sent start request to server.'});
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -125,7 +122,7 @@ module.exports = function(app){
         notify.notify(3, e)
       }
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });
 
@@ -140,7 +137,7 @@ module.exports = function(app){
       })();
       
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
     }
   });*/
 

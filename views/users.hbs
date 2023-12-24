@@ -37,18 +37,21 @@
 <div class="col-xl-6 callout-info">
 
 
-<table class="table text-center" style="border: none;" id="myTable" data-sort-direction="asc">
-  <tr style="background-color: rgba(0, 0, 0, 0.2);">
-    <th class="col text-secondary">ID</th>
-    <th class="col text-secondary">Username</th>
-    <th class="col text-secondary">Is Superuser?</th>
-    <th class="col text-secondary">Actions</th>
-  </tr>
+<table class="table">
+  <thead class="callout">
+    <tr class="text-adaptive">
+      <th scope="col">ID</th>
+      <th scope="col">Name</th>
+      <th scope="col">Is Superuser?</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
   {{#each users}}
-  <tr>
-    <td scope="row"><span class="text-primary">{{this.id}}</span></td>
-    <td scope="row"><span class="text-primary">{{this.username}}</span></td>
-    <td scope="row" id="listsu"><div class="text-primary">{{this.is_superuser}}</div></td>
+  <tr class="text-adaptive">
+    <td scope="row">{{this.id}}</td>
+    <td scope="row">{{this.username}}</td>
+    <td scope="row">{{this.is_superuser}}</td>
     <td scope="row">
       <form style="float:left; margin-right: 10px;" action="/users/promote/{{this.id}}" method="POST"> <input type="submit" value="Promote" class="btn btn-info" onclick="return confirm('Are you sure you want to promote this user?');"></form>
       <form style="float:left; margin-right: 10px;" action="/users/demote/{{this.id}}" method="POST"> <input type="submit" value="Demote" class="btn btn-warning" onclick="return confirm('Are you sure you want to demote this user?');"></form>
@@ -57,43 +60,17 @@
   </tr>
   {{/each}}
   <tr>
-    <td>&nbsp;</td>
-  
-    <td>&nbsp;</td>
-  
-    <td>&nbsp;</td>
-  
+    <td></td>
+    <td></td>
+    <td></td>
     <td><form action="/register" ><input type="submit" value="+ Add a user" class="btn btn-primary" style="float:left; margin-right: 10px;" ></form></td>
   </tr>
+  </tbody>
 </table>
-
-<button onclick="myFunction()">Show Snackbar</button>
-<div id="snackbar">Message blah blah</div>
 
 </div>
 <div class="callout-info col-md-6">TIP: It is recommended to edit users in the user page, versus editing it directly in phpMyAdmin.</div>
-
-<!--<script>
-      /*let text2 = document.getElementById("listsu").innerHTML; 
-      text2.replace(0, 'Superuser').replace(1, 'Superuser');
-      
-      */
-      const inputElement = document.getElementById('listsu');
-      const input = Number(inputElement.value);
-
-      let output;
-      if (input === 0) {
-        output = 'User';
-      } else {
-        output = 'Superuser';
-      }
-      document.getElementById("listsu").innerHTML = output;
-</script>-->
-
-
-
-
-  </div>
+</div>
 </div>
 </div>
 

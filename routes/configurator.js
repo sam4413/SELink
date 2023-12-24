@@ -39,7 +39,7 @@ module.exports = function(app){
 
   app.get('/configurator', async (req, res) => {
     if (!req.session.userId) {
-      res.render('login.hbs');
+      res.redirect('/login');
       return;
     }
   
@@ -58,7 +58,7 @@ module.exports = function(app){
     
     app.get('/configurator/installedplugins', async (req, res) => {
       if (!req.session.userId) {
-        res.render('login.hbs');
+        res.redirect('/login');
         return;
       }
       const userId = req.session.userId;
@@ -77,7 +77,7 @@ module.exports = function(app){
 
 app.get('/configurator/plugins', async (req, res) => {
     if (!req.session.userId) {
-      res.render('login.hbs');
+      res.redirect('/login');
       return;
     }
   
@@ -94,7 +94,7 @@ app.get('/configurator/plugins', async (req, res) => {
 
     app.get('/configurator/plugins/list', async (req, res) => {
       if (!req.session.userId) {
-        res.render('login.hbs');
+        res.redirect('/login');
         return;
       }
     
@@ -112,7 +112,7 @@ app.get('/configurator/plugins', async (req, res) => {
             return null;
           });
           //console.log(shortDescriptions);
-          res.render('pluginslist.hbs', {shortdesc: 'shortDescriptions', result: output});
+          res.render('pluginslist.hbs', {shortdesc: shortDescriptions, result: output});
             } else {
               res.send('You do not have permission to access this page.');
             }
@@ -120,7 +120,7 @@ app.get('/configurator/plugins', async (req, res) => {
 
       app.post('/configurator/plugin/info/:guid', async (req, res) => {
         if (!req.session.userId) {
-          res.render('login.hbs');
+          res.redirect('/login');
           return;
         }
         
@@ -148,7 +148,7 @@ app.get('/configurator/plugins', async (req, res) => {
 
       app.get('/configurator/plugins/installed', consoleLimiter, async (req, res) => {
       if (!req.session.userId) {
-        res.render('login.hbs');
+        res.redirect('/login');
         return;
       }
     
@@ -205,7 +205,7 @@ app.get('/configurator/plugins', async (req, res) => {
 //Posts
 app.post('/configurator/plugins/get/:id/post', async (req, res) => {
   if (!req.session.userId) {
-    res.render('login.hbs');
+    res.redirect('/login');
     return;
   }
 
@@ -239,7 +239,7 @@ app.post('/configurator/plugins/get/:id/post', async (req, res) => {
 
 app.get('/configurator/plugins/get/display', consoleLimiter, async (req, res) => {
   if (!req.session.userId) {
-    res.render('login.hbs');
+    res.redirect('/login');
     return;
   }
 
@@ -299,7 +299,7 @@ app.post('/configurator/plugins/get/submit', bodyParser.json(), async (req, res)
   app.post('/uploadplugin', async (req, res) => {
     // Check if user is logged in
     if (!req.session.userId) {
-      return res.render('login.hbs');
+      return res.redirect('/login');
     }
 
     const userId = req.session.userId;
@@ -333,7 +333,7 @@ app.post('/configurator/plugins/get/submit', bodyParser.json(), async (req, res)
   app.post('/installplugin/:id', async (req, res) => {
     // Check if user is logged in
     if (!req.session.userId) {
-      return res.render('login.hbs');
+      return res.redirect('/login');
     }
     
     const userId = req.session.userId;
@@ -357,7 +357,7 @@ app.post('/configurator/plugins/get/submit', bodyParser.json(), async (req, res)
     app.post('/deleteplugin/:id', async (req, res) => {
       // Check if user is logged in
       if (!req.session.userId) {
-        return res.render('login.hbs');
+        return res.redirect('/login');
       }
     
       const userId = req.session.userId;

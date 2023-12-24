@@ -1,27 +1,32 @@
-<table class="table text-center" style="border: none;" id="myTable">
-  <tr style="background-color: rgba(0, 0, 0, 0.2);">
-    <th class="col text-secondary">Username</th>
-    <th class="col text-secondary">Actions</th>
-  </tr>
-
-
-{{#if names}}
-  {{#each names}}
-  <tr>
-    <td scope="row text-primary"><span class="text-primary" style="position:relative;"><strong>{{this.personaname}}</strong><br>{{this.steamid}}</td>
+<table class="table table-hover" id="myTable">
+  <thead class="callout">
+    <tr class="text-adaptive">
+      <th class="col">Username</th>
+      <th class="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {{#if names}}
+    {{#each names}}
+    <tr>
+    <td scope="row"><span class="text-adaptive" style="padding-top:15px;"><strong style="font-size:18px;">{{this.personaname}}</strong><br>{{this.steamid}}</span></td>
     <td scope="row text-primary">
-      <span><form class="btn btn-danger" action="/players/{{this.steamid}}/unban" method="POST">
-          <button style="padding: 0px;" type="submit" value="Unban User" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to unban this user?');">Unban User</button></form>
-      </span>
+        <span><form class="btn btn-danger" action="/players/{{this.steamid}}/unban" method="POST">
+            <button style="padding: 0px;" type="submit" value="Unban User" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to unban this user?');">Unban User</button></form>
+        </span>
+      </td>
+    </tr>
   {{/each}}
-{{/if}}
-{{#each eosnames}}
-  <tr>
-    <td scope="row text-primary"><span class="text-primary" style="position:relative;"><strong>{{this}}</strong></td>
-    <td scope="row text-primary">
-      <span><form class="btn btn-danger" action="/players/{{this}}/unban" method="POST">
-          <button style="padding: 0px;" type="submit" value="Unban User" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to unban this user?');">Unban User</button></form>
-      </span>
+  {{/if}}
+  {{#each eosnames}}
+    <tr>
+      <td scope="row text-primary"><span class="text-primary" style="position:relative;"><strong>{{this}}</strong></td>
+      <td scope="row text-primary">
+        <span><form class="btn btn-danger" action="/players/{{this}}/unban" method="POST">
+            <button style="padding: 0px;" type="submit" value="Unban User" class="btn btn-hidden text-white" onclick="return confirm('Are you sure you want to unban this user?');">Unban User</button></form>
+        </span>
+      </td>
+    </tr>
   {{/each}}
-  </tr>
+  </tbody>
 </table>

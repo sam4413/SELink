@@ -14,8 +14,8 @@ exports.notify = async function (level, content) {
         var log_file_name = `./logs/${today}.txt`
         var log_file_content = `${content}\n`
         if (fs.existsSync(log_file_name)) {
-            fs.appendFile(log_file_name, log_file_content, function (err) {
-                if (err) throw err;
+            fs.appendFile(log_file_name, log_file_content, function (err) { //TODO: Log the Log level as well to txt.
+                if (err) notify.notify(3,err.message);
                 if (level == 1) {
                     console.log("[INFO]  ",`${content}`)
                 } else if (level == 2) {

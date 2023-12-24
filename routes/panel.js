@@ -30,7 +30,15 @@ module.exports = function(app){
         res.render('panel.hbs', {sn: serverName, mn: mapName, sd: serverDescription, ml: memberLimit, ipn: ip, pt: port});
       
     } else {
-      res.render('login.hbs');
+      res.redirect('/login');
+    }
+  });
+
+  app.get('/about', async (req, res) => {
+    if (req.session.userId) {
+        res.render('about.hbs');
+    } else {
+      res.redirect('/login');
     }
   });
 }

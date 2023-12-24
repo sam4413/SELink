@@ -43,7 +43,7 @@ const connection = mysql.createConnection({
 
 app.get('/users', embeddedLimiter, bodyParser.json(), async (req, res) => {
     if (!req.session.userId) {
-      res.render('login.hbs');
+      res.redirect('/login');
       return;
     }
   
@@ -77,7 +77,7 @@ app.get('/users', embeddedLimiter, bodyParser.json(), async (req, res) => {
 
   app.get('/users/list', embeddedLimiter, bodyParser.json(), async (req, res) => {
     if (!req.session.userId) {
-      res.render('login.hbs');
+      res.redirect('/login');
       return;
     }
   
@@ -96,7 +96,7 @@ app.get('/users', embeddedLimiter, bodyParser.json(), async (req, res) => {
 
   app.post('/users/resetPassword', async (req, res) => {
     if (!req.session.userId) {
-      res.render('login.hbs');
+      res.redirect('/login');
       return;
     }
   
@@ -116,7 +116,7 @@ app.get('/users', embeddedLimiter, bodyParser.json(), async (req, res) => {
 
   app.post('/users/delete/:id', embeddedLimiter, async (req, res) => {
     if (!req.session.userId) {
-      res.render('login.hbs');
+      res.redirect('/login');
       return;
     }
   
@@ -172,7 +172,7 @@ app.get('/users', embeddedLimiter, bodyParser.json(), async (req, res) => {
 
   app.post('/users/promote/:id', embeddedLimiter, async (req, res) => {
     if (!req.session.userId) {
-      res.render('login.hbs');
+      res.redirect('/login');
       return;
     }
   
@@ -228,7 +228,7 @@ app.get('/users', embeddedLimiter, bodyParser.json(), async (req, res) => {
 
   app.post('/users/demote/:id', embeddedLimiter, async (req, res) => {
     if (!req.session.userId) {
-      res.render('login.hbs');
+      res.redirect('/login');
       return;
     }
   

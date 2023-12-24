@@ -1,28 +1,28 @@
 
-<table id="myTable" style="border:none;" width="100%" data-sort-direction="asc">
-  <thead>
-    <tr>
-      <th style="width: 34px;background-color: rgba(0, 0, 0, 0.5);"></th>
-      <th style="color: lightgrey; width: 135px;background-color: rgba(0, 0, 0, 0.5);">Name</th>
-      <th style="color: lightgrey; width: 92px;background-color: rgba(0, 0, 0, 0.5);">Author</th>
-      <th style="color: lightgrey; width: 734px;background-color: rgba(0, 0, 0, 0.5);">Description</th>
-      <th style="color: lightgrey; width: 123px;background-color: rgba(0, 0, 0, 0.5);">Cumulative Downloads</th>
-      <th style="color: lightgrey; width: 123px;background-color: rgba(0, 0, 0, 0.5);">Actions</th>
+<table class="table">
+  <thead class="callout">
+    <tr class="text-adaptive">
+      <th scope="col"></th>
+      <th scope="col">Name</th>
+      <th scope="col">Author</th>
+      <th scope="col">Description</th>
+      <th scope="col">Cumulative Downloads</th>
+      <th scope="col">Actions</th>
     </tr>
   </thead>
   <tbody>
     {{#each result}}
-    <tr style="color: border: 0; padding:75px;" class="even">
-      <td style="color: border: 0;"><img src="{{this.icon}}" alt="{{this.name}}" width="50" height="50"></td>
+    <tr class="text-adaptive">
+      <td><img src="{{this.icon}}" alt="{{this.name}}" width="50" height="50"></td>
       <td style="color: border: 0;" class="plugin-name">
         <form style="float:left; " action="/configurator/plugin/info/{{this.guid}}" method="POST"> 
           <input type="submit" class="btn btn-link" value="{{this.name}}" class="btn btn-primary">
         </form>
       </td>
-      <td style="border: 0;" class="sorting_1">{{this.author}}</td>
-      <td style="border: 0;" id="markparse">{{this.shortdesc}}</td>
-      <td style="border: 0;">{{this.downloads}}</td>
-      <td style="border: 0;">
+      <td>{{this.author}}</td>
+      <td id="markparse">{{this.shortdesc}}</td>
+      <td>{{this.downloads}}</td>
+      <td>
         <form style="float:right; " action="/installplugin/{{this.guid}}" method="POST"> 
           <input type="submit" value="Install" class="btn btn-primary" onclick="return confirm('Are you sure you want to install this plugin?');">
         </form><br>
