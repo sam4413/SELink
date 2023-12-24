@@ -114,7 +114,7 @@ module.exports = function(app){
 
           res.render('ftp', { folders, files, currentPath });
         } else {
-          res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you beleve this is an error."})
+          res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you believe this is an error."})
         }
         
       } catch (error) {
@@ -133,7 +133,7 @@ module.exports = function(app){
         return res.status(403).send('Forbidden');
       }
       if (process.env.ENABLE_FTP_SERVER == 'false') {
-        res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you beleve this is an error."})
+        res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you believe this is an error."})
       }
       try {
           const filePath = req.query.path;
@@ -175,7 +175,7 @@ module.exports = function(app){
         return res.status(403).send('Forbidden');
       }
       if (process.env.ENABLE_FTP_SERVER == 'false') {
-        res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you beleve this is an error."})
+        res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you believe this is an error."})
       }
       const ftp = new basicFtp.Client();
       await ftp.access(ftpConfig);
@@ -230,7 +230,7 @@ module.exports = function(app){
         return res.status(403).send('Forbidden');
       }
       if (process.env.ENABLE_FTP_SERVER == 'false') {
-        res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you beleve this is an error."})
+        res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you believe this is an error."})
       }
       const ftp = new basicFtp.Client();
       await ftp.access(ftpConfig);
@@ -272,7 +272,7 @@ module.exports = function(app){
         return res.status(403).send('Forbidden');
       }
       if (process.env.ENABLE_FTP_SERVER == 'false') {
-        res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you beleve this is an error."})
+        res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you believe this is an error."})
       }
       const ftp = new basicFtp.Client();
       await ftp.access(ftpConfig);
@@ -309,7 +309,7 @@ module.exports = function(app){
         return res.status(403).send('Forbidden');
       }
       if (process.env.ENABLE_FTP_SERVER == 'false') {
-        res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you beleve this is an error."})
+        res.render('error.hbs', {errormsg: "The FTP Service is not enabled. Please contact your administrator if you believe this is an error."})
       }
       const ftp = new basicFtp.Client();
       await ftp.access(ftpConfig);
