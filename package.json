@@ -15,6 +15,7 @@
   "author": "sam",
   "license": "ISC",
   "dependencies": {
+    "basic-ftp": "^5.0.4",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
     "bootstrap-icons": "^1.10.3",
