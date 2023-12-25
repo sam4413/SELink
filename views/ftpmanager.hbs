@@ -21,49 +21,48 @@
 </div>
 <main class="content">
   <p class="subtitle2"><a href="/panel">Server Control Panel</a> > FTP Manager</p>
-	
-  <!--Container-->
-<div class="row">
-<div class="col-xl-11 callout-info"><strong>INTERFACE</strong>
-   <hr>
-		{{#if sn}} 
-    <p class="callout-secondary"><strong>Server Name: </strong>{{sn}}<br>
-    {{/if}}
-		
-
-    {{#if mn}} 
-    <strong>Map Name: </strong>{{mn}}<br>
-    {{/if}}
-
-    {{#if sd}} 
-    <strong>Server Description: </strong>{{sd}}<br>
-    {{/if}}
-
-    {{#if ml}} 
-    <strong>Member Limit: </strong>{{ml}}<br>
-    {{/if}}
-
-    {{#if ipn}} 
-    <strong>Server Address: </strong>{{ipn}}:{{#if pt}}{{pt}}{{/if}}
-    {{/if}}
-    </p>
+	<div class="row">
+<hr>
+<div class="callout col-xl-12">
+  <h2>Current Path: {{currentPath}}</h2>
+  <hr>
+<div class="col-xl-12 callout"><strong>File Manager</strong><br>
+  <form style="display:inline-block;">
+    <a class="text-black" style="font-size: 20px;text-decoration: none;" href="javascript:history.back()"><i class=" bi bi-arrow-left-circle-fill"></i> Go back</a>
+  </form>
+&nbsp;&nbsp;&nbsp;&nbsp;
+  <form action="/createFolder?path={{currentPath}}" method="POST" style="display:inline-block;" target="dummyframe" class="">
+    Create Folder<br><div class="col-auto" style="display:inline-block;"><input class="form-control" type="text" name="name" id="name" required></div>
+    <div class="col-auto" style="display:inline-block;"><button type="submit" onclick="setTimeout(function(){window.location.reload();},10);" value="Create Folder" class="btn btn-primary">Create Folder</button></div>
+  </form>
+&nbsp;&nbsp;&nbsp;&nbsp;
+  <form action="/upload?path={{currentPath}}" method="post" style="display:inline-block;" enctype="multipart/form-data" class="">
+    Upload file<br><div class="col-auto" style="display:inline-block;"><input class="form-control" type="file" name="file" id="file" required></div>
+    <div class="col-auto" style="display:inline-block;"><button class="btn btn-primary" type="submit">Upload</button></div>
+  </form>
 </div>
+<hr>
+    {{#each folders}}
+      <div class="file">
+        <i class="bi bi-folder"></i><a href="?path={{../currentPath}}{{name}}/" style="text-decoration: none;"> {{name}}</a>
+        <form action="/deleteFolder?path=.{{../currentPath}}{{name}}" method="POST" style="margin-right: 10px; display:inline-block;">
+            <button type="submit" style="margin-top:10px;" value="Delete" class="btn btn-link" onclick="return confirm('#### WARNING! ####\nYou are about to delete an ENTIRE FOLDER! This could BREAK the entire torch instance, or make AMPLink inaccessable! This action cannot be undone!');setTimeout(function(){window.location.reload();},10);"><i class="bi bi-trash"></i></button>
+        </form>
+      </div>
+    {{/each}}
 
-<div class="w-100"></div>
-
-<div class="w-100"></div>
-
-<!--Divider-->
-		<div class="col-xl-11 callout-danger"><strong>Configuration&nbsp;</strong>
-		  <hr>
-		<form style="float:left; margin-right: 10px;" action="/postConfigurator" method="POST"><input type="submit" value="Plugins Management" class="btn btn-danger"></form>
-    <form style="float:left; margin-right: 10px;" action="/postFtpManager" method="POST"><input type="submit" value="FTP Manager" class="btn btn-danger"></form>
-    <form style="float:left; margin-right: 10px;" action="/postScheduled" method="POST"><input type="submit" value="Scheduled Tasks" class="btn btn-danger"></form>
-	  </div>
+    {{#each files}}
+      <div class="file">
+        <i class="bi bi-file-earmark"></i> {{name}} <button class="btn btn-link"> <a href="/download?path={{../currentPath}}{{name}}" style="text-decoration: none;" download><i class="bi bi-file-earmark-arrow-down-fill"></i></a></button>
+        <form action="/delete?path={{../currentPath}}{{name}}" method="POST" style="margin-right: 10px; display:inline-block;">
+            <button type="submit" style="margin-top:10px;" value="Delete" class="btn btn-link" onclick="return confirm('#### WARNING! ####\nAre you sure you want to delete this file? This action cannot be undone!');setTimeout(function(){window.location.reload();},10);"><i class="bi bi-trash"></i></button>
+        </form>
+      </div>
+    {{/each}}
+    
+  <hr>
+  
 </div>
-
-
-
 
 </main>
 </body>

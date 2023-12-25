@@ -26,11 +26,11 @@ if (process.env.ENABLE_FTP_SERVER == 'true') {
     password: process.env.FTP_SERVER_PASSWORD,
     secure: false
   }; 
-  ftpClient.connect(ftpConfig);
   notify.notify(1,"FTP Server: Enabled.")
 } else {
   notify.notify(1,"FTP Server: Disabled.")
 }
+ftpClient.connect(ftpConfig);
 
 // Function to retrieve file and folder information
 function getDirectoryContents(remotePath) {
@@ -278,17 +278,11 @@ module.exports = function(app){
       await ftp.access(ftpConfig);
     try {
         const currentPath = req.query.path;
-
-        if (isLegalName(currentPath)) {
         await ftp.removeDir(currentPath.substring(1))
         notify.notify(1,`Folder ${currentPath} deleted.`)
         ftp.close();
-
+        
         res.redirect(req.get('referer'));
-        } else {
-            notify.notify(3,"FTP Server: Folder deletion failed: Invalid name.")
-            res.status(400).send(`Invalid name. (400).`);
-        }
         
     } catch (error) {
         ftp.close();

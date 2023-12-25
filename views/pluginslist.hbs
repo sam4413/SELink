@@ -7,7 +7,7 @@
       <th scope="col">Author</th>
       <th scope="col">Description</th>
       <th scope="col">Cumulative Downloads</th>
-      <th scope="col">Actions</th>
+      <th scope="col" style="text-align: center;">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -16,7 +16,7 @@
       <td><img src="{{this.icon}}" alt="{{this.name}}" width="50" height="50"></td>
       <td style="color: border: 0;" class="plugin-name">
         <form style="float:left; " action="/configurator/plugin/info/{{this.guid}}" method="POST"> 
-          <input type="submit" class="btn btn-link" value="{{this.name}}" class="btn btn-primary">
+          <input type="submit" class="btn btn-hidden" value="{{this.name}}" class="btn btn-primary">
         </form>
       </td>
       <td>{{this.author}}</td>
