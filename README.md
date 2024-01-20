@@ -1,4 +1,4 @@
-![AMPLink Logo](https://cdn.discordapp.com/attachments/617491056652582953/1085417601208946728/image.png)
+![SELink Logo](https://cdn.discordapp.com/attachments/617491056652582953/1085417601208946728/image.png)
 ## SELink (Space Engineers Linker)
 (Formally AMPLink)
 
