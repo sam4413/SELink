@@ -1,8 +1,11 @@
+# The SELink project unfortunatly has shut down as of 2/1/2025
+**Due to college and generally not having enough free time, I cannot commit myself into maintaning or supporting SELink. Feel free to fork this project and build upon it however. Thank you everyone who has supported me along the way to help develop SELink.**
+I might make a successor program to SELink, however this is unlikely.
+
+
 ![SELink Logo](https://cdn.discordapp.com/attachments/617491056652582953/1085417601208946728/image.png)
 ## SELink (Space Engineers Linker)
 (Formally AMPLink)
-
-**We are currently going under a name change. Some stuff may be called AMPLink, but eventually it will all be called SELink.**
 
 SELink is a powerful tool that allows Administrators easy access to their Space Engineers servers through an easy to use webpanel.
  
